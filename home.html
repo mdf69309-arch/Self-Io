@@ -5,482 +5,213 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>EarnZone — Home</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src='//libtl.com/sdk.js' data-zone='10729825' data-sdk='show_10729825'></script>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0e1a;
-      --card: #111827;
-      --accent: #f59e0b;
-      --accent2: #ef4444;
+      --primary: #e8380d;
+      --primary2: #ff6b35;
+      --bg: #f0f2f5;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e5e7eb;
       --green: #10b981;
-      --blue: #3b82f6;
-      --purple: #8b5cf6;
-      --text: #f1f5f9;
-      --muted: #64748b;
-      --border: rgba(245,158,11,0.15);
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Noto Sans Bengali', 'Sora', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding-bottom: 80px;
-    }
-    /* Header */
-    .header {
-      background: linear-gradient(135deg, #111827, #1a2236);
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Noto Sans Bengali','Sora',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 70px; }
+
+    .header { background: linear-gradient(135deg,var(--primary),var(--primary2)); padding: 14px 16px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
     .header-left { display: flex; align-items: center; gap: 10px; }
-    .header-logo { font-size: 22px; }
-    .header-title { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 800; color: var(--accent); }
-    .points-badge {
-      background: linear-gradient(135deg, var(--accent), #f97316);
-      color: #000;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+    .header-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; }
+    .header-title { font-family: 'Sora',sans-serif; font-size: 20px; font-weight: 800; color: #fff; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .notif-btn { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; position: relative; }
+    .notif-dot { position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; background: #ff4444; border-radius: 50%; border: 1.5px solid white; }
+    .avatar-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
 
-    /* Banner Ad Area */
-    .ad-banner {
-      background: rgba(245,158,11,0.05);
-      border-bottom: 1px solid var(--border);
-      padding: 8px;
-      text-align: center;
-      font-size: 11px;
-      color: var(--muted);
-      min-height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .balance-wrap { background: linear-gradient(135deg,var(--primary),var(--primary2)); padding: 0 16px 20px; }
+    .balance-card { background: #fff; border-radius: 16px; padding: 18px 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .balance-label { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+    .balance-amount { font-family: 'Sora',sans-serif; font-size: 32px; font-weight: 800; color: var(--text); }
+    .balance-pts { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .balance-marquee { font-size: 12px; color: var(--muted); margin-top: 8px; overflow: hidden; white-space: nowrap; }
+    .marquee-text { display: inline-block; animation: marquee 15s linear infinite; }
+    @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-    .container { padding: 20px 16px; }
+    .container { padding: 16px; }
+    .section { margin-bottom: 20px; }
+    .section-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
 
-    /* User Welcome */
-    .welcome-card {
-      background: linear-gradient(135deg, #1a2236, #1e2d4a);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .avatar {
-      width: 52px; height: 52px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; flex-shrink: 0;
-    }
-    .welcome-info h3 { font-size: 17px; font-weight: 700; }
-    .welcome-info p { font-size: 13px; color: var(--muted); margin-top: 2px; }
-    .total-earned {
-      margin-left: auto;
-      text-align: right;
-    }
-    .total-earned .amount {
-      font-family: 'Sora', sans-serif;
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--accent);
-    }
-    .total-earned .label { font-size: 11px; color: var(--muted); }
+    .menu-card { background: var(--card); border-radius: 14px; padding: 14px 8px; text-align: center; cursor: pointer; text-decoration: none; color: var(--text); display: block; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform 0.15s; border: 1px solid var(--border); }
+    .menu-card:active { transform: scale(0.95); }
+    .card-img { width: 56px; height: 56px; border-radius: 12px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+    .card-label { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.3; }
 
-    /* Section Title */
-    .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .bg-red { background: linear-gradient(135deg,#ff4444,#ff6b6b); }
+    .bg-orange { background: linear-gradient(135deg,#ff8c00,#ffa500); }
+    .bg-blue { background: linear-gradient(135deg,#3b82f6,#60a5fa); }
+    .bg-purple { background: linear-gradient(135deg,#8b5cf6,#a78bfa); }
+    .bg-green { background: linear-gradient(135deg,#10b981,#34d399); }
+    .bg-teal { background: linear-gradient(135deg,#14b8a6,#2dd4bf); }
+    .bg-indigo { background: linear-gradient(135deg,#6366f1,#818cf8); }
+    .bg-rose { background: linear-gradient(135deg,#f43f5e,#fb7185); }
+    .bg-cyan { background: linear-gradient(135deg,#06b6d4,#22d3ee); }
 
-    /* Spin Wheel */
-    .spin-section {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 24px 20px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .spin-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-    .spin-subtitle {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-    .wheel-wrap {
-      position: relative;
-      display: inline-block;
-      margin-bottom: 16px;
-    }
-    .wheel-pointer {
-      position: absolute;
-      top: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 28px;
-      z-index: 10;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-    }
-    canvas#spinCanvas {
-      border-radius: 50%;
-      box-shadow: 0 0 40px rgba(245,158,11,0.2);
-    }
-    .btn-spin {
-      background: linear-gradient(135deg, var(--accent), #f97316);
-      border: none;
-      border-radius: 14px;
-      color: #000;
-      font-size: 16px;
-      font-weight: 700;
-      font-family: inherit;
-      padding: 14px 40px;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 20px rgba(245,158,11,0.3);
-    }
-    .btn-spin:disabled {
-      opacity: 0.5; cursor: not-allowed;
-      transform: none !important;
-    }
-    .btn-spin:not(:disabled):hover { transform: translateY(-2px); }
-    .spin-result {
-      margin-top: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--green);
-      min-height: 24px;
-    }
-    .spin-cooldown {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 6px;
-    }
-
-    /* Quick Action Cards */
-    .actions-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .action-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      color: var(--text);
-      display: block;
-    }
-    .action-card:hover { transform: translateY(-3px); border-color: var(--accent); }
-    .action-card .icon { font-size: 32px; margin-bottom: 8px; }
-    .action-card .title { font-size: 15px; font-weight: 700; }
-    .action-card .desc { font-size: 12px; color: var(--muted); margin-top: 4px; }
-    .action-card .reward {
-      display: inline-block;
-      background: rgba(16,185,129,0.15);
-      color: var(--green);
-      border-radius: 8px;
-      padding: 3px 8px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: 8px;
-    }
-
-    /* Stats Row */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 10px;
-      text-align: center;
-    }
-    .stat-card .val {
-      font-family: 'Sora', sans-serif;
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--accent);
-    }
-    .stat-card .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-    /* Withdraw Card */
-    .withdraw-card {
-      background: linear-gradient(135deg, #1a2236, #1e2d4a);
-      border: 1px solid rgba(16,185,129,0.2);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .withdraw-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
-    .withdraw-info {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .withdraw-info span { color: var(--text); font-weight: 600; }
-    .btn-withdraw {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, var(--green), #059669);
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-    }
-
-    /* Bottom Nav */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: #111827;
-      border-top: 1px solid var(--border);
-      display: flex;
-      padding: 10px 0;
-      z-index: 200;
-    }
-    .nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      cursor: pointer;
-      text-decoration: none;
-      color: var(--muted);
-      font-size: 11px;
-      transition: color 0.2s;
-    }
-    .nav-item.active { color: var(--accent); }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border); display: flex; padding: 8px 0; z-index: 200; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; text-decoration: none; color: var(--muted); font-size: 10px; font-weight: 600; }
+    .nav-item.active { color: var(--primary); }
     .nav-item .nav-icon { font-size: 22px; }
 
-    /* Ad Modal */
-    .ad-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-    }
-    .ad-modal.show { display: flex; }
-    .ad-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 28px 24px;
-      width: 90%;
-      max-width: 360px;
-      text-align: center;
-    }
-    .ad-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-    .ad-box p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-    .ad-placeholder {
-      background: rgba(255,255,255,0.05);
-      border: 2px dashed var(--border);
-      border-radius: 16px;
-      padding: 30px;
-      margin-bottom: 20px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .ad-timer {
-      font-family: 'Sora', sans-serif;
-      font-size: 36px;
-      font-weight: 800;
-      color: var(--accent);
-      margin-bottom: 16px;
-    }
-    .btn-claim {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--green), #059669);
-      border: none;
-      border-radius: 14px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      display: none;
-    }
+    .spin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 900; align-items: center; justify-content: center; }
+    .spin-modal.show { display: flex; }
+    .spin-box { background: #fff; border-radius: 24px; padding: 24px 20px; width: 90%; max-width: 360px; text-align: center; }
+    .spin-box h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+    .spin-box p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .wheel-wrap { position: relative; display: inline-block; margin-bottom: 12px; }
+    .wheel-pointer { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-size: 24px; z-index: 10; }
+    .btn-spin { width: 100%; padding: 13px; background: linear-gradient(135deg,var(--primary),var(--primary2)); border: none; border-radius: 12px; color: #fff; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; margin-bottom: 8px; }
+    .btn-spin:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-close-spin { width: 100%; padding: 11px; background: #f3f4f6; border: none; border-radius: 12px; color: var(--muted); font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; }
+    .spin-result { font-size: 14px; font-weight: 700; color: var(--green); min-height: 22px; margin: 8px 0; }
 
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--green);
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      opacity: 0;
-      transition: all 0.3s;
-      z-index: 2000;
-      white-space: nowrap;
-    }
+    .ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
+    .ad-modal.show { display: flex; }
+    .ad-box { background: #fff; border-radius: 20px; padding: 24px 20px; width: 88%; max-width: 340px; text-align: center; }
+    .ad-box h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+    .ad-box p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .ad-placeholder { background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 12px; padding: 24px; margin-bottom: 16px; font-size: 13px; color: var(--muted); }
+    .ad-timer { font-family: 'Sora',sans-serif; font-size: 40px; font-weight: 800; color: var(--primary); margin-bottom: 14px; }
+    .btn-claim { width: 100%; padding: 13px; background: linear-gradient(135deg,var(--green),#059669); border: none; border-radius: 12px; color: #fff; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; display: none; }
+
+    .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 2000; white-space: nowrap; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
-  <!-- Header -->
   <div class="header">
     <div class="header-left">
-      <span class="header-logo">💰</span>
-      <span class="header-title">EarnZone</span>
+      <div class="header-icon">⚙️</div>
+      <span class="header-title">Quiz Game</span>
     </div>
-    <div class="points-badge">⭐ <span id="headerPoints">0</span></div>
+    <div class="header-right">
+      <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+      <div class="avatar-btn">😊</div>
+    </div>
   </div>
 
-  <!-- Banner Ad -->
-  <div class="ad-banner" id="bannerAd">
-    <!-- Monetag Banner Ad -->
-    <div id="monetag-banner"></div>
+  <div class="balance-wrap">
+    <div class="balance-card">
+      <div class="balance-label">My Balance</div>
+      <div class="balance-amount">৳<span id="balanceAmount">0.00</span></div>
+      <div class="balance-pts">⭐ <span id="userPoints">0</span> পয়েন্ট</div>
+      <div class="balance-marquee">
+        <span class="marquee-text">🎉 স্বাগতম! বিজ্ঞাপন দেখুন এবং পয়েন্ট আয় করুন! আজই শুরু করুন! 💰</span>
+      </div>
+    </div>
   </div>
 
   <div class="container">
-    <!-- Welcome Card -->
-    <div class="welcome-card">
-      <div class="avatar">😊</div>
-      <div class="welcome-info">
-        <h3 id="userName">লোড হচ্ছে...</h3>
-        <p>স্বাগতম! আজ আয় করুন</p>
-      </div>
-      <div class="total-earned">
-        <div class="amount" id="userPoints">0</div>
-        <div class="label">পয়েন্ট</div>
-      </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="val" id="statSpins">0</div>
-        <div class="lbl">স্পিন</div>
-      </div>
-      <div class="stat-card">
-        <div class="val" id="statQuiz">0</div>
-        <div class="lbl">কুইজ</div>
-      </div>
-      <div class="stat-card">
-        <div class="val" id="statScratch">0</div>
-        <div class="lbl">স্ক্র্যাচ</div>
+    <div class="section">
+      <div class="section-title">Work System</div>
+      <div class="grid-3">
+        <a href="#" class="menu-card" onclick="showToastMsg('📹 ভিডিও শীঘ্রই আসছে!')">
+          <div class="card-img bg-red">▶️</div>
+          <div class="card-label">How to Work</div>
+        </a>
+        <a href="#" class="menu-card" onclick="showToastMsg('🔗 Monetag-এ কানেক্ট করুন!')">
+          <div class="card-img bg-orange">📱</div>
+          <div class="card-label">Connect First</div>
+        </a>
+        <a href="#" class="menu-card">
+          <div class="card-img bg-blue">📊</div>
+          <div class="card-label">Leaderboard</div>
+        </a>
       </div>
     </div>
 
-    <!-- Spin Wheel -->
-    <div class="spin-section">
-      <div class="spin-title">🎡 লাকি স্পিন</div>
-      <div class="spin-subtitle">স্পিন করুন, বিজ্ঞাপন দেখুন, পয়েন্ট জিতুন!</div>
+    <div class="section">
+      <div class="section-title">Task Work</div>
+      <div class="grid-3">
+        <a href="#" class="menu-card" onclick="openSpin()">
+          <div class="card-img bg-red">🎡</div>
+          <div class="card-label">Spin Wheel</div>
+        </a>
+        <a href="quiz.html" class="menu-card">
+          <div class="card-img bg-purple">🔢</div>
+          <div class="card-label">Solve Math</div>
+        </a>
+        <a href="quiz.html" class="menu-card">
+          <div class="card-img bg-indigo">🖼️</div>
+          <div class="card-label">Image Quiz</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Quiz work</div>
+      <div class="grid-3">
+        <a href="quiz.html" class="menu-card">
+          <div class="card-img bg-rose">🧠</div>
+          <div class="card-label">Quiz</div>
+        </a>
+        <a href="quiz.html" class="menu-card">
+          <div class="card-img bg-purple">❓</div>
+          <div class="card-label">Bangla Quiz</div>
+        </a>
+        <a href="scratch.html" class="menu-card">
+          <div class="card-img bg-cyan">🃏</div>
+          <div class="card-label">ScratchCard</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Payment</div>
+      <div class="grid-3">
+        <a href="#" class="menu-card" onclick="requestWithdraw()">
+          <div class="card-img bg-teal">💸</div>
+          <div class="card-label">Withdraw</div>
+        </a>
+        <a href="#" class="menu-card" onclick="inviteFriends()">
+          <div class="card-img bg-green">👥</div>
+          <div class="card-label">Invite Friends</div>
+        </a>
+        <a href="https://t.me/selfiotop_bot" class="menu-card">
+          <div class="card-img bg-blue">✈️</div>
+          <div class="card-label">Join Telegram</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <a class="nav-item active" href="home.html"><span class="nav-icon">🏠</span>হোম</a>
+    <a class="nav-item" href="quiz.html"><span class="nav-icon">🧠</span>কুইজ</a>
+    <a class="nav-item" href="scratch.html"><span class="nav-icon">🃏</span>স্ক্র্যাচ</a>
+    <a class="nav-item" id="adminNavLink" href="admin.html" style="display:none"><span class="nav-icon">⚙️</span>অ্যাডমিন</a>
+  </div>
+
+  <div class="spin-modal" id="spinModal">
+    <div class="spin-box">
+      <h3>🎡 লাকি স্পিন</h3>
+      <p>স্পিন করুন, বিজ্ঞাপন দেখুন, পয়েন্ট জিতুন!</p>
       <div class="wheel-wrap">
         <div class="wheel-pointer">▼</div>
-        <canvas id="spinCanvas" width="240" height="240"></canvas>
+        <canvas id="spinCanvas" width="220" height="220"></canvas>
       </div>
-      <br>
-      <button class="btn-spin" id="spinBtn" onclick="startSpin()">🎯 স্পিন করুন</button>
       <div class="spin-result" id="spinResult"></div>
-      <div class="spin-cooldown" id="spinCooldown"></div>
-    </div>
-
-    <!-- Action Cards -->
-    <div class="section-title">⚡ আয়ের উপায়</div>
-    <div class="actions-grid">
-      <a href="quiz.html" class="action-card">
-        <div class="icon">🧠</div>
-        <div class="title">কুইজ</div>
-        <div class="desc">প্রশ্নের উত্তর দিন</div>
-        <div class="reward">+পয়েন্ট</div>
-      </a>
-      <a href="scratch.html" class="action-card">
-        <div class="icon">🃏</div>
-        <div class="title">স্ক্র্যাচ কার্ড</div>
-        <div class="desc">কার্ড খুলে জিতুন</div>
-        <div class="reward">+পয়েন্ট</div>
-      </a>
-    </div>
-
-    <!-- Withdraw -->
-    <div class="withdraw-card">
-      <h3>💸 উইথড্র</h3>
-      <div class="withdraw-info">
-        <span>আপনার পয়েন্ট:</span>
-        <span id="withdrawPoints">0 পয়েন্ট</span>
-      </div>
-      <div class="withdraw-info">
-        <span>সমতুল্য টাকা:</span>
-        <span id="withdrawMoney">৳0.00</span>
-      </div>
-      <button class="btn-withdraw" onclick="requestWithdraw()">উইথড্র করুন</button>
+      <button class="btn-spin" id="spinBtn" onclick="startSpin()">🎯 স্পিন করুন</button>
+      <button class="btn-close-spin" onclick="closeSpin()">বন্ধ করুন</button>
     </div>
   </div>
 
-  <!-- Bottom Nav -->
-  <div class="bottom-nav">
-    <a class="nav-item active" href="home.html">
-      <span class="nav-icon">🏠</span>হোম
-    </a>
-    <a class="nav-item" href="quiz.html">
-      <span class="nav-icon">🧠</span>কুইজ
-    </a>
-    <a class="nav-item" href="scratch.html">
-      <span class="nav-icon">🃏</span>স্ক্র্যাচ
-    </a>
-    <a class="nav-item" id="adminNavLink" href="admin.html" style="display:none">
-      <span class="nav-icon">⚙️</span>অ্যাডমিন
-    </a>
-  </div>
-
-  <!-- Ad Modal -->
   <div class="ad-modal" id="adModal">
     <div class="ad-box">
       <h3>🎁 বিজ্ঞাপন দেখুন</h3>
-      <p>বিজ্ঞাপন দেখা শেষ হলে পয়েন্ট পাবেন!</p>
-      <div class="ad-placeholder" id="adContent">
-        <!-- Monetag Interstitial Ad loads here -->
-        📺 বিজ্ঞাপন লোড হচ্ছে...
-      </div>
+      <p>বিজ্ঞাপন দেখলেই পয়েন্ট পাবেন!</p>
+      <div class="ad-placeholder">📺 বিজ্ঞাপন লোড হচ্ছে...</div>
       <div class="ad-timer" id="adTimer">5</div>
       <button class="btn-claim" id="claimBtn" onclick="claimReward()">✅ পয়েন্ট নিন!</button>
     </div>
@@ -488,196 +219,130 @@
 
   <div class="toast" id="toast"></div>
 
-  <!-- Monetag SDK -->
-  <script src='//libtl.com/sdk.js' data-zone='10729825' data-sdk='show_10729825'></script>
-
   <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const tg = window.Telegram?.WebApp;
     if (tg) tg.expand();
 
-    let currentUser = null;
-    let userData = null;
-    let adSettings = { spinPoints: 10, quizPoints: 15, scratchPoints: 20, pointsToTaka: 0.01 };
-    let pendingReward = 0;
-    let adTimer = null;
-    let spinIsRunning = false;
+    let currentUser = null, userData = null;
+    let adSettings = { spinPoints: 10, pointsToTaka: 0.01, minWithdraw: 100 };
+    let pendingReward = 0, adTimerInterval = null, spinIsRunning = false;
 
-    // Spin Wheel Setup
+    // Spin
     const canvas = document.getElementById('spinCanvas');
     const ctx = canvas.getContext('2d');
-    const segments = ['10', '5', '20', '2', '15', '8', '25', '3'];
-    const colors = ['#f59e0b','#ef4444','#10b981','#3b82f6','#8b5cf6','#f97316','#06b6d4','#84cc16'];
+    const segments = ['10','5','20','2','15','8','25','3'];
+    const colors = ['#e8380d','#ef4444','#10b981','#3b82f6','#8b5cf6','#f97316','#06b6d4','#f59e0b'];
     let currentAngle = 0;
 
     function drawWheel(angle) {
-      const cx = canvas.width / 2, cy = canvas.height / 2, r = cx - 8;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const arc = (2 * Math.PI) / segments.length;
-      segments.forEach((seg, i) => {
-        const start = angle + i * arc;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.arc(cx, cy, r, start, start + arc);
-        ctx.fillStyle = colors[i];
-        ctx.fill();
-        ctx.strokeStyle = '#0a0e1a';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(start + arc / 2);
-        ctx.textAlign = 'right';
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 15px Sora, sans-serif';
-        ctx.fillText(seg, r - 10, 5);
-        ctx.restore();
+      const cx = canvas.width/2, cy = canvas.height/2, r = cx-6;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      const arc = (2*Math.PI)/segments.length;
+      segments.forEach((seg,i) => {
+        const s = angle+i*arc;
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,s,s+arc);
+        ctx.fillStyle = colors[i]; ctx.fill();
+        ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+        ctx.save(); ctx.translate(cx,cy); ctx.rotate(s+arc/2);
+        ctx.textAlign='right'; ctx.fillStyle='#fff';
+        ctx.font='bold 13px Sora,sans-serif'; ctx.fillText(seg,r-8,5); ctx.restore();
       });
-      // Center circle
-      ctx.beginPath();
-      ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
-      ctx.fillStyle = '#0a0e1a';
-      ctx.fill();
-      ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      ctx.fillStyle = '#f59e0b';
-      ctx.font = 'bold 14px Sora';
-      ctx.textAlign = 'center';
-      ctx.fillText('GO', cx, cy + 5);
+      ctx.beginPath(); ctx.arc(cx,cy,20,0,2*Math.PI);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle=colors[0]; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle=colors[0]; ctx.font='bold 10px Sora'; ctx.textAlign='center'; ctx.fillText('GO',cx,cy+4);
     }
     drawWheel(0);
 
+    window.openSpin = () => document.getElementById('spinModal').classList.add('show');
+    window.closeSpin = () => document.getElementById('spinModal').classList.remove('show');
+
     window.startSpin = () => {
       if (spinIsRunning) return;
-      showAdModal('spin');
+      if (window.show_10729825) {
+        window.show_10729825().then(() => doSpin(adSettings.spinPoints)).catch(() => showManualAd('spin'));
+      } else showManualAd('spin');
     };
 
     function doSpin(pts) {
       spinIsRunning = true;
       document.getElementById('spinBtn').disabled = true;
       document.getElementById('spinResult').textContent = '';
-      const totalRotation = (5 + Math.random() * 5) * 2 * Math.PI;
-      const duration = 4000;
-      const start = performance.now();
-      const startAngle = currentAngle;
+      const totalRot = (5+Math.random()*5)*2*Math.PI, dur = 4000, start = performance.now(), startAngle = currentAngle;
       function animate(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        currentAngle = startAngle + totalRotation * eased;
-        drawWheel(currentAngle);
-        if (progress < 1) { requestAnimationFrame(animate); return; }
-        spinIsRunning = false;
-        document.getElementById('spinBtn').disabled = false;
-        document.getElementById('spinResult').textContent = `🎉 +${pts} পয়েন্ট পেলেন!`;
-        showToast(`+${pts} পয়েন্ট যোগ হয়েছে! 🎉`);
+        const p = Math.min((now-start)/dur,1), e = 1-Math.pow(1-p,3);
+        currentAngle = startAngle+totalRot*e; drawWheel(currentAngle);
+        if (p<1) { requestAnimationFrame(animate); return; }
+        spinIsRunning = false; document.getElementById('spinBtn').disabled = false;
+        document.getElementById('spinResult').textContent = `🎉 +${pts} পয়েন্ট!`;
+        addPoints(pts,'spinCount'); showToast(`+${pts} পয়েন্ট! 🎉`);
       }
       requestAnimationFrame(animate);
     }
 
-    function showAdModal(type) {
-      pendingReward = adSettings.spinPoints;
-      if (type === 'quiz') pendingReward = adSettings.quizPoints;
-      if (type === 'scratch') pendingReward = adSettings.scratchPoints;
-      window._currentAdType = type;
-
-      // Try Monetag Rewarded Ad first
-      if (window.show_10729825) {
-        window.show_10729825().then(() => {
-          // Ad watched successfully — give reward directly
-          claimReward();
-        }).catch(() => {
-          // Fallback to manual modal if ad fails
-          showManualAdModal();
-        });
-      } else {
-        showManualAdModal();
-      }
-    }
-
-    function showManualAdModal() {
+    function showManualAd(type) {
+      pendingReward = adSettings.spinPoints; window._currentAdType = type;
       document.getElementById('adModal').classList.add('show');
       document.getElementById('claimBtn').style.display = 'none';
-      let t = 5;
-      document.getElementById('adTimer').textContent = t;
-      clearInterval(adTimer);
-      adTimer = setInterval(() => {
-        t--;
-        document.getElementById('adTimer').textContent = t;
-        if (t <= 0) {
-          clearInterval(adTimer);
-          document.getElementById('adTimer').textContent = '✅';
-          document.getElementById('claimBtn').style.display = 'block';
-        }
+      let t = 5; document.getElementById('adTimer').textContent = t;
+      clearInterval(adTimerInterval);
+      adTimerInterval = setInterval(() => {
+        t--; document.getElementById('adTimer').textContent = t;
+        if (t<=0) { clearInterval(adTimerInterval); document.getElementById('adTimer').textContent='✅'; document.getElementById('claimBtn').style.display='block'; }
       }, 1000);
     }
 
-    window.claimReward = async () => {
+    window.claimReward = () => {
       document.getElementById('adModal').classList.remove('show');
-      if (!currentUser) return;
-      const type = window._currentAdType;
-      await updateDoc(doc(db, 'users', currentUser.uid), {
-        points: increment(pendingReward),
-        [`${type}Count`]: increment(1)
-      });
-      userData.points = (userData.points || 0) + pendingReward;
-      updateUI();
-      if (type === 'spin') doSpin(pendingReward);
-      showToast(`+${pendingReward} পয়েন্ট যোগ হয়েছে!`);
+      if (window._currentAdType==='spin') doSpin(pendingReward);
+      else { addPoints(pendingReward, window._currentAdType+'Count'); showToast(`+${pendingReward} পয়েন্ট!`); }
     };
 
+    async function addPoints(pts, field) {
+      if (!currentUser) return;
+      await updateDoc(doc(db,'users',currentUser.uid), { points: increment(pts), [field]: increment(1) });
+      userData.points = (userData.points||0)+pts; updateUI();
+    }
+
     window.requestWithdraw = async () => {
-      if (!userData || userData.points < 100) {
-        showToast('কমপক্ষে ১০০ পয়েন্ট লাগবে!', true);
-        return;
-      }
-      await addDoc(collection(db, 'withdrawRequests'), {
-        userId: currentUser.uid,
-        userName: userData.name,
-        points: userData.points,
-        taka: (userData.points * adSettings.pointsToTaka).toFixed(2),
-        status: 'pending',
-        createdAt: serverTimestamp()
-      });
-      showToast('উইথড্র রিকোয়েস্ট পাঠানো হয়েছে! ✅');
+      const min = adSettings.minWithdraw||100;
+      if (!userData||(userData.points||0)<min) { showToast(`কমপক্ষে ${min} পয়েন্ট লাগবে!`,true); return; }
+      await addDoc(collection(db,'withdrawRequests'), { userId:currentUser.uid, userName:userData.name, points:userData.points, taka:((userData.points||0)*adSettings.pointsToTaka).toFixed(2), status:'pending', createdAt:serverTimestamp() });
+      showToast('✅ উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!');
     };
+
+    window.inviteFriends = () => {
+      if (tg) tg.openTelegramLink('https://t.me/share/url?url=t.me/selfiotop_bot/selfio&text=EarnZone-এ যোগ দিন!');
+      else showToast('Telegram-এ শেয়ার করুন!');
+    };
+
+    window.showToastMsg = (msg) => showToast(msg);
 
     function updateUI() {
       if (!userData) return;
-      document.getElementById('userName').textContent = userData.name || 'ইউজার';
-      document.getElementById('userPoints').textContent = userData.points || 0;
-      document.getElementById('headerPoints').textContent = userData.points || 0;
-      document.getElementById('withdrawPoints').textContent = (userData.points || 0) + ' পয়েন্ট';
-      document.getElementById('withdrawMoney').textContent = '৳' + ((userData.points || 0) * adSettings.pointsToTaka).toFixed(2);
-      document.getElementById('statSpins').textContent = userData.spinCount || 0;
-      document.getElementById('statQuiz').textContent = userData.quizCount || 0;
-      document.getElementById('statScratch').textContent = userData.scratchCount || 0;
-      if (userData.isAdmin) document.getElementById('adminNavLink').style.display = 'flex';
+      const pts = userData.points||0;
+      document.getElementById('balanceAmount').textContent = (pts*(adSettings.pointsToTaka||0.01)).toFixed(2);
+      document.getElementById('userPoints').textContent = pts;
+      if (userData.isAdmin) document.getElementById('adminNavLink').style.display='flex';
     }
 
-    function showToast(msg, isError = false) {
+    function showToast(msg, isError=false) {
       const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.style.background = isError ? '#ef4444' : '#10b981';
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3000);
+      t.textContent=msg; t.style.background=isError?'#ef4444':'#10b981';
+      t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
     }
-
-    // Expose for other pages
-    window.showAdModal = showAdModal;
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.href = 'index.html'; return; }
+      if (!user) { window.location.href='index.html'; return; }
       currentUser = user;
-      const snap = await getDoc(doc(db, 'users', user.uid));
+      const snap = await getDoc(doc(db,'users',user.uid));
       if (snap.exists()) userData = snap.data();
-      // Load settings
-      const settSnap = await getDoc(doc(db, 'settings', 'adConfig'));
-      if (settSnap.exists()) adSettings = { ...adSettings, ...settSnap.data() };
+      const settSnap = await getDoc(doc(db,'settings','adConfig'));
+      if (settSnap.exists()) adSettings = {...adSettings,...settSnap.data()};
       updateUI();
     });
   </script>
