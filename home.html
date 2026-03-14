@@ -95,11 +95,26 @@
   <!-- Balance -->
   <div class="balance-wrap">
     <div class="balance-card">
-      <div class="balance-label">My Balance</div>
+      <div class="balance-label">👋 স্বাগতম, <span id="userName">লোড হচ্ছে...</span></div>
       <div class="balance-amount">৳<span id="balanceAmount">0.00</span></div>
-      <div class="balance-pts">⭐ <span id="userPoints">0</span> পয়েন্ট</div>
-      <div class="balance-marquee">
-        <span class="marquee-text">🎉 স্বাগতম! বিজ্ঞাপন দেখুন এবং পয়েন্ট আয় করুন! আজই শুরু করুন! 💰</span>
+      <div style="display:flex;justify-content:center;gap:20px;margin-top:10px;">
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;">⭐ পয়েন্ট</div>
+          <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:#e8380d;" id="userPoints">0</div>
+        </div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;">💰 ব্যালেন্স</div>
+          <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--green);">৳<span id="userBalance">0.00</span></div>
+        </div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;">🎯 Ad দেখেছেন</div>
+          <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:#8b5cf6;" id="userAdCount">0</div>
+        </div>
+      </div>
+      <div class="balance-marquee" style="margin-top:10px;">
+        <span class="marquee-text" id="marqueeText">🎉 স্বাগতম! বিজ্ঞাপন দেখুন এবং পয়েন্ট আয় করুন! আজই শুরু করুন! 💰</span>
       </div>
     </div>
   </div>
@@ -182,6 +197,17 @@
       </div>
     </div>
 
+    <!-- Admin Card — শুধু Admin দেখবে -->
+    <div class="section" id="adminSection" style="display:none">
+      <div class="section-title">Admin</div>
+      <div class="grid-3">
+        <div class="menu-card" id="adminNavLink" onclick="location.href='admin.html'" style="display:none">
+          <div class="card-img" style="background:linear-gradient(135deg,#f59e0b,#f97316)">⚙️</div>
+          <div class="card-label">Admin Panel</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Ad Modal -->
@@ -233,6 +259,7 @@
       const settSnap = await getDoc(doc(db, 'settings', 'adConfig'));
       if (settSnap.exists()) adSettings = { ...adSettings, ...settSnap.data() };
       updateUI();
+      loadMarquee();
     });
 
     // সব কার্ডে ক্লিক → Ad দেখাও
@@ -310,8 +337,27 @@
     function updateUI() {
       if (!userData) return;
       const pts = userData.points || 0;
-      document.getElementById('balanceAmount').textContent = (pts * (adSettings.pointsToTaka || 0.01)).toFixed(2);
+      const balance = userData.balance || 0;
+      const adCount = userData.adCount || 0;
+
+      document.getElementById('userName').textContent = userData.name || 'ইউজার';
+      document.getElementById('balanceAmount').textContent = balance.toFixed(2);
       document.getElementById('userPoints').textContent = pts;
+      document.getElementById('userBalance').textContent = balance.toFixed(2);
+      document.getElementById('userAdCount').textContent = adCount;
+      if (userData.isAdmin) {
+        document.getElementById('adminNavLink').style.display = 'flex';
+        document.getElementById('adminSection').style.display = 'block';
+      }
+    }
+
+    async function loadMarquee() {
+      try {
+        const snap = await getDoc(doc(db, 'settings', 'notice'));
+        if (snap.exists() && snap.data().text) {
+          document.getElementById('marqueeText').textContent = snap.data().text;
+        }
+      } catch(e) {}
     }
 
     function showToast(msg, isError = false) {
