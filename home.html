@@ -207,7 +207,7 @@
     import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const tg = window.Telegram?.WebApp;
-    if (tg) tg.expand();
+    if (tg) { tg.expand(); tg.BackButton.hide(); }
 
     let currentUser = null, userData = null;
     let adSettings = { spinPoints: 10, pointsToTaka: 0.01, minWithdraw: 100 };
