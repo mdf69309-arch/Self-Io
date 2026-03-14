@@ -488,8 +488,8 @@
 
   <div class="toast" id="toast"></div>
 
-  <!-- Monetag In-Page Push -->
-  <script src="//oplss.com/401/10729825' data-sdk='show_10729825"></script>
+  <!-- Monetag SDK -->
+  <script src='//libtl.com/sdk.js' data-zone='10729825' data-sdk='show_10729825'></script>
 
   <script type="module">
     import { auth, db } from './firebase-config.js';
@@ -584,6 +584,22 @@
       if (type === 'quiz') pendingReward = adSettings.quizPoints;
       if (type === 'scratch') pendingReward = adSettings.scratchPoints;
       window._currentAdType = type;
+
+      // Try Monetag Rewarded Ad first
+      if (window.show_10729825) {
+        window.show_10729825().then(() => {
+          // Ad watched successfully — give reward directly
+          claimReward();
+        }).catch(() => {
+          // Fallback to manual modal if ad fails
+          showManualAdModal();
+        });
+      } else {
+        showManualAdModal();
+      }
+    }
+
+    function showManualAdModal() {
       document.getElementById('adModal').classList.add('show');
       document.getElementById('claimBtn').style.display = 'none';
       let t = 5;
