@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>EarnZone — স্ক্র্যাচ কার্ড</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e1a; --card: #111827; --accent: #f59e0b;
+      --green: #10b981; --text: #f1f5f9; --muted: #64748b; --border: rgba(245,158,11,0.15);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Noto Sans Bengali','Sora',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
+    .header { background: #111827; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .back-btn { font-size: 22px; cursor: pointer; text-decoration: none; color: var(--text); }
+    .header-title { font-family: 'Sora',sans-serif; font-size: 18px; font-weight: 800; color: var(--accent); }
+    .points-badge { background: linear-gradient(135deg,var(--accent),#f97316); color: #000; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+    .container { padding: 20px 16px; text-align: center; }
+    .page-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .page-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+    /* Cards Grid */
+    .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+    .scratch-card-wrap { position: relative; }
+    .scratch-card {
+      background: linear-gradient(135deg, #1e3a5f, #1a2d4a);
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .scratch-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #c0c0c0, #a0a0a0, #d0d0d0);
+      transition: opacity 0.5s;
+    }
+    .scratch-card.revealed::before { opacity: 0; }
+    .scratch-card.revealed { cursor: default; border-color: var(--accent); }
+    .scratch-card .card-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .scratch-card .card-icon { font-size: 28px; }
+    .scratch-card .card-pts { font-size: 12px; font-weight: 700; color: var(--accent); display: none; }
+    .scratch-card.revealed .card-pts { display: block; }
+    .scratch-card .scratch-hint {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      font-size: 11px;
+      color: #555;
+      font-weight: 700;
+    }
+    .scratch-card .scratch-hint .hint-icon { font-size: 20px; margin-bottom: 2px; }
+    .scratch-card.revealed .scratch-hint { display: none; }
+
+    .reveal-all-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg,var(--accent),#f97316);
+      border: none;
+      border-radius: 14px;
+      color: #000;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 20px rgba(245,158,11,0.3);
+      transition: all 0.3s;
+    }
+    .reveal-all-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .new-cards-btn {
+      width: 100%;
+      padding: 13px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: none;
+    }
+
+    .total-won { background: var(--card); border: 1px solid rgba(16,185,129,0.2); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+    .total-won .label { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+    .total-won .value { font-family: 'Sora',sans-serif; font-size: 32px; font-weight: 800; color: var(--accent); }
+
+    /* Ad Modal */
+    .ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; }
+    .ad-modal.show { display: flex; }
+    .ad-box { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 28px 24px; width: 90%; max-width: 360px; text-align: center; }
+    .ad-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .ad-box p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .ad-placeholder { background: rgba(255,255,255,0.05); border: 2px dashed var(--border); border-radius: 16px; padding: 30px; margin-bottom: 20px; font-size: 13px; color: var(--muted); }
+    .ad-timer { font-family: 'Sora',sans-serif; font-size: 36px; font-weight: 800; color: var(--accent); margin-bottom: 16px; }
+    .btn-claim { width: 100%; padding: 14px; background: linear-gradient(135deg,var(--green),#059669); border: none; border-radius: 14px; color: #fff; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; display: none; }
+
+    /* Bottom Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #111827; border-top: 1px solid var(--border); display: flex; padding: 10px 0; z-index: 200; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; text-decoration: none; color: var(--muted); font-size: 11px; }
+    .nav-item.active { color: var(--accent); }
+    .nav-item .nav-icon { font-size: 22px; }
+
+    .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: #fff; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 2000; white-space: nowrap; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .scratch-card.revealed .card-content { animation: popIn 0.3s ease; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="home.html" class="back-btn">←</a>
+    <span class="header-title">🃏 স্ক্র্যাচ কার্ড</span>
+    <div class="points-badge">⭐ <span id="headerPoints">0</span></div>
+  </div>
+
+  <div class="container">
+    <div class="page-title">🃏 স্ক্র্যাচ করে জিতুন!</div>
+    <div class="page-sub">কার্ড ঘষুন, বিজ্ঞাপন দেখুন, পয়েন্ট জিতুন!</div>
+
+    <div class="total-won">
+      <div class="label">এই রাউন্ডে জিতেছেন</div>
+      <div class="value" id="totalWon">0 পয়েন্ট</div>
+    </div>
+
+    <div class="cards-grid" id="cardsGrid"></div>
+
+    <button class="reveal-all-btn" id="revealBtn" onclick="revealCard()">
+      👆 একটি কার্ড স্ক্র্যাচ করুন
+    </button>
+    <button class="new-cards-btn" id="newCardsBtn" onclick="generateCards()">
+      🔄 নতুন কার্ড নিন
+    </button>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <a class="nav-item" href="home.html"><span class="nav-icon">🏠</span>হোম</a>
+    <a class="nav-item" href="quiz.html"><span class="nav-icon">🧠</span>কুইজ</a>
+    <a class="nav-item active" href="scratch.html"><span class="nav-icon">🃏</span>স্ক্র্যাচ</a>
+  </div>
+
+  <!-- Ad Modal -->
+  <div class="ad-modal" id="adModal">
+    <div class="ad-box">
+      <h3>🎁 বিজ্ঞাপন দেখুন</h3>
+      <p>বিজ্ঞাপন দেখলেই কার্ড খুলবে!</p>
+      <div class="ad-placeholder">📺 বিজ্ঞাপন লোড হচ্ছে...</div>
+      <div class="ad-timer" id="adTimer">5</div>
+      <button class="btn-claim" id="claimBtn" onclick="claimCard()">✅ কার্ড খুলুন!</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.expand();
+
+    let currentUser = null;
+    let userPoints = 0;
+    let adSettings = { scratchPoints: 20 };
+    let cards = [];
+    let currentCardIndex = -1;
+    let revealedCount = 0;
+    let totalWon = 0;
+    let adTimer = null;
+
+    const prizes = [
+      { icon: '💎', pts: 50, chance: 0.05 },
+      { icon: '🥇', pts: 30, chance: 0.1 },
+      { icon: '🎁', pts: 20, chance: 0.15 },
+      { icon: '⭐', pts: 15, chance: 0.2 },
+      { icon: '🎯', pts: 10, chance: 0.25 },
+      { icon: '🎪', pts: 5, chance: 0.25 },
+    ];
+
+    function getPrize() {
+      const r = Math.random();
+      let cum = 0;
+      for (const p of prizes) { cum += p.chance; if (r < cum) return p; }
+      return prizes[prizes.length - 1];
+    }
+
+    window.generateCards = () => {
+      cards = Array.from({ length: 6 }, () => getPrize());
+      revealedCount = 0; totalWon = 0;
+      document.getElementById('totalWon').textContent = '0 পয়েন্ট';
+      document.getElementById('revealBtn').disabled = false;
+      document.getElementById('revealBtn').textContent = '👆 একটি কার্ড স্ক্র্যাচ করুন';
+      document.getElementById('newCardsBtn').style.display = 'none';
+      renderCards();
+    };
+
+    function renderCards() {
+      const grid = document.getElementById('cardsGrid');
+      grid.innerHTML = '';
+      cards.forEach((card, i) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'scratch-card-wrap';
+        const el = document.createElement('div');
+        el.className = 'scratch-card';
+        el.id = `card-${i}`;
+        el.innerHTML = `
+          <div class="card-content">
+            <span class="card-icon">${card.icon}</span>
+            <span class="card-pts">+${card.pts}</span>
+          </div>
+          <div class="scratch-hint">
+            <span class="hint-icon">🤚</span>
+            <span>ঘষুন</span>
+          </div>
+        `;
+        el.onclick = () => selectCard(i);
+        wrap.appendChild(el);
+        grid.appendChild(wrap);
+      });
+    }
+
+    function selectCard(i) {
+      const el = document.getElementById(`card-${i}`);
+      if (el.classList.contains('revealed')) return;
+      currentCardIndex = i;
+      showAd();
+    }
+
+    function showAd() {
+      document.getElementById('adModal').classList.add('show');
+      document.getElementById('claimBtn').style.display = 'none';
+      let t = 5;
+      document.getElementById('adTimer').textContent = t;
+      clearInterval(adTimer);
+      adTimer = setInterval(() => {
+        t--;
+        document.getElementById('adTimer').textContent = t;
+        if (t <= 0) {
+          clearInterval(adTimer);
+          document.getElementById('adTimer').textContent = '✅';
+          document.getElementById('claimBtn').style.display = 'block';
+        }
+      }, 1000);
+    }
+
+    window.claimCard = async () => {
+      document.getElementById('adModal').classList.remove('show');
+      if (currentCardIndex < 0) return;
+      const card = cards[currentCardIndex];
+      const el = document.getElementById(`card-${currentCardIndex}`);
+      el.classList.add('revealed');
+      revealedCount++;
+      totalWon += card.pts;
+      document.getElementById('totalWon').textContent = totalWon + ' পয়েন্ট';
+      showToast(`🎉 ${card.icon} +${card.pts} পয়েন্ট!`);
+      if (currentUser) {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          points: increment(card.pts),
+          scratchCount: increment(1)
+        });
+        userPoints += card.pts;
+        document.getElementById('headerPoints').textContent = userPoints;
+      }
+      if (revealedCount >= cards.length) {
+        document.getElementById('revealBtn').disabled = true;
+        document.getElementById('revealBtn').textContent = '✅ সব কার্ড খোলা হয়েছে!';
+        document.getElementById('newCardsBtn').style.display = 'block';
+      }
+    };
+
+    window.revealCard = () => {
+      const unrevealed = cards.map((_, i) => i).filter(i => !document.getElementById(`card-${i}`)?.classList.contains('revealed'));
+      if (unrevealed.length === 0) return;
+      const pick = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+      selectCard(pick);
+    };
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'index.html'; return; }
+      currentUser = user;
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if (snap.exists()) {
+        userPoints = snap.data().points || 0;
+        document.getElementById('headerPoints').textContent = userPoints;
+      }
+      const settSnap = await getDoc(doc(db, 'settings', 'adConfig'));
+      if (settSnap.exists()) adSettings = { ...adSettings, ...settSnap.data() };
+      generateCards();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>EarnZone — Login</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --card: #111827;
+      --accent: #f59e0b;
+      --accent2: #ef4444;
+      --green: #10b981;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --border: rgba(245,158,11,0.2);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans Bengali', 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(245,158,11,0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(239,68,68,0.06) 0%, transparent 50%);
+      pointer-events: none;
+      animation: bgPulse 8s ease-in-out infinite alternate;
+    }
+    @keyframes bgPulse {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    .logo-wrap {
+      text-align: center;
+      margin-bottom: 32px;
+      animation: fadeDown 0.6s ease;
+    }
+    .logo-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 12px;
+      box-shadow: 0 0 40px rgba(245,158,11,0.3);
+    }
+    .logo-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), #fcd34d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .logo-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 380px;
+      animation: fadeUp 0.6s ease 0.1s both;
+      position: relative;
+      z-index: 1;
+    }
+    .tabs {
+      display: flex;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all 0.3s;
+    }
+    .tab.active {
+      background: linear-gradient(135deg, var(--accent), #f97316);
+      color: #000;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .form-group input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 13px 16px;
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus {
+      border-color: var(--accent);
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent), #f97316);
+      border: none;
+      border-radius: 14px;
+      color: #000;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(245,158,11,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,158,11,0.4); }
+    .btn-primary:active { transform: scale(0.98); }
+    .error-msg {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+    .success-msg {
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: #6ee7b7;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+    .loading {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .form-panel { display: none; }
+    .form-panel.active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="logo-wrap">
+    <div class="logo-icon">💰</div>
+    <div class="logo-title">EarnZone</div>
+    <div class="logo-sub">দেখুন, খেলুন, আয় করুন!</div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">লগইন</div>
+      <div class="tab" onclick="switchTab('signup')">সাইনআপ</div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="form-panel active" id="loginPanel">
+      <div class="form-group">
+        <label>ইমেইল</label>
+        <input type="email" id="loginEmail" placeholder="আপনার ইমেইল দিন">
+      </div>
+      <div class="form-group">
+        <label>পাসওয়ার্ড</label>
+        <input type="password" id="loginPass" placeholder="পাসওয়ার্ড দিন">
+      </div>
+      <button class="btn-primary" onclick="login()" id="loginBtn">লগইন করুন</button>
+      <div class="error-msg" id="loginError"></div>
+    </div>
+
+    <!-- Signup Form -->
+    <div class="form-panel" id="signupPanel">
+      <div class="form-group">
+        <label>নাম</label>
+        <input type="text" id="signupName" placeholder="আপনার নাম দিন">
+      </div>
+      <div class="form-group">
+        <label>ইমেইল</label>
+        <input type="email" id="signupEmail" placeholder="আপনার ইমেইল দিন">
+      </div>
+      <div class="form-group">
+        <label>পাসওয়ার্ড</label>
+        <input type="password" id="signupPass" placeholder="পাসওয়ার্ড দিন (৬+ অক্ষর)">
+      </div>
+      <button class="btn-primary" onclick="signup()" id="signupBtn">অ্যাকাউন্ট খুলুন</button>
+      <div class="error-msg" id="signupError"></div>
+      <div class="success-msg" id="signupSuccess"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.expand();
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists() && snap.data().isAdmin) {
+          window.location.href = 'admin.html';
+        } else {
+          window.location.href = 'home.html';
+        }
+      }
+    });
+
+    window.switchTab = (tab) => {
+      document.querySelectorAll('.tab').forEach((t, i) => {
+        t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'signup'));
+      });
+      document.getElementById('loginPanel').classList.toggle('active', tab === 'login');
+      document.getElementById('signupPanel').classList.toggle('active', tab === 'signup');
+    };
+
+    window.login = async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPass').value;
+      const errEl = document.getElementById('loginError');
+      const btn = document.getElementById('loginBtn');
+      errEl.style.display = 'none';
+      if (!email || !pass) { errEl.textContent = 'সব তথ্য দিন'; errEl.style.display = 'block'; return; }
+      btn.innerHTML = '<span class="loading"></span>লগইন হচ্ছে...';
+      btn.disabled = true;
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (e) {
+        errEl.textContent = 'ইমেইল বা পাসওয়ার্ড ভুল!';
+        errEl.style.display = 'block';
+        btn.innerHTML = 'লগইন করুন';
+        btn.disabled = false;
+      }
+    };
+
+    window.signup = async () => {
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const pass = document.getElementById('signupPass').value;
+      const errEl = document.getElementById('signupError');
+      const sucEl = document.getElementById('signupSuccess');
+      const btn = document.getElementById('signupBtn');
+      errEl.style.display = 'none'; sucEl.style.display = 'none';
+      if (!name || !email || !pass) { errEl.textContent = 'সব তথ্য দিন'; errEl.style.display = 'block'; return; }
+      if (pass.length < 6) { errEl.textContent = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষর'; errEl.style.display = 'block'; return; }
+      btn.innerHTML = '<span class="loading"></span>তৈরি হচ্ছে...';
+      btn.disabled = true;
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        await setDoc(doc(db, 'users', cred.user.uid), {
+          name, email, points: 0, isAdmin: false,
+          createdAt: serverTimestamp()
+        });
+        sucEl.textContent = '✅ অ্যাকাউন্ট তৈরি হয়েছে! হোমে যাচ্ছি...';
+        sucEl.style.display = 'block';
+      } catch (e) {
+        errEl.textContent = e.code === 'auth/email-already-in-use' ? 'এই ইমেইল আগেই ব্যবহৃত!' : 'সাইনআপ ব্যর্থ হয়েছে';
+        errEl.style.display = 'block';
+        btn.innerHTML = 'অ্যাকাউন্ট খুলুন';
+        btn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>

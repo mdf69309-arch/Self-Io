@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>EarnZone — কুইজ</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e1a; --card: #111827; --accent: #f59e0b;
+      --green: #10b981; --red: #ef4444; --text: #f1f5f9;
+      --muted: #64748b; --border: rgba(245,158,11,0.15);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Noto Sans Bengali','Sora',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
+    .header { background: #111827; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .back-btn { font-size: 22px; cursor: pointer; text-decoration: none; color: var(--text); }
+    .header-title { font-family: 'Sora',sans-serif; font-size: 18px; font-weight: 800; color: var(--accent); }
+    .points-badge { background: linear-gradient(135deg,var(--accent),#f97316); color: #000; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+    .container { padding: 20px 16px; }
+
+    .progress-wrap { margin-bottom: 20px; }
+    .progress-info { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    .progress-bar { background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; overflow: hidden; }
+    .progress-fill { background: linear-gradient(90deg,var(--accent),#f97316); height: 100%; border-radius: 10px; transition: width 0.4s ease; }
+
+    .question-card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 24px 20px; margin-bottom: 20px; }
+    .q-number { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 10px; }
+    .q-text { font-size: 17px; font-weight: 700; line-height: 1.5; }
+
+    .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .option-btn {
+      background: rgba(255,255,255,0.04);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 14px 18px;
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    .option-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(245,158,11,0.08); }
+    .option-btn.correct { border-color: var(--green); background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .option-btn.wrong { border-color: var(--red); background: rgba(239,68,68,0.15); color: #fca5a5; }
+
+    .result-section { display: none; text-align: center; }
+    .result-card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; }
+    .result-emoji { font-size: 56px; margin-bottom: 12px; }
+    .result-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+    .result-score { font-size: 15px; color: var(--muted); margin-bottom: 20px; }
+    .result-points { font-family: 'Sora',sans-serif; font-size: 40px; font-weight: 800; color: var(--accent); }
+    .result-pts-label { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .btn-again { width: 100%; padding: 14px; background: linear-gradient(135deg,var(--accent),#f97316); border: none; border-radius: 14px; color: #000; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; margin-bottom: 10px; }
+    .btn-home { width: 100%; padding: 14px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 14px; color: var(--text); font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; text-decoration: none; display: block; text-align: center; }
+
+    /* Ad Modal */
+    .ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; flex-direction: column; }
+    .ad-modal.show { display: flex; }
+    .ad-box { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 28px 24px; width: 90%; max-width: 360px; text-align: center; }
+    .ad-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .ad-box p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .ad-placeholder { background: rgba(255,255,255,0.05); border: 2px dashed var(--border); border-radius: 16px; padding: 30px; margin-bottom: 20px; font-size: 13px; color: var(--muted); }
+    .ad-timer { font-family: 'Sora',sans-serif; font-size: 36px; font-weight: 800; color: var(--accent); margin-bottom: 16px; }
+    .btn-claim { width: 100%; padding: 14px; background: linear-gradient(135deg,var(--green),#059669); border: none; border-radius: 14px; color: #fff; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; display: none; }
+
+    /* Bottom Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #111827; border-top: 1px solid var(--border); display: flex; padding: 10px 0; z-index: 200; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; text-decoration: none; color: var(--muted); font-size: 11px; transition: color 0.2s; }
+    .nav-item.active { color: var(--accent); }
+    .nav-item .nav-icon { font-size: 22px; }
+
+    .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: #fff; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 2000; white-space: nowrap; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="home.html" class="back-btn">←</a>
+    <span class="header-title">🧠 কুইজ</span>
+    <div class="points-badge">⭐ <span id="headerPoints">0</span></div>
+  </div>
+
+  <div class="container">
+    <!-- Quiz Section -->
+    <div id="quizSection">
+      <div class="progress-wrap">
+        <div class="progress-info">
+          <span>প্রশ্ন <span id="currentQ">1</span>/<span id="totalQ">5</span></span>
+          <span id="scoreDisplay">স্কোর: 0</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width:20%"></div>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number" id="qNumber">প্রশ্ন ১</div>
+        <div class="q-text" id="qText">লোড হচ্ছে...</div>
+      </div>
+
+      <div class="options" id="optionsContainer"></div>
+    </div>
+
+    <!-- Result Section -->
+    <div class="result-section" id="resultSection">
+      <div class="result-card">
+        <div class="result-emoji" id="resultEmoji">🎉</div>
+        <div class="result-title" id="resultTitle">দারুণ!</div>
+        <div class="result-score" id="resultScore"></div>
+        <div class="result-points" id="resultPoints">0</div>
+        <div class="result-pts-label">পয়েন্ট অর্জন করেছেন</div>
+        <button class="btn-again" onclick="startQuiz()">🔄 আবার খেলুন</button>
+        <a href="home.html" class="btn-home">🏠 হোমে যান</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <a class="nav-item" href="home.html"><span class="nav-icon">🏠</span>হোম</a>
+    <a class="nav-item active" href="quiz.html"><span class="nav-icon">🧠</span>কুইজ</a>
+    <a class="nav-item" href="scratch.html"><span class="nav-icon">🃏</span>স্ক্র্যাচ</a>
+  </div>
+
+  <!-- Ad Modal -->
+  <div class="ad-modal" id="adModal">
+    <div class="ad-box">
+      <h3>🎁 বিজ্ঞাপন দেখুন</h3>
+      <p>বিজ্ঞাপন দেখলেই পয়েন্ট পাবেন!</p>
+      <div class="ad-placeholder">📺 বিজ্ঞাপন লোড হচ্ছে...</div>
+      <div class="ad-timer" id="adTimer">5</div>
+      <button class="btn-claim" id="claimBtn" onclick="claimPoints()">✅ পয়েন্ট নিন!</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { doc, getDoc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.expand();
+
+    const questions = [
+      { q: "বাংলাদেশের রাজধানী কোনটি?", opts: ["ঢাকা","চট্টগ্রাম","রাজশাহী","সিলেট"], ans: 0 },
+      { q: "পৃথিবীর সবচেয়ে বড় মহাসাগর কোনটি?", opts: ["আটলান্টিক","ভারত মহাসাগর","প্রশান্ত মহাসাগর","আর্কটিক"], ans: 2 },
+      { q: "১ কিলোমিটার = কত মিটার?", opts: ["১০০","৫০০","১০০০","১৫০০"], ans: 2 },
+      { q: "সূর্য কোন দিকে উদয় হয়?", opts: ["পশ্চিম","দক্ষিণ","উত্তর","পূর্ব"], ans: 3 },
+      { q: "বাংলাদেশ কত সালে স্বাধীন হয়?", opts: ["১৯৭০","১৯৭১","১৯৭২","১৯৭৩"], ans: 1 },
+      { q: "পানির রাসায়নিক সূত্র কী?", opts: ["CO2","H2O","O2","NaCl"], ans: 1 },
+      { q: "সপ্তাহে কতদিন?", opts: ["৫","৬","৭","৮"], ans: 2 },
+      { q: "মানবদেহে হাড়ের সংখ্যা কত?", opts: ["২০৪","২০৬","২০৮","২১০"], ans: 1 },
+    ];
+
+    let currentUser = null;
+    let userPoints = 0;
+    let adSettings = { quizPoints: 15, pointsToTaka: 0.01 };
+    let currentIndex = 0;
+    let score = 0;
+    let shuffledQ = [];
+    let adTimer = null;
+    let answered = false;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'index.html'; return; }
+      currentUser = user;
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if (snap.exists()) {
+        userPoints = snap.data().points || 0;
+        document.getElementById('headerPoints').textContent = userPoints;
+      }
+      const settSnap = await getDoc(doc(db, 'settings', 'adConfig'));
+      if (settSnap.exists()) adSettings = { ...adSettings, ...settSnap.data() };
+      startQuiz();
+    });
+
+    window.startQuiz = () => {
+      shuffledQ = [...questions].sort(() => Math.random() - 0.5).slice(0, 5);
+      currentIndex = 0; score = 0;
+      document.getElementById('totalQ').textContent = shuffledQ.length;
+      document.getElementById('quizSection').style.display = 'block';
+      document.getElementById('resultSection').style.display = 'none';
+      showQuestion();
+    };
+
+    function showQuestion() {
+      answered = false;
+      const q = shuffledQ[currentIndex];
+      document.getElementById('currentQ').textContent = currentIndex + 1;
+      document.getElementById('qNumber').textContent = `প্রশ্ন ${currentIndex + 1}`;
+      document.getElementById('qText').textContent = q.q;
+      document.getElementById('progressFill').style.width = `${((currentIndex + 1) / shuffledQ.length) * 100}%`;
+      document.getElementById('scoreDisplay').textContent = `স্কোর: ${score}`;
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+      q.opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.onclick = () => selectAnswer(i, btn);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(idx, btn) {
+      if (answered) return;
+      answered = true;
+      const q = shuffledQ[currentIndex];
+      const allBtns = document.querySelectorAll('.option-btn');
+      allBtns.forEach(b => b.disabled = true);
+      if (idx === q.ans) {
+        btn.classList.add('correct');
+        score++;
+        showToast('✅ সঠিক উত্তর!');
+      } else {
+        btn.classList.add('wrong');
+        allBtns[q.ans].classList.add('correct');
+        showToast('❌ ভুল উত্তর!', true);
+      }
+      setTimeout(() => {
+        currentIndex++;
+        if (currentIndex < shuffledQ.length) showQuestion();
+        else showAdThenResult();
+      }, 1200);
+    }
+
+    function showAdThenResult() {
+      document.getElementById('adModal').classList.add('show');
+      document.getElementById('claimBtn').style.display = 'none';
+      let t = 5;
+      document.getElementById('adTimer').textContent = t;
+      clearInterval(adTimer);
+      adTimer = setInterval(() => {
+        t--;
+        document.getElementById('adTimer').textContent = t;
+        if (t <= 0) {
+          clearInterval(adTimer);
+          document.getElementById('adTimer').textContent = '✅';
+          document.getElementById('claimBtn').style.display = 'block';
+        }
+      }, 1000);
+    }
+
+    window.claimPoints = async () => {
+      document.getElementById('adModal').classList.remove('show');
+      const earned = adSettings.quizPoints * score;
+      if (currentUser && earned > 0) {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          points: increment(earned),
+          quizCount: increment(1)
+        });
+        userPoints += earned;
+        document.getElementById('headerPoints').textContent = userPoints;
+      }
+      showResult(earned);
+    };
+
+    function showResult(earned) {
+      document.getElementById('quizSection').style.display = 'none';
+      document.getElementById('resultSection').style.display = 'block';
+      const pct = score / shuffledQ.length;
+      document.getElementById('resultEmoji').textContent = pct >= 0.8 ? '🏆' : pct >= 0.5 ? '🎉' : '😊';
+      document.getElementById('resultTitle').textContent = pct >= 0.8 ? 'অসাধারণ!' : pct >= 0.5 ? 'ভালো করেছেন!' : 'চেষ্টা করুন!';
+      document.getElementById('resultScore').textContent = `${score}/${shuffledQ.length} সঠিক উত্তর`;
+      document.getElementById('resultPoints').textContent = earned;
+    }
+
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.background = isError ? '#ef4444' : '#10b981';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+  </script>
+</body>
+</html>
