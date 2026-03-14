@@ -205,7 +205,7 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const tg = window.Telegram?.WebApp; if(tg) tg.expand();
+    const tg = window.Telegram?.WebApp; if(tg) { tg.expand(); tg.BackButton.show(); tg.BackButton.onClick(()=>{ window.location.href='home.html'; }); }
 
     let currentUser=null, userData=null;
     let adSettings = { spinPoints:10, pointsToTaka:0.01, minWithdraw:100 };
@@ -285,11 +285,21 @@
         drawWheel(currentAngle);
         if(p < 1) { requestAnimationFrame(animate); return; }
 
-        // কোন সেগমেন্টে থামলো
-        const arc = (2*Math.PI)/segments.length;
-        const norm = ((-currentAngle % (2*Math.PI)) + (2*Math.PI)) % (2*Math.PI);
-        const idx = Math.floor(norm/arc) % segments.length;
+        // ── সঠিক সেগমেন্ট calculation ──
+        // Pointer উপরে (top = -PI/2)
+        // চাকা যে কোণে আছে তার থেকে বের করবো pointer কোন segment এ পয়েন্ট করছে
+        const arc = (2*Math.PI) / segments.length;
+        // currentAngle normalize করো 0 to 2PI এর মধ্যে
+        let normalizedAngle = currentAngle % (2*Math.PI);
+        if(normalizedAngle < 0) normalizedAngle += 2*Math.PI;
+        // Pointer top এ আছে, তাই pointer angle = 3PI/2 (বা -PI/2)
+        // Segment index = pointer angle থেকে wheel angle বাদ দিয়ে
+        const pointerAngle = (3*Math.PI/2); // top position
+        let relativeAngle = (pointerAngle - normalizedAngle + 2*Math.PI) % (2*Math.PI);
+        const idx = Math.floor(relativeAngle / arc) % segments.length;
         spinResult = parseInt(segments[idx]) || 0;
+
+        console.log('Stopped at segment:', segments[idx], 'idx:', idx, 'pts:', spinResult);
 
         // স্পিন শেষে Ad দেখাও
         showRewardAd();
