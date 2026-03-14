@@ -3,163 +3,262 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>EarnZone — অ্যাডমিন</title>
+  <title>EarnZone — Admin Panel</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0e1a; --card: #111827; --accent: #f59e0b;
-      --green: #10b981; --red: #ef4444; --blue: #3b82f6;
-      --text: #f1f5f9; --muted: #64748b; --border: rgba(245,158,11,0.15);
+      --bg:#0f172a; --card:#1e293b; --card2:#162032;
+      --accent:#f59e0b; --green:#10b981; --red:#ef4444;
+      --blue:#3b82f6; --purple:#8b5cf6;
+      --text:#f1f5f9; --muted:#64748b; --border:rgba(255,255,255,0.08);
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Noto Sans Bengali','Sora',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 100px; }
-    .header { background: #111827; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-    .header-title { font-family: 'Sora',sans-serif; font-size: 18px; font-weight: 800; color: var(--accent); }
-    .logout-btn { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; padding: 6px 14px; border-radius: 10px; cursor: pointer; font-size: 13px; font-family: inherit; }
-    .container { padding: 20px 16px; }
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    body{font-family:'Noto Sans Bengali','Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;}
 
-    /* Stats Cards */
-    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
-    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 18px 14px; }
-    .stat-card .icon { font-size: 24px; margin-bottom: 8px; }
-    .stat-card .val { font-family: 'Sora',sans-serif; font-size: 26px; font-weight: 800; color: var(--accent); }
-    .stat-card .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    /* Header */
+    .header{background:linear-gradient(135deg,#1e293b,#162032);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+    .header-left{display:flex;align-items:center;gap:10px;}
+    .header-logo{font-size:26px;}
+    .header-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--accent);}
+    .logout-btn{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;padding:7px 14px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;}
 
-    /* Section */
-    .section { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 16px; }
-    .section-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    /* Stats */
+    .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:16px 16px 0;}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;}
+    .stat-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+    .si-yellow{background:rgba(245,158,11,0.15);}
+    .si-green{background:rgba(16,185,129,0.15);}
+    .si-blue{background:rgba(59,130,246,0.15);}
+    .si-purple{background:rgba(139,92,246,0.15);}
+    .si-red{background:rgba(239,68,68,0.15);}
+    .stat-info .val{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--accent);}
+    .stat-info .lbl{font-size:12px;color:var(--muted);margin-top:2px;}
 
-    /* Settings Form */
-    .setting-row { margin-bottom: 16px; }
-    .setting-row label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
-    .setting-row input {
-      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 15px;
-      font-family: inherit; outline: none;
-    }
-    .setting-row input:focus { border-color: var(--accent); }
-    .btn-save { width: 100%; padding: 13px; background: linear-gradient(135deg,var(--accent),#f97316); border: none; border-radius: 12px; color: #000; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; }
+    /* Nav Tabs */
+    .nav-tabs{display:flex;gap:6px;padding:16px 16px 0;overflow-x:auto;scrollbar-width:none;}
+    .nav-tabs::-webkit-scrollbar{display:none;}
+    .nav-tab{flex-shrink:0;padding:9px 16px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--border);transition:all 0.2s;white-space:nowrap;}
+    .nav-tab.active{background:linear-gradient(135deg,var(--accent),#f97316);color:#000;border-color:transparent;}
 
-    /* Withdraw Requests */
-    .withdraw-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
-    .withdraw-item .wr-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .withdraw-item .wr-name { font-size: 15px; font-weight: 700; }
-    .withdraw-item .wr-status { padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; }
-    .wr-status.pending { background: rgba(245,158,11,0.15); color: var(--accent); }
-    .wr-status.approved { background: rgba(16,185,129,0.15); color: var(--green); }
-    .wr-status.rejected { background: rgba(239,68,68,0.15); color: #fca5a5; }
-    .withdraw-item .wr-info { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
-    .wr-actions { display: flex; gap: 8px; }
-    .btn-approve { flex: 1; padding: 9px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: var(--green); border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
-    .btn-reject { flex: 1; padding: 9px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    /* Container */
+    .container{padding:16px;}
 
-    /* Users */
-    .user-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-    .user-info .u-name { font-size: 14px; font-weight: 700; }
-    .user-info .u-email { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .user-points { font-family: 'Sora',sans-serif; font-size: 18px; font-weight: 800; color: var(--accent); }
+    /* Section Card */
+    .sec{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:14px;}
+    .sec-title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--text);}
 
-    .empty-state { text-align: center; padding: 30px; color: var(--muted); font-size: 14px; }
+    /* Form */
+    .field{margin-bottom:14px;}
+    .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:600;}
+    .field input,.field select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;font-family:inherit;outline:none;transition:border-color 0.2s;}
+    .field input:focus,.field select:focus{border-color:var(--accent);}
+    .field select option{background:#1e293b;}
+    .btn-save{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),#f97316);border:none;border-radius:12px;color:#000;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform 0.15s;}
+    .btn-save:active{transform:scale(0.98);}
+    .btn-green{background:linear-gradient(135deg,var(--green),#059669);color:#fff;}
 
-    .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: #fff; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 2000; white-space: nowrap; }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    /* Info row */
+    .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;}
+    .info-row:last-child{border-bottom:none;}
+    .info-row .lbl{color:var(--muted);}
+    .info-row .val{font-weight:700;color:var(--text);}
 
-    .tabs { display: flex; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px; margin-bottom: 16px; }
-    .tab { flex: 1; padding: 9px; text-align: center; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted); transition: all 0.3s; }
-    .tab.active { background: linear-gradient(135deg,var(--accent),#f97316); color: #000; }
+    /* Withdraw Items */
+    .wr-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+    .wr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+    .wr-name{font-size:15px;font-weight:700;}
+    .wr-badge{padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;}
+    .badge-pending{background:rgba(245,158,11,0.15);color:var(--accent);}
+    .badge-approved{background:rgba(16,185,129,0.15);color:var(--green);}
+    .badge-rejected{background:rgba(239,68,68,0.15);color:#fca5a5;}
+    .wr-detail{font-size:13px;color:var(--muted);margin-bottom:10px;}
+    .wr-actions{display:flex;gap:8px;}
+    .btn-approve{flex:1;padding:9px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:var(--green);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+    .btn-reject{flex:1;padding:9px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
 
-    .loading { text-align: center; padding: 20px; color: var(--muted); }
+    /* User Items */
+    .user-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+    .user-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+    .user-name{font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;}
+    .user-pts{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--accent);}
+    .user-email{font-size:12px;color:var(--muted);}
+    .user-device{font-size:11px;color:var(--muted);margin-top:4px;}
+    .user-actions{display:flex;gap:8px;margin-top:10px;}
+    .btn-ban{flex:1;padding:8px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+    .btn-pts-add{flex:1;padding:8px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:var(--green);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+    .btn-admin-toggle{flex:1;padding:8px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:var(--accent);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+
+    .empty{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
+    .loading-txt{text-align:center;padding:20px;color:var(--muted);}
+
+    /* Toast */
+    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#fff;padding:10px 22px;border-radius:12px;font-size:14px;font-weight:700;opacity:0;transition:all 0.3s;z-index:3000;white-space:nowrap;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* Dialog */
+    .dialog{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:2000;align-items:center;justify-content:center;}
+    .dialog.show{display:flex;}
+    .dialog-box{background:#1e293b;border:1px solid var(--border);border-radius:20px;padding:24px;width:88%;max-width:340px;}
+    .dialog-box h3{font-size:17px;font-weight:800;margin-bottom:16px;}
+    .dialog-box input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;font-family:inherit;outline:none;margin-bottom:12px;}
+    .dialog-box input:focus{border-color:var(--accent);}
+    .dlg-btns{display:flex;gap:10px;}
+    .dlg-btns button{flex:1;padding:11px;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;}
+    .dlg-confirm{background:linear-gradient(135deg,var(--accent),#f97316);color:#000;}
+    .dlg-cancel{background:rgba(255,255,255,0.08);color:var(--muted);}
+
+    /* Bottom Nav */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1e293b;border-top:1px solid var(--border);display:flex;padding:8px 0;z-index:200;}
+    .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;text-decoration:none;color:var(--muted);font-size:10px;font-weight:600;}
+    .bnav-item.active{color:var(--accent);}
+    .bnav-item .ni{font-size:20px;}
+
+    /* Notification badge */
+    .badge-count{display:inline-block;background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:4px;}
   </style>
 </head>
 <body>
+
   <div class="header">
-    <span class="header-title">⚙️ অ্যাডমিন প্যানেল</span>
-    <button class="logout-btn" onclick="doLogout()">লগআউট</button>
+    <div class="header-left">
+      <span class="header-logo">👑</span>
+      <span class="header-title">Admin Panel</span>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">🚪 লগআউট</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon si-yellow">👥</div>
+      <div class="stat-info"><div class="val" id="totalUsers">-</div><div class="lbl">মোট ইউজার</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-green">💰</div>
+      <div class="stat-info"><div class="val" id="totalPoints">-</div><div class="lbl">মোট পয়েন্ট</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-red">⏳</div>
+      <div class="stat-info"><div class="val" id="pendingCount">-</div><div class="lbl">পেন্ডিং উইথড্র</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-blue">✅</div>
+      <div class="stat-info"><div class="val" id="approvedCount">-</div><div class="lbl">অনুমোদিত</div></div>
+    </div>
+  </div>
+
+  <!-- Nav Tabs -->
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="switchTab('settings')">⚙️ সেটিংস</div>
+    <div class="nav-tab" onclick="switchTab('withdraw')">💸 উইথড্র <span class="badge-count" id="pendingBadge">0</span></div>
+    <div class="nav-tab" onclick="switchTab('users')">👥 ইউজার</div>
+    <div class="nav-tab" onclick="switchTab('notice')">📢 নোটিশ</div>
   </div>
 
   <div class="container">
-    <!-- Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="icon">👥</div>
-        <div class="val" id="totalUsers">-</div>
-        <div class="lbl">মোট ইউজার</div>
-      </div>
-      <div class="stat-card">
-        <div class="icon">💸</div>
-        <div class="val" id="pendingCount">-</div>
-        <div class="lbl">উইথড্র পেন্ডিং</div>
-      </div>
-      <div class="stat-card">
-        <div class="icon">⭐</div>
-        <div class="val" id="totalPoints">-</div>
-        <div class="lbl">মোট পয়েন্ট</div>
-      </div>
-      <div class="stat-card">
-        <div class="icon">✅</div>
-        <div class="val" id="approvedCount">-</div>
-        <div class="lbl">অনুমোদিত</div>
-      </div>
-    </div>
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('settings')">সেটিংস</div>
-      <div class="tab" onclick="switchTab('withdraw')">উইথড্র</div>
-      <div class="tab" onclick="switchTab('users')">ইউজার</div>
-    </div>
+    <!-- ── Settings Tab ── -->
+    <div id="tab-settings">
 
-    <!-- Settings Tab -->
-    <div id="settingsTab">
-      <div class="section">
-        <div class="section-title">💡 বিজ্ঞাপন পয়েন্ট সেটিংস</div>
-        <div class="setting-row">
-          <label>স্পিন দেখলে পয়েন্ট</label>
-          <input type="number" id="spinPoints" placeholder="যেমন: 10">
-        </div>
-        <div class="setting-row">
-          <label>কুইজ প্রতি পয়েন্ট</label>
-          <input type="number" id="quizPoints" placeholder="যেমন: 15">
-        </div>
-        <div class="setting-row">
-          <label>স্ক্র্যাচ পয়েন্ট</label>
-          <input type="number" id="scratchPoints" placeholder="যেমন: 20">
-        </div>
-        <button class="btn-save" onclick="saveAdSettings()">💾 পয়েন্ট সেটিংস সেভ করুন</button>
+      <div class="sec">
+        <div class="sec-title">🎡 স্পিন ও পয়েন্ট সেটিংস</div>
+        <div class="field"><label>স্পিন Ad দেখলে পয়েন্ট মাল্টিপ্লায়ার</label><input type="number" id="spinPoints" placeholder="যেমন: 10"></div>
+        <div class="field"><label>কুইজ প্রতি পয়েন্ট</label><input type="number" id="quizPoints" placeholder="যেমন: 15"></div>
+        <div class="field"><label>স্ক্র্যাচ কার্ড পয়েন্ট</label><input type="number" id="scratchPoints" placeholder="যেমন: 20"></div>
+        <div class="field"><label>হোম কার্ড Ad পয়েন্ট</label><input type="number" id="adCardPoints" placeholder="যেমন: 5"></div>
+        <button class="btn-save" onclick="savePointSettings()">💾 পয়েন্ট সেটিংস সেভ করুন</button>
       </div>
 
-      <div class="section">
-        <div class="section-title">💱 পয়েন্ট → টাকা রেট</div>
-        <div class="setting-row">
-          <label>১ পয়েন্ট = কত টাকা?</label>
-          <input type="number" id="pointsToTaka" placeholder="যেমন: 0.01" step="0.001">
-        </div>
-        <div class="setting-row">
-          <label>সর্বনিম্ন উইথড্র (পয়েন্ট)</label>
-          <input type="number" id="minWithdraw" placeholder="যেমন: 100">
-        </div>
+      <div class="sec">
+        <div class="sec-title">💱 পয়েন্ট → টাকা রেট</div>
+        <div class="field"><label>১ পয়েন্ট = কত টাকা?</label><input type="number" id="pointsToTaka" placeholder="যেমন: 0.01" step="0.0001"></div>
+        <div class="field"><label>সর্বনিম্ন কনভার্ট (পয়েন্ট)</label><input type="number" id="minWithdraw" placeholder="যেমন: 100"></div>
+        <div class="field"><label>সর্বনিম্ন উইথড্র (টাকা ৳)</label><input type="number" id="minTaka" placeholder="যেমন: 10" step="0.5"></div>
         <button class="btn-save" onclick="saveRateSettings()">💾 রেট সেটিংস সেভ করুন</button>
-      </div>
-
-      <div class="section">
-        <div class="section-title">🔑 অ্যাডমিন বানান</div>
-        <div class="setting-row">
-          <label>ইউজার UID বা Email</label>
-          <input type="text" id="adminEmail" placeholder="ইউজার UID দিন">
+        <!-- Preview -->
+        <div style="margin-top:14px;background:rgba(16,185,129,0.08);border-radius:12px;padding:12px;">
+          <div class="info-row"><span class="lbl">১০০ পয়েন্ট =</span><span class="val" id="ratePreview">৳1.00</span></div>
+          <div class="info-row"><span class="lbl">১০০০ পয়েন্ট =</span><span class="val" id="ratePreview2">৳10.00</span></div>
         </div>
-        <button class="btn-save" onclick="makeAdmin()">👑 অ্যাডমিন করুন</button>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">🚫 ডিভাইস লক সেটিংস</div>
+        <div class="field">
+          <label>একটি ডিভাইসে কতটি অ্যাকাউন্ট?</label>
+          <select id="deviceLimit">
+            <option value="1">১টি (কঠোর)</option>
+            <option value="2">২টি</option>
+            <option value="3">৩টি</option>
+          </select>
+        </div>
+        <button class="btn-save" onclick="saveDeviceSettings()">💾 সেভ করুন</button>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">👑 অ্যাডমিন ম্যানেজ</div>
+        <div class="field"><label>ইউজার UID</label><input type="text" id="adminUid" placeholder="Firebase UID দিন"></div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-save" style="flex:1" onclick="makeAdmin()">👑 অ্যাডমিন করুন</button>
+          <button class="btn-save btn-green" style="flex:1" onclick="removeAdmin()">🔻 অ্যাডমিন সরান</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Withdraw Tab ── -->
+    <div id="tab-withdraw" style="display:none">
+      <div class="sec" style="padding:14px;">
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <button class="btn-save" style="flex:1;padding:9px;font-size:13px;" onclick="filterWR('all')">সব</button>
+          <button class="btn-save" style="flex:1;padding:9px;font-size:13px;background:rgba(245,158,11,0.2);color:var(--accent);" onclick="filterWR('pending')">পেন্ডিং</button>
+          <button class="btn-save" style="flex:1;padding:9px;font-size:13px;background:rgba(16,185,129,0.2);color:var(--green);" onclick="filterWR('approved')">অনুমোদিত</button>
+        </div>
+        <div id="withdrawList"><div class="loading-txt">লোড হচ্ছে...</div></div>
       </div>
     </div>
 
-    <!-- Withdraw Tab -->
-    <div id="withdrawTab" style="display:none">
-      <div id="withdrawList"><div class="loading">লোড হচ্ছে...</div></div>
+    <!-- ── Users Tab ── -->
+    <div id="tab-users" style="display:none">
+      <div class="sec" style="padding:14px;">
+        <input type="text" id="searchUser" placeholder="🔍 নাম বা ইমেইল খুঁজুন..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;margin-bottom:14px;" oninput="searchUsers()">
+        <div id="usersList"><div class="loading-txt">লোড হচ্ছে...</div></div>
+      </div>
     </div>
 
-    <!-- Users Tab -->
-    <div id="usersTab" style="display:none">
-      <div id="usersList"><div class="loading">লোড হচ্ছে...</div></div>
+    <!-- ── Notice Tab ── -->
+    <div id="tab-notice" style="display:none">
+      <div class="sec">
+        <div class="sec-title">📢 মার্কি নোটিশ</div>
+        <div class="field"><label>নোটিশ টেক্সট</label><input type="text" id="marqueeText" placeholder="যেমন: আজ বিশেষ অফার! দ্বিগুণ পয়েন্ট পাবেন!"></div>
+        <button class="btn-save" onclick="saveNotice()">💾 নোটিশ সেভ করুন</button>
+      </div>
+      <div class="sec">
+        <div class="sec-title">🔧 App রক্ষণাবেক্ষণ</div>
+        <div class="field">
+          <label>Maintenance Mode</label>
+          <select id="maintenanceMode">
+            <option value="false">বন্ধ (App চালু)</option>
+            <option value="true">চালু (App বন্ধ)</option>
+          </select>
+        </div>
+        <div class="field"><label>রক্ষণাবেক্ষণ বার্তা</label><input type="text" id="maintenanceMsg" placeholder="যেমন: আমরা শীঘ্রই ফিরে আসছি..."></div>
+        <button class="btn-save" onclick="saveMaintenance()">💾 সেভ করুন</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Add Points Dialog -->
+  <div class="dialog" id="addPtsDialog">
+    <div class="dialog-box">
+      <h3>⭐ পয়েন্ট যোগ করুন</h3>
+      <input type="number" id="addPtsAmount" placeholder="পয়েন্ট পরিমাণ">
+      <div class="dlg-btns">
+        <button class="dlg-confirm" onclick="confirmAddPoints()">✅ যোগ করুন</button>
+        <button class="dlg-cancel" onclick="closeAddPts()">বাতিল</button>
+      </div>
     </div>
   </div>
 
@@ -168,156 +267,243 @@
   <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const tg = window.Telegram?.WebApp;
-    if (tg) tg.expand();
+    if(tg){ tg.expand(); tg.BackButton.show(); tg.BackButton.onClick(()=>{ window.location.href='home.html'; }); }
 
-    let currentUser = null;
+    let currentUser=null, allUsers=[], allWR=[], selectedUserId=null;
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.href = 'index.html'; return; }
-      const snap = await getDoc(doc(db, 'users', user.uid));
-      if (!snap.exists() || !snap.data().isAdmin) {
-        window.location.href = 'home.html'; return;
-      }
+    // ── Auth Check ──
+    onAuthStateChanged(auth, async(user)=>{
+      if(!user){ window.location.href='index.html'; return; }
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if(!snap.exists()||!snap.data().isAdmin){ window.location.href='home.html'; return; }
       currentUser = user;
       loadSettings();
       loadStats();
     });
 
-    async function loadSettings() {
-      const snap = await getDoc(doc(db, 'settings', 'adConfig'));
-      if (snap.exists()) {
-        const d = snap.data();
-        document.getElementById('spinPoints').value = d.spinPoints || 10;
-        document.getElementById('quizPoints').value = d.quizPoints || 15;
-        document.getElementById('scratchPoints').value = d.scratchPoints || 20;
-        document.getElementById('pointsToTaka').value = d.pointsToTaka || 0.01;
-        document.getElementById('minWithdraw').value = d.minWithdraw || 100;
+    // ── Load Settings ──
+    async function loadSettings(){
+      const snap = await getDoc(doc(db,'settings','adConfig'));
+      if(snap.exists()){
+        const d=snap.data();
+        document.getElementById('spinPoints').value = d.spinPoints||10;
+        document.getElementById('quizPoints').value = d.quizPoints||15;
+        document.getElementById('scratchPoints').value = d.scratchPoints||20;
+        document.getElementById('adCardPoints').value = d.adCardPoints||5;
+        document.getElementById('pointsToTaka').value = d.pointsToTaka||0.01;
+        document.getElementById('minWithdraw').value = d.minWithdraw||100;
+        document.getElementById('minTaka').value = d.minTaka||10;
+        document.getElementById('deviceLimit').value = d.deviceLimit||1;
+        updateRatePreview();
+      }
+      const nSnap = await getDoc(doc(db,'settings','notice'));
+      if(nSnap.exists()){
+        document.getElementById('marqueeText').value = nSnap.data().text||'';
+        document.getElementById('maintenanceMode').value = nSnap.data().maintenance||'false';
+        document.getElementById('maintenanceMsg').value = nSnap.data().maintenanceMsg||'';
       }
     }
 
-    async function loadStats() {
-      const usersSnap = await getDocs(collection(db, 'users'));
-      let totalPts = 0;
-      usersSnap.forEach(d => { totalPts += d.data().points || 0; });
+    // ── Stats ──
+    async function loadStats(){
+      const usersSnap = await getDocs(collection(db,'users'));
+      let totalPts=0;
+      usersSnap.forEach(d=>{ totalPts+=d.data().points||0; });
       document.getElementById('totalUsers').textContent = usersSnap.size;
       document.getElementById('totalPoints').textContent = totalPts;
 
-      const wrSnap = await getDocs(collection(db, 'withdrawRequests'));
-      let pending = 0, approved = 0;
-      wrSnap.forEach(d => {
-        if (d.data().status === 'pending') pending++;
-        if (d.data().status === 'approved') approved++;
+      const wrSnap = await getDocs(collection(db,'withdrawRequests'));
+      let pending=0, approved=0;
+      wrSnap.forEach(d=>{
+        if(d.data().status==='pending') pending++;
+        if(d.data().status==='approved') approved++;
       });
       document.getElementById('pendingCount').textContent = pending;
       document.getElementById('approvedCount').textContent = approved;
+      document.getElementById('pendingBadge').textContent = pending;
     }
 
+    // ── Tab Switch ──
     window.switchTab = (tab) => {
-      ['settings','withdraw','users'].forEach(t => {
-        document.getElementById(t + 'Tab').style.display = t === tab ? 'block' : 'none';
+      ['settings','withdraw','users','notice'].forEach(t=>{
+        document.getElementById('tab-'+t).style.display = t===tab?'block':'none';
       });
-      document.querySelectorAll('.tab').forEach((el, i) => {
-        const tabs = ['settings','withdraw','users'];
-        el.classList.toggle('active', tabs[i] === tab);
+      document.querySelectorAll('.nav-tab').forEach((el,i)=>{
+        const tabs=['settings','withdraw','users','notice'];
+        el.classList.toggle('active', tabs[i]===tab);
       });
-      if (tab === 'withdraw') loadWithdrawRequests();
-      if (tab === 'users') loadUsers();
+      if(tab==='withdraw') loadWithdrawRequests('all');
+      if(tab==='users') loadUsers();
     };
 
-    async function loadWithdrawRequests() {
-      const container = document.getElementById('withdrawList');
-      container.innerHTML = '<div class="loading">লোড হচ্ছে...</div>';
-      const snap = await getDocs(query(collection(db, 'withdrawRequests'), orderBy('createdAt', 'desc')));
-      if (snap.empty) { container.innerHTML = '<div class="empty-state">কোনো রিকোয়েস্ট নেই</div>'; return; }
-      container.innerHTML = '';
-      snap.forEach(d => {
-        const data = d.data();
-        const el = document.createElement('div');
-        el.className = 'withdraw-item';
-        el.innerHTML = `
-          <div class="wr-header">
-            <span class="wr-name">${data.userName || 'অজানা'}</span>
-            <span class="wr-status ${data.status}">${data.status === 'pending' ? 'পেন্ডিং' : data.status === 'approved' ? 'অনুমোদিত' : 'বাতিল'}</span>
+    // ── Withdraw ──
+    window.filterWR = (f) => loadWithdrawRequests(f);
+
+    async function loadWithdrawRequests(filter='all'){
+      const c = document.getElementById('withdrawList');
+      c.innerHTML='<div class="loading-txt">লোড হচ্ছে...</div>';
+      const snap = await getDocs(query(collection(db,'withdrawRequests'),orderBy('createdAt','desc')));
+      allWR=[];
+      snap.forEach(d=>allWR.push({id:d.id,...d.data()}));
+      const filtered = filter==='all' ? allWR : allWR.filter(w=>w.status===filter);
+      if(!filtered.length){ c.innerHTML='<div class="empty">কোনো রিকোয়েস্ট নেই</div>'; return; }
+      c.innerHTML = filtered.map(w=>`
+        <div class="wr-item">
+          <div class="wr-top">
+            <span class="wr-name">${w.userName||'অজানা'}</span>
+            <span class="wr-badge badge-${w.status}">${w.status==='pending'?'পেন্ডিং':w.status==='approved'?'অনুমোদিত':'বাতিল'}</span>
           </div>
-          <div class="wr-info">${data.points} পয়েন্ট = ৳${data.taka}</div>
-          ${data.status === 'pending' ? `
+          <div class="wr-detail">📧 ${w.userId?.slice(0,12)||''}... · ⭐ ${w.points} পয়েন্ট = ৳${w.taka}</div>
+          ${w.status==='pending'?`
           <div class="wr-actions">
-            <button class="btn-approve" onclick="updateWithdraw('${d.id}','approved')">✅ অনুমোদন</button>
-            <button class="btn-reject" onclick="updateWithdraw('${d.id}','rejected')">❌ বাতিল</button>
-          </div>` : ''}
-        `;
-        container.appendChild(el);
-      });
+            <button class="btn-approve" onclick="updateWR('${w.id}','approved')">✅ অনুমোদন</button>
+            <button class="btn-reject" onclick="updateWR('${w.id}','rejected')">❌ বাতিল</button>
+          </div>`:''}
+        </div>`).join('');
     }
 
-    async function loadUsers() {
-      const container = document.getElementById('usersList');
-      container.innerHTML = '<div class="loading">লোড হচ্ছে...</div>';
-      const snap = await getDocs(collection(db, 'users'));
-      if (snap.empty) { container.innerHTML = '<div class="empty-state">কোনো ইউজার নেই</div>'; return; }
-      container.innerHTML = '';
-      snap.forEach(d => {
-        const data = d.data();
-        const el = document.createElement('div');
-        el.className = 'user-item';
-        el.innerHTML = `
-          <div class="user-info">
-            <div class="u-name">${data.name || 'অজানা'} ${data.isAdmin ? '👑' : ''}</div>
-            <div class="u-email">${data.email || ''}</div>
-          </div>
-          <div class="user-points">${data.points || 0}</div>
-        `;
-        container.appendChild(el);
-      });
-    }
-
-    window.updateWithdraw = async (id, status) => {
-      await updateDoc(doc(db, 'withdrawRequests', id), { status });
-      showToast(status === 'approved' ? '✅ অনুমোদন করা হয়েছে' : '❌ বাতিল করা হয়েছে');
-      loadWithdrawRequests();
-      loadStats();
+    window.updateWR = async(id,status)=>{
+      await updateDoc(doc(db,'withdrawRequests',id),{status,updatedAt:serverTimestamp()});
+      showToast(status==='approved'?'✅ অনুমোদন করা হয়েছে':'❌ বাতিল করা হয়েছে');
+      loadWithdrawRequests('all'); loadStats();
     };
 
-    window.saveAdSettings = async () => {
-      const data = {
-        spinPoints: parseInt(document.getElementById('spinPoints').value) || 10,
-        quizPoints: parseInt(document.getElementById('quizPoints').value) || 15,
-        scratchPoints: parseInt(document.getElementById('scratchPoints').value) || 20,
-      };
-      await setDoc(doc(db, 'settings', 'adConfig'), data, { merge: true });
+    // ── Users ──
+    async function loadUsers(){
+      const c = document.getElementById('usersList');
+      c.innerHTML='<div class="loading-txt">লোড হচ্ছে...</div>';
+      const snap = await getDocs(collection(db,'users'));
+      allUsers=[];
+      snap.forEach(d=>allUsers.push({id:d.id,...d.data()}));
+      renderUsers(allUsers);
+    }
+
+    function renderUsers(users){
+      const c = document.getElementById('usersList');
+      if(!users.length){ c.innerHTML='<div class="empty">কোনো ইউজার নেই</div>'; return; }
+      c.innerHTML = users.map(u=>`
+        <div class="user-item">
+          <div class="user-top">
+            <span class="user-name">${u.name||'অজানা'} ${u.isAdmin?'👑':''} ${u.banned?'🚫':''}</span>
+            <span class="user-pts">${u.points||0}</span>
+          </div>
+          <div class="user-email">📧 ${u.email||''}</div>
+          <div class="user-device">📱 Device: ${u.deviceId?.slice(0,12)||'N/A'}...</div>
+          <div class="user-actions">
+            <button class="btn-pts-add" onclick="openAddPts('${u.id}')">+পয়েন্ট</button>
+            <button class="btn-admin-toggle" onclick="toggleAdmin('${u.id}',${!!u.isAdmin})">${u.isAdmin?'অ্যাডমিন সরান':'অ্যাডমিন করুন'}</button>
+            <button class="btn-ban" onclick="toggleBan('${u.id}',${!!u.banned})">${u.banned?'আনব্যান':'ব্যান'}</button>
+          </div>
+        </div>`).join('');
+    }
+
+    window.searchUsers = () => {
+      const q = document.getElementById('searchUser').value.toLowerCase();
+      const filtered = allUsers.filter(u=>(u.name||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q));
+      renderUsers(filtered);
+    };
+
+    window.toggleAdmin = async(uid,isAdmin)=>{
+      await updateDoc(doc(db,'users',uid),{isAdmin:!isAdmin});
+      showToast(isAdmin?'👤 অ্যাডমিন সরানো হয়েছে':'👑 অ্যাডমিন করা হয়েছে');
+      loadUsers();
+    };
+
+    window.toggleBan = async(uid,isBanned)=>{
+      await updateDoc(doc(db,'users',uid),{banned:!isBanned,deviceId:isBanned?null:''});
+      showToast(isBanned?'✅ আনব্যান হয়েছে':'🚫 ব্যান করা হয়েছে');
+      loadUsers();
+    };
+
+    window.openAddPts = (uid)=>{ selectedUserId=uid; document.getElementById('addPtsDialog').classList.add('show'); };
+    window.closeAddPts = ()=>{ document.getElementById('addPtsDialog').classList.remove('show'); selectedUserId=null; };
+    window.confirmAddPoints = async()=>{
+      const pts = parseInt(document.getElementById('addPtsAmount').value)||0;
+      if(!pts||!selectedUserId){ showToast('পয়েন্ট দিন!',true); return; }
+      await updateDoc(doc(db,'users',selectedUserId),{points:pts>0?{increment:pts}:0});
+      // Use proper increment
+      const {increment} = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+      await updateDoc(doc(db,'users',selectedUserId),{points:increment(pts)});
+      showToast(`✅ ${pts} পয়েন্ট যোগ হয়েছে!`);
+      closeAddPts(); loadUsers(); loadStats();
+    };
+
+    // ── Save Settings ──
+    window.savePointSettings = async()=>{
+      await setDoc(doc(db,'settings','adConfig'),{
+        spinPoints: parseInt(document.getElementById('spinPoints').value)||10,
+        quizPoints: parseInt(document.getElementById('quizPoints').value)||15,
+        scratchPoints: parseInt(document.getElementById('scratchPoints').value)||20,
+        adCardPoints: parseInt(document.getElementById('adCardPoints').value)||5,
+      },{merge:true});
       showToast('✅ পয়েন্ট সেটিংস সেভ হয়েছে!');
     };
 
-    window.saveRateSettings = async () => {
-      const data = {
-        pointsToTaka: parseFloat(document.getElementById('pointsToTaka').value) || 0.01,
-        minWithdraw: parseInt(document.getElementById('minWithdraw').value) || 100,
-      };
-      await setDoc(doc(db, 'settings', 'adConfig'), data, { merge: true });
+    window.saveRateSettings = async()=>{
+      const rate = parseFloat(document.getElementById('pointsToTaka').value)||0.01;
+      await setDoc(doc(db,'settings','adConfig'),{
+        pointsToTaka: rate,
+        minWithdraw: parseInt(document.getElementById('minWithdraw').value)||100,
+        minTaka: parseFloat(document.getElementById('minTaka').value)||10,
+      },{merge:true});
+      updateRatePreview();
       showToast('✅ রেট সেটিংস সেভ হয়েছে!');
     };
 
-    window.makeAdmin = async () => {
-      const uid = document.getElementById('adminEmail').value.trim();
-      if (!uid) { showToast('UID দিন!', true); return; }
-      await updateDoc(doc(db, 'users', uid), { isAdmin: true });
+    window.saveDeviceSettings = async()=>{
+      await setDoc(doc(db,'settings','adConfig'),{
+        deviceLimit: parseInt(document.getElementById('deviceLimit').value)||1,
+      },{merge:true});
+      showToast('✅ ডিভাইস সেটিংস সেভ হয়েছে!');
+    };
+
+    window.saveNotice = async()=>{
+      await setDoc(doc(db,'settings','notice'),{
+        text: document.getElementById('marqueeText').value,
+        updatedAt: serverTimestamp()
+      },{merge:true});
+      showToast('✅ নোটিশ সেভ হয়েছে!');
+    };
+
+    window.saveMaintenance = async()=>{
+      await setDoc(doc(db,'settings','notice'),{
+        maintenance: document.getElementById('maintenanceMode').value,
+        maintenanceMsg: document.getElementById('maintenanceMsg').value,
+        updatedAt: serverTimestamp()
+      },{merge:true});
+      showToast('✅ Maintenance সেটিংস সেভ হয়েছে!');
+    };
+
+    window.makeAdmin = async()=>{
+      const uid = document.getElementById('adminUid').value.trim();
+      if(!uid){ showToast('UID দিন!',true); return; }
+      await updateDoc(doc(db,'users',uid),{isAdmin:true});
       showToast('✅ অ্যাডমিন করা হয়েছে!');
     };
 
-    window.doLogout = async () => {
-      await signOut(auth);
-      window.location.href = 'index.html';
+    window.removeAdmin = async()=>{
+      const uid = document.getElementById('adminUid').value.trim();
+      if(!uid){ showToast('UID দিন!',true); return; }
+      await updateDoc(doc(db,'users',uid),{isAdmin:false});
+      showToast('✅ অ্যাডমিন সরানো হয়েছে!');
     };
 
-    function showToast(msg, isError = false) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.style.background = isError ? '#ef4444' : '#10b981';
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3000);
+    function updateRatePreview(){
+      const rate = parseFloat(document.getElementById('pointsToTaka')?.value)||0.01;
+      document.getElementById('ratePreview').textContent = '৳'+(100*rate).toFixed(2);
+      document.getElementById('ratePreview2').textContent = '৳'+(1000*rate).toFixed(2);
+    }
+    document.getElementById('pointsToTaka')?.addEventListener('input', updateRatePreview);
+
+    window.doLogout = async()=>{ await signOut(auth); window.location.href='index.html'; };
+
+    function showToast(msg,isError=false){
+      const t=document.getElementById('toast');
+      t.textContent=msg; t.style.background=isError?'#ef4444':'#10b981';
+      t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
     }
   </script>
 </body>
