@@ -137,6 +137,25 @@
     .form-group input:focus {
       border-color: var(--accent);
     }
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-wrap input {
+      width: 100%;
+      padding-right: 46px;
+    }
+    .eye-btn {
+      position: absolute;
+      right: 14px;
+      font-size: 18px;
+      cursor: pointer;
+      user-select: none;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    .eye-btn:hover { opacity: 1; }
     .btn-primary {
       width: 100%;
       padding: 14px;
@@ -213,7 +232,10 @@
       </div>
       <div class="form-group">
         <label>পাসওয়ার্ড</label>
-        <input type="password" id="loginPass" placeholder="পাসওয়ার্ড দিন">
+        <div class="input-wrap">
+          <input type="password" id="loginPass" placeholder="পাসওয়ার্ড দিন">
+          <span class="eye-btn" onclick="togglePass('loginPass', this)">👁️</span>
+        </div>
       </div>
       <button class="btn-primary" onclick="login()" id="loginBtn">লগইন করুন</button>
       <div class="error-msg" id="loginError"></div>
@@ -231,13 +253,29 @@
       </div>
       <div class="form-group">
         <label>পাসওয়ার্ড</label>
-        <input type="password" id="signupPass" placeholder="পাসওয়ার্ড দিন (৬+ অক্ষর)">
+        <div class="input-wrap">
+          <input type="password" id="signupPass" placeholder="পাসওয়ার্ড দিন (৬+ অক্ষর)">
+          <span class="eye-btn" onclick="togglePass('signupPass', this)">👁️</span>
+        </div>
       </div>
       <button class="btn-primary" onclick="signup()" id="signupBtn">অ্যাকাউন্ট খুলুন</button>
       <div class="error-msg" id="signupError"></div>
       <div class="success-msg" id="signupSuccess"></div>
     </div>
   </div>
+
+  <script>
+    window.togglePass = (id, btn) => {
+      const input = document.getElementById(id);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+      }
+    };
+  </script>
 
   <script type="module">
     import { auth, db } from './firebase-config.js';
