@@ -241,12 +241,41 @@
 
   <script type="module">
     import { auth, db } from './firebase-config.js';
-    import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { doc, setDoc, getDoc, updateDoc, query, collection, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const tg = window.Telegram?.WebApp;
     if (tg) tg.expand();
 
+    // ── Device Fingerprint তৈরি ──
+    function getDeviceFingerprint() {
+      // LocalStorage-এ সেভ করা ID থাকলে সেটা ব্যবহার করো
+      let id = localStorage.getItem('_did');
+      if (!id) {
+        // নতুন unique ID তৈরি করো এই ডিভাইসের জন্য
+        const raw = [
+          navigator.userAgent,
+          navigator.language,
+          screen.width + 'x' + screen.height,
+          new Date().getTimezoneOffset(),
+          navigator.hardwareConcurrency || 0,
+          navigator.platform || ''
+        ].join('|');
+        // Simple hash
+        let hash = 0;
+        for (let i = 0; i < raw.length; i++) {
+          hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+          hash |= 0;
+        }
+        id = Math.abs(hash).toString(36) + '-' + Date.now().toString(36);
+        localStorage.setItem('_did', id);
+      }
+      return id;
+    }
+
+    const DEVICE_ID = getDeviceFingerprint();
+
+    // ── লগইন করা ইউজার redirect ──
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const snap = await getDoc(doc(db, 'users', user.uid));
@@ -266,6 +295,7 @@
       document.getElementById('signupPanel').classList.toggle('active', tab === 'signup');
     };
 
+    // ── লগইন ──
     window.login = async () => {
       const email = document.getElementById('loginEmail').value.trim();
       const pass = document.getElementById('loginPass').value;
@@ -276,15 +306,41 @@
       btn.innerHTML = '<span class="loading"></span>লগইন হচ্ছে...';
       btn.disabled = true;
       try {
-        await signInWithEmailAndPassword(auth, email, pass);
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
+        const userSnap = await getDoc(doc(db, 'users', cred.user.uid));
+        if (!userSnap.exists()) {
+          errEl.textContent = 'অ্যাকাউন্ট পাওয়া যায়নি!';
+          errEl.style.display = 'block';
+          await signOut(auth);
+          btn.innerHTML = 'লগইন করুন'; btn.disabled = false; return;
+        }
+        const userData = userSnap.data();
+
+        // ── ডিভাইস চেক ──
+        const registeredDevice = userData.deviceId;
+
+        if (registeredDevice && registeredDevice !== DEVICE_ID) {
+          // অন্য ডিভাইস থেকে লগইন চেষ্টা!
+          await signOut(auth);
+          errEl.innerHTML = '🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত!<br><small>একটি অ্যাকাউন্ট শুধু একটি ডিভাইসে ব্যবহার করা যাবে।</small>';
+          errEl.style.display = 'block';
+          btn.innerHTML = 'লগইন করুন'; btn.disabled = false; return;
+        }
+
+        // ডিভাইস সেভ বা আপডেট করো
+        await updateDoc(doc(db, 'users', cred.user.uid), {
+          deviceId: DEVICE_ID,
+          lastLogin: serverTimestamp()
+        });
+
       } catch (e) {
         errEl.textContent = 'ইমেইল বা পাসওয়ার্ড ভুল!';
         errEl.style.display = 'block';
-        btn.innerHTML = 'লগইন করুন';
-        btn.disabled = false;
+        btn.innerHTML = 'লগইন করুন'; btn.disabled = false;
       }
     };
 
+    // ── সাইনআপ ──
     window.signup = async () => {
       const name = document.getElementById('signupName').value.trim();
       const email = document.getElementById('signupEmail').value.trim();
@@ -298,18 +354,28 @@
       btn.innerHTML = '<span class="loading"></span>তৈরি হচ্ছে...';
       btn.disabled = true;
       try {
+        // ── এই ডিভাইস দিয়ে আগে অ্যাকাউন্ট হয়েছে কিনা চেক ──
+        const deviceQuery = query(collection(db, 'users'), where('deviceId', '==', DEVICE_ID));
+        const deviceSnap = await getDocs(deviceQuery);
+        if (!deviceSnap.empty) {
+          errEl.innerHTML = '🚫 এই ডিভাইসে আগেই একটি অ্যাকাউন্ট তৈরি হয়েছে!<br><small>একটি ডিভাইসে শুধু একটি অ্যাকাউন্ট করা যাবে।</small>';
+          errEl.style.display = 'block';
+          btn.innerHTML = 'অ্যাকাউন্ট খুলুন'; btn.disabled = false; return;
+        }
+
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
         await setDoc(doc(db, 'users', cred.user.uid), {
           name, email, points: 0, isAdmin: false,
-          createdAt: serverTimestamp()
+          deviceId: DEVICE_ID,
+          createdAt: serverTimestamp(),
+          lastLogin: serverTimestamp()
         });
         sucEl.textContent = '✅ অ্যাকাউন্ট তৈরি হয়েছে! হোমে যাচ্ছি...';
         sucEl.style.display = 'block';
       } catch (e) {
         errEl.textContent = e.code === 'auth/email-already-in-use' ? 'এই ইমেইল আগেই ব্যবহৃত!' : 'সাইনআপ ব্যর্থ হয়েছে';
         errEl.style.display = 'block';
-        btn.innerHTML = 'অ্যাকাউন্ট খুলুন';
-        btn.disabled = false;
+        btn.innerHTML = 'অ্যাকাউন্ট খুলুন'; btn.disabled = false;
       }
     };
   </script>
