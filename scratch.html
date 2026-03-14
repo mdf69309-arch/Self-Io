@@ -6,11 +6,7 @@
   <title>EarnZone — স্ক্র্যাচ কার্ড</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0a0e1a; --card: #111827; --accent: #f59e0b;
-      --green: #10b981; --text: #f1f5f9; --muted: #64748b; --border: rgba(245,158,11,0.15);
-    }
+  <script src='//libtl.com/sdk.js' data-zone='10729825' data-sdk='show_10729825'></script>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Noto Sans Bengali','Sora',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
     .header { background: #111827; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
@@ -252,6 +248,19 @@
     }
 
     function showAd() {
+      // Try Monetag Rewarded Ad
+      if (window.show_10729825) {
+        window.show_10729825().then(() => {
+          claimCard();
+        }).catch(() => {
+          showManualAd();
+        });
+      } else {
+        showManualAd();
+      }
+    }
+
+    function showManualAd() {
       document.getElementById('adModal').classList.add('show');
       document.getElementById('claimBtn').style.display = 'none';
       let t = 5;
