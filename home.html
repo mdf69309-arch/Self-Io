@@ -19,7 +19,7 @@
       --green: #10b981;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { font-family: 'Noto Sans Bengali','Sora',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 70px; }
+    body { font-family: 'Noto Sans Bengali','Sora',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 20px; }
 
     .header { background: linear-gradient(135deg,var(--primary),var(--primary2)); padding: 14px 16px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
     .header-left { display: flex; align-items: center; gap: 10px; }
@@ -44,8 +44,8 @@
     .section-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
     .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
 
-    .menu-card { background: var(--card); border-radius: 14px; padding: 14px 8px; text-align: center; cursor: pointer; text-decoration: none; color: var(--text); display: block; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform 0.15s; border: 1px solid var(--border); }
-    .menu-card:active { transform: scale(0.95); }
+    .menu-card { background: var(--card); border-radius: 14px; padding: 14px 8px; text-align: center; cursor: pointer; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform 0.15s, box-shadow 0.15s; user-select: none; }
+    .menu-card:active { transform: scale(0.93); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
     .card-img { width: 56px; height: 56px; border-radius: 12px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
     .card-label { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.3; }
 
@@ -59,40 +59,31 @@
     .bg-rose { background: linear-gradient(135deg,#f43f5e,#fb7185); }
     .bg-cyan { background: linear-gradient(135deg,#06b6d4,#22d3ee); }
 
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border); display: flex; padding: 8px 0; z-index: 200; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); }
-    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; text-decoration: none; color: var(--muted); font-size: 10px; font-weight: 600; }
-    .nav-item.active { color: var(--primary); }
-    .nav-item .nav-icon { font-size: 22px; }
-
-    .spin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 900; align-items: center; justify-content: center; }
-    .spin-modal.show { display: flex; }
-    .spin-box { background: #fff; border-radius: 24px; padding: 24px 20px; width: 90%; max-width: 360px; text-align: center; }
-    .spin-box h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
-    .spin-box p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
-    .wheel-wrap { position: relative; display: inline-block; margin-bottom: 12px; }
-    .wheel-pointer { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-size: 24px; z-index: 10; }
-    .btn-spin { width: 100%; padding: 13px; background: linear-gradient(135deg,var(--primary),var(--primary2)); border: none; border-radius: 12px; color: #fff; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; margin-bottom: 8px; }
-    .btn-spin:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-close-spin { width: 100%; padding: 11px; background: #f3f4f6; border: none; border-radius: 12px; color: var(--muted); font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; }
-    .spin-result { font-size: 14px; font-weight: 700; color: var(--green); min-height: 22px; margin: 8px 0; }
-
-    .ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
+    /* Ad Modal */
+    .ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; }
     .ad-modal.show { display: flex; }
-    .ad-box { background: #fff; border-radius: 20px; padding: 24px 20px; width: 88%; max-width: 340px; text-align: center; }
-    .ad-box h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-    .ad-box p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
-    .ad-placeholder { background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 12px; padding: 24px; margin-bottom: 16px; font-size: 13px; color: var(--muted); }
-    .ad-timer { font-family: 'Sora',sans-serif; font-size: 40px; font-weight: 800; color: var(--primary); margin-bottom: 14px; }
-    .btn-claim { width: 100%; padding: 13px; background: linear-gradient(135deg,var(--green),#059669); border: none; border-radius: 12px; color: #fff; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; display: none; }
+    .ad-box { background: #fff; border-radius: 24px; padding: 28px 22px; width: 88%; max-width: 340px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .ad-box-icon { font-size: 44px; margin-bottom: 10px; }
+    .ad-box h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; color: var(--text); }
+    .ad-box p { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+    .ad-placeholder { background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 14px; padding: 28px; margin-bottom: 18px; font-size: 13px; color: var(--muted); }
+    .ad-timer-wrap { margin-bottom: 16px; }
+    .ad-timer { font-family: 'Sora',sans-serif; font-size: 48px; font-weight: 800; color: var(--primary); line-height: 1; }
+    .ad-timer-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .btn-claim { width: 100%; padding: 14px; background: linear-gradient(135deg,var(--green),#059669); border: none; border-radius: 14px; color: #fff; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; display: none; transition: transform 0.2s; }
+    .btn-claim:active { transform: scale(0.97); }
 
-    .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 2000; white-space: nowrap; }
+    /* Toast */
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: #fff; padding: 10px 22px; border-radius: 12px; font-size: 13px; font-weight: 700; opacity: 0; transition: all 0.3s; z-index: 2000; white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
+
+  <!-- Header -->
   <div class="header">
     <div class="header-left">
-      <div class="header-icon">⚙️</div>
+      <div class="header-icon" onclick="goAdmin()">⚙️</div>
       <span class="header-title">Quiz Game</span>
     </div>
     <div class="header-right">
@@ -101,6 +92,7 @@
     </div>
   </div>
 
+  <!-- Balance -->
   <div class="balance-wrap">
     <div class="balance-card">
       <div class="balance-label">My Balance</div>
@@ -113,107 +105,97 @@
   </div>
 
   <div class="container">
+
+    <!-- Work System -->
     <div class="section">
       <div class="section-title">Work System</div>
       <div class="grid-3">
-        <a href="#" class="menu-card" onclick="showToastMsg('📹 ভিডিও শীঘ্রই আসছে!')">
+        <div class="menu-card" onclick="showAd('How to Work')">
           <div class="card-img bg-red">▶️</div>
           <div class="card-label">How to Work</div>
-        </a>
-        <a href="#" class="menu-card" onclick="showToastMsg('🔗 Monetag-এ কানেক্ট করুন!')">
+        </div>
+        <div class="menu-card" onclick="showAd('Connect First')">
           <div class="card-img bg-orange">📱</div>
           <div class="card-label">Connect First</div>
-        </a>
-        <a href="#" class="menu-card">
+        </div>
+        <div class="menu-card" onclick="showAd('Leaderboard')">
           <div class="card-img bg-blue">📊</div>
           <div class="card-label">Leaderboard</div>
-        </a>
+        </div>
       </div>
     </div>
 
+    <!-- Task Work -->
     <div class="section">
       <div class="section-title">Task Work</div>
       <div class="grid-3">
-        <a href="#" class="menu-card" onclick="openSpin()">
+        <div class="menu-card" onclick="showAd('Spin Wheel')">
           <div class="card-img bg-red">🎡</div>
           <div class="card-label">Spin Wheel</div>
-        </a>
-        <a href="quiz.html" class="menu-card">
+        </div>
+        <div class="menu-card" onclick="showAd('Solve Math')">
           <div class="card-img bg-purple">🔢</div>
           <div class="card-label">Solve Math</div>
-        </a>
-        <a href="quiz.html" class="menu-card">
+        </div>
+        <div class="menu-card" onclick="showAd('Image Quiz')">
           <div class="card-img bg-indigo">🖼️</div>
           <div class="card-label">Image Quiz</div>
-        </a>
+        </div>
       </div>
     </div>
 
+    <!-- Quiz Work -->
     <div class="section">
       <div class="section-title">Quiz work</div>
       <div class="grid-3">
-        <a href="quiz.html" class="menu-card">
+        <div class="menu-card" onclick="showAd('Quiz')">
           <div class="card-img bg-rose">🧠</div>
           <div class="card-label">Quiz</div>
-        </a>
-        <a href="quiz.html" class="menu-card">
+        </div>
+        <div class="menu-card" onclick="showAd('Bangla Quiz')">
           <div class="card-img bg-purple">❓</div>
           <div class="card-label">Bangla Quiz</div>
-        </a>
-        <a href="scratch.html" class="menu-card">
+        </div>
+        <div class="menu-card" onclick="showAd('ScratchCard')">
           <div class="card-img bg-cyan">🃏</div>
           <div class="card-label">ScratchCard</div>
-        </a>
+        </div>
       </div>
     </div>
 
+    <!-- Payment -->
     <div class="section">
       <div class="section-title">Payment</div>
       <div class="grid-3">
-        <a href="#" class="menu-card" onclick="requestWithdraw()">
+        <div class="menu-card" onclick="requestWithdraw()">
           <div class="card-img bg-teal">💸</div>
           <div class="card-label">Withdraw</div>
-        </a>
-        <a href="#" class="menu-card" onclick="inviteFriends()">
+        </div>
+        <div class="menu-card" onclick="inviteFriends()">
           <div class="card-img bg-green">👥</div>
           <div class="card-label">Invite Friends</div>
-        </a>
-        <a href="https://t.me/selfiotop_bot" class="menu-card">
+        </div>
+        <div class="menu-card" onclick="showAd('Join Telegram')">
           <div class="card-img bg-blue">✈️</div>
           <div class="card-label">Join Telegram</div>
-        </a>
+        </div>
       </div>
     </div>
+
   </div>
 
-  <div class="bottom-nav">
-    <a class="nav-item active" href="home.html"><span class="nav-icon">🏠</span>হোম</a>
-    <a class="nav-item" href="quiz.html"><span class="nav-icon">🧠</span>কুইজ</a>
-    <a class="nav-item" href="scratch.html"><span class="nav-icon">🃏</span>স্ক্র্যাচ</a>
-    <a class="nav-item" id="adminNavLink" href="admin.html" style="display:none"><span class="nav-icon">⚙️</span>অ্যাডমিন</a>
-  </div>
-
-  <div class="spin-modal" id="spinModal">
-    <div class="spin-box">
-      <h3>🎡 লাকি স্পিন</h3>
-      <p>স্পিন করুন, বিজ্ঞাপন দেখুন, পয়েন্ট জিতুন!</p>
-      <div class="wheel-wrap">
-        <div class="wheel-pointer">▼</div>
-        <canvas id="spinCanvas" width="220" height="220"></canvas>
-      </div>
-      <div class="spin-result" id="spinResult"></div>
-      <button class="btn-spin" id="spinBtn" onclick="startSpin()">🎯 স্পিন করুন</button>
-      <button class="btn-close-spin" onclick="closeSpin()">বন্ধ করুন</button>
-    </div>
-  </div>
-
+  <!-- Ad Modal -->
   <div class="ad-modal" id="adModal">
     <div class="ad-box">
-      <h3>🎁 বিজ্ঞাপন দেখুন</h3>
+      <div class="ad-box-icon" id="adIcon">📺</div>
+      <h3 id="adTitle">বিজ্ঞাপন দেখুন</h3>
       <p>বিজ্ঞাপন দেখলেই পয়েন্ট পাবেন!</p>
-      <div class="ad-placeholder">📺 বিজ্ঞাপন লোড হচ্ছে...</div>
-      <div class="ad-timer" id="adTimer">5</div>
-      <button class="btn-claim" id="claimBtn" onclick="claimReward()">✅ পয়েন্ট নিন!</button>
+      <div class="ad-placeholder">📢 বিজ্ঞাপন লোড হচ্ছে...</div>
+      <div class="ad-timer-wrap">
+        <div class="ad-timer" id="adTimer">5</div>
+        <div class="ad-timer-label">সেকেন্ড অপেক্ষা করুন</div>
+      </div>
+      <button class="btn-claim" id="claimBtn" onclick="claimPoints()">✅ পয়েন্ট নিন!</button>
     </div>
   </div>
 
@@ -229,122 +211,105 @@
 
     let currentUser = null, userData = null;
     let adSettings = { spinPoints: 10, pointsToTaka: 0.01, minWithdraw: 100 };
-    let pendingReward = 0, adTimerInterval = null, spinIsRunning = false;
+    let adTimerInterval = null;
+    let currentCardName = '';
 
-    // Spin
-    const canvas = document.getElementById('spinCanvas');
-    const ctx = canvas.getContext('2d');
-    const segments = ['10','5','20','2','15','8','25','3'];
-    const colors = ['#e8380d','#ef4444','#10b981','#3b82f6','#8b5cf6','#f97316','#06b6d4','#f59e0b'];
-    let currentAngle = 0;
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'index.html'; return; }
+      currentUser = user;
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if (snap.exists()) userData = snap.data();
+      const settSnap = await getDoc(doc(db, 'settings', 'adConfig'));
+      if (settSnap.exists()) adSettings = { ...adSettings, ...settSnap.data() };
+      updateUI();
+    });
 
-    function drawWheel(angle) {
-      const cx = canvas.width/2, cy = canvas.height/2, r = cx-6;
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      const arc = (2*Math.PI)/segments.length;
-      segments.forEach((seg,i) => {
-        const s = angle+i*arc;
-        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,s,s+arc);
-        ctx.fillStyle = colors[i]; ctx.fill();
-        ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
-        ctx.save(); ctx.translate(cx,cy); ctx.rotate(s+arc/2);
-        ctx.textAlign='right'; ctx.fillStyle='#fff';
-        ctx.font='bold 13px Sora,sans-serif'; ctx.fillText(seg,r-8,5); ctx.restore();
-      });
-      ctx.beginPath(); ctx.arc(cx,cy,20,0,2*Math.PI);
-      ctx.fillStyle='#fff'; ctx.fill();
-      ctx.strokeStyle=colors[0]; ctx.lineWidth=2; ctx.stroke();
-      ctx.fillStyle=colors[0]; ctx.font='bold 10px Sora'; ctx.textAlign='center'; ctx.fillText('GO',cx,cy+4);
-    }
-    drawWheel(0);
+    // সব কার্ডে ক্লিক → Ad দেখাও
+    window.showAd = (cardName) => {
+      currentCardName = cardName;
 
-    window.openSpin = () => document.getElementById('spinModal').classList.add('show');
-    window.closeSpin = () => document.getElementById('spinModal').classList.remove('show');
-
-    window.startSpin = () => {
-      if (spinIsRunning) return;
+      // Monetag Rewarded Ad চেষ্টা করো
       if (window.show_10729825) {
-        window.show_10729825().then(() => doSpin(adSettings.spinPoints)).catch(() => showManualAd('spin'));
-      } else showManualAd('spin');
+        window.show_10729825()
+          .then(() => { givePoints(); })
+          .catch(() => { showManualAd(cardName); });
+      } else {
+        showManualAd(cardName);
+      }
     };
 
-    function doSpin(pts) {
-      spinIsRunning = true;
-      document.getElementById('spinBtn').disabled = true;
-      document.getElementById('spinResult').textContent = '';
-      const totalRot = (5+Math.random()*5)*2*Math.PI, dur = 4000, start = performance.now(), startAngle = currentAngle;
-      function animate(now) {
-        const p = Math.min((now-start)/dur,1), e = 1-Math.pow(1-p,3);
-        currentAngle = startAngle+totalRot*e; drawWheel(currentAngle);
-        if (p<1) { requestAnimationFrame(animate); return; }
-        spinIsRunning = false; document.getElementById('spinBtn').disabled = false;
-        document.getElementById('spinResult').textContent = `🎉 +${pts} পয়েন্ট!`;
-        addPoints(pts,'spinCount'); showToast(`+${pts} পয়েন্ট! 🎉`);
-      }
-      requestAnimationFrame(animate);
-    }
-
-    function showManualAd(type) {
-      pendingReward = adSettings.spinPoints; window._currentAdType = type;
-      document.getElementById('adModal').classList.add('show');
+    function showManualAd(cardName) {
+      document.getElementById('adTitle').textContent = cardName + ' — বিজ্ঞাপন দেখুন';
       document.getElementById('claimBtn').style.display = 'none';
-      let t = 5; document.getElementById('adTimer').textContent = t;
+      document.getElementById('adModal').classList.add('show');
+      let t = 5;
+      document.getElementById('adTimer').textContent = t;
       clearInterval(adTimerInterval);
       adTimerInterval = setInterval(() => {
-        t--; document.getElementById('adTimer').textContent = t;
-        if (t<=0) { clearInterval(adTimerInterval); document.getElementById('adTimer').textContent='✅'; document.getElementById('claimBtn').style.display='block'; }
+        t--;
+        document.getElementById('adTimer').textContent = t;
+        if (t <= 0) {
+          clearInterval(adTimerInterval);
+          document.getElementById('adTimer').textContent = '✅';
+          document.getElementById('claimBtn').style.display = 'block';
+        }
       }, 1000);
     }
 
-    window.claimReward = () => {
+    window.claimPoints = () => {
       document.getElementById('adModal').classList.remove('show');
-      if (window._currentAdType==='spin') doSpin(pendingReward);
-      else { addPoints(pendingReward, window._currentAdType+'Count'); showToast(`+${pendingReward} পয়েন্ট!`); }
+      givePoints();
     };
 
-    async function addPoints(pts, field) {
+    async function givePoints() {
+      const pts = adSettings.spinPoints || 10;
       if (!currentUser) return;
-      await updateDoc(doc(db,'users',currentUser.uid), { points: increment(pts), [field]: increment(1) });
-      userData.points = (userData.points||0)+pts; updateUI();
+      await updateDoc(doc(db, 'users', currentUser.uid), {
+        points: increment(pts),
+        adCount: increment(1)
+      });
+      userData.points = (userData.points || 0) + pts;
+      updateUI();
+      showToast(`+${pts} পয়েন্ট পেলেন! 🎉`);
     }
 
     window.requestWithdraw = async () => {
-      const min = adSettings.minWithdraw||100;
-      if (!userData||(userData.points||0)<min) { showToast(`কমপক্ষে ${min} পয়েন্ট লাগবে!`,true); return; }
-      await addDoc(collection(db,'withdrawRequests'), { userId:currentUser.uid, userName:userData.name, points:userData.points, taka:((userData.points||0)*adSettings.pointsToTaka).toFixed(2), status:'pending', createdAt:serverTimestamp() });
+      const min = adSettings.minWithdraw || 100;
+      if (!userData || (userData.points || 0) < min) {
+        showToast(`কমপক্ষে ${min} পয়েন্ট লাগবে!`, true); return;
+      }
+      await addDoc(collection(db, 'withdrawRequests'), {
+        userId: currentUser.uid, userName: userData.name,
+        points: userData.points,
+        taka: ((userData.points || 0) * (adSettings.pointsToTaka || 0.01)).toFixed(2),
+        status: 'pending', createdAt: serverTimestamp()
+      });
       showToast('✅ উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!');
     };
 
     window.inviteFriends = () => {
-      if (tg) tg.openTelegramLink('https://t.me/share/url?url=t.me/selfiotop_bot/selfio&text=EarnZone-এ যোগ দিন!');
-      else showToast('Telegram-এ শেয়ার করুন!');
+      if (tg) tg.openTelegramLink('https://t.me/share/url?url=t.me/selfiotop_bot/selfio&text=EarnZone-এ যোগ দিন! পয়েন্ট আয় করুন!');
+      else showToast('লিংক শেয়ার করুন: t.me/selfiotop_bot/selfio');
     };
 
-    window.showToastMsg = (msg) => showToast(msg);
+    window.goAdmin = () => {
+      if (userData?.isAdmin) window.location.href = 'admin.html';
+    };
 
     function updateUI() {
       if (!userData) return;
-      const pts = userData.points||0;
-      document.getElementById('balanceAmount').textContent = (pts*(adSettings.pointsToTaka||0.01)).toFixed(2);
+      const pts = userData.points || 0;
+      document.getElementById('balanceAmount').textContent = (pts * (adSettings.pointsToTaka || 0.01)).toFixed(2);
       document.getElementById('userPoints').textContent = pts;
-      if (userData.isAdmin) document.getElementById('adminNavLink').style.display='flex';
     }
 
-    function showToast(msg, isError=false) {
+    function showToast(msg, isError = false) {
       const t = document.getElementById('toast');
-      t.textContent=msg; t.style.background=isError?'#ef4444':'#10b981';
-      t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
+      t.textContent = msg;
+      t.style.background = isError ? '#ef4444' : '#10b981';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
     }
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.href='index.html'; return; }
-      currentUser = user;
-      const snap = await getDoc(doc(db,'users',user.uid));
-      if (snap.exists()) userData = snap.data();
-      const settSnap = await getDoc(doc(db,'settings','adConfig'));
-      if (settSnap.exists()) adSettings = {...adSettings,...settSnap.data()};
-      updateUI();
-    });
   </script>
 </body>
 </html>
