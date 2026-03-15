@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>EarnZone — Home</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src='//libtl.com/sdk.js' data-zone='10729825' data-sdk='show_10729825'></script>
+  <script src='https://sad.adsgram.ai/js/sad.min.js'></script>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -235,6 +235,14 @@
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.expand(); tg.BackButton.hide(); }
 
+    // Adsgram Init
+    let AdController = null;
+    window.addEventListener('load', () => {
+      if(window.Adsgram){
+        AdController = window.Adsgram.init({ blockId: '25155' });
+      }
+    });
+
     let currentUser = null, userData = null;
     let adSettings = { spinPoints: 10, pointsToTaka: 0.01, minWithdraw: 100 };
     let adTimerInterval = null;
@@ -265,10 +273,8 @@
     // সব কার্ডে ক্লিক → Ad দেখাও
     window.showAd = (cardName) => {
       currentCardName = cardName;
-
-      // Monetag Rewarded Ad চেষ্টা করো
-      if (window.show_10729825) {
-        window.show_10729825()
+      if(AdController){
+        AdController.show()
           .then(() => { givePoints(); })
           .catch(() => { showManualAd(cardName); });
       } else {
