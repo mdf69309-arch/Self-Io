@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Spin & Win</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<!-- Adsgram SDK -->
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -108,14 +110,24 @@ canvas{display:block;border-radius:50%;}
   </div>
 </div>
 
-<!-- Ad Modal — Ad চলার সময় এর উপর timer overlay -->
+<!-- Ad Modal — Ad এর উপরে timer overlay -->
 <div class="modal" id="adModal">
-  <div style="position:relative;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:30px;">
-    <!-- Timer Overlay — Ad এর উপরে ভাসবে -->
-    <div id="timerOverlay" style="background:rgba(0,0,0,0.75);border:2px solid #f59e0b;border-radius:16px;padding:14px 24px;text-align:center;backdrop-filter:blur(4px);">
-      <div style="font-size:12px;color:#94a3b8;margin-bottom:4px;">বিজ্ঞাপন দেখুন</div>
-      <div id="timerNum" style="font-size:44px;font-weight:800;color:#f59e0b;line-height:1;font-family:Arial;">15</div>
-      <div style="font-size:11px;color:#94a3b8;margin-top:4px;">সেকেন্ড পর পয়েন্ট যোগ হবে 🎉</div>
+  <div style="position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:9999;pointer-events:auto;">
+    <div style="background:rgba(10,14,26,0.92);border:2px solid #f59e0b;border-radius:20px;padding:16px 28px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(8px);">
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">বিজ্ঞাপন দেখুন</div>
+      <!-- Progress Ring -->
+      <div style="position:relative;width:70px;height:70px;margin:0 auto 8px;">
+        <svg width="70" height="70" style="transform:rotate(-90deg);">
+          <circle cx="35" cy="35" r="30" fill="none" stroke="rgba(245,158,11,0.2)" stroke-width="5"/>
+          <circle id="progressRing" cx="35" cy="35" r="30" fill="none" stroke="#f59e0b" stroke-width="5"
+            stroke-dasharray="188.5" stroke-dashoffset="0" stroke-linecap="round"
+            style="transition:stroke-dashoffset 1s linear;"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <span id="timerNum" style="font-size:26px;font-weight:800;color:#f59e0b;font-family:Arial;">10</span>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#94a3b8;">সেকেন্ড পর অটো পয়েন্ট 🎉</div>
     </div>
   </div>
 </div>
@@ -232,58 +244,75 @@ function openAd(){
   _adActive=true;
   window._adActive=true;
   _adPaused=false;
-  _timerRemaining=15;
+  _timerRemaining=10;
   _adStartTime=Date.now();
 
   document.addEventListener('visibilitychange', onVisChange);
 
-  if(window.show_10729825){
-    // Rewarded Interstitial চালাও (Ad নিজেই fullscreen হবে)
-    window.show_10729825()
+  // Timer overlay দেখাও
+  document.getElementById('timerNum').textContent=_timerRemaining;
+  document.getElementById('adModal').classList.add('on');
+
+  // Adsgram Rewarded Video চালাও
+  if(window.AdController){
+    window.AdController.show()
       .then(function(){
-        // Ad শেষ — timer ও চলছে, এখানে কিছু করবো না
-        // Timer শেষ হলেই পয়েন্ট দেবে
-      })
-      .catch(function(){
-        // Ad বন্ধ করা হয়েছে — পয়েন্ট নেই
-        if(_timerRemaining > 0){
+        // Ad সম্পূর্ণ দেখা হয়েছে — timer চলুক বা পয়েন্ট দাও
+        if(_adActive){
           clearInterval(window._adTimer);
-          document.getElementById('adModal').classList.remove('on');
           document.removeEventListener('visibilitychange', onVisChange);
           _adActive=false; window._adActive=false;
-          showToast('⚠️ বিজ্ঞাপন বন্ধ করবেন না! পয়েন্ট পাননি।', true);
-          resetSpin();
+          document.getElementById('adModal').classList.remove('on');
+          _adWatched=true;
+          autoGivePoints();
         }
+      })
+      .catch(function(e){
+        // Ad বন্ধ করা হয়েছে
+        clearInterval(window._adTimer);
+        document.removeEventListener('visibilitychange', onVisChange);
+        _adActive=false; window._adActive=false;
+        document.getElementById('adModal').classList.remove('on');
+        showToast('⚠️ বিজ্ঞাপন সম্পূর্ণ দেখুন! পয়েন্ট পাননি।', true);
+        resetSpin();
       });
-    // Ad চলার সাথে সাথে timer overlay দেখাও
-    document.getElementById('timerNum').textContent=_timerRemaining;
-    document.getElementById('adModal').classList.add('on');
-    startTimer();
   } else {
-    // SDK নেই — শুধু timer দেখাও
-    document.getElementById('timerNum').textContent=_timerRemaining;
-    document.getElementById('adModal').classList.add('on');
-    startTimer();
+    // Adsgram লোড হয়নি — timer fallback
+    showToast('বিজ্ঞাপন লোড হচ্ছে...', false);
   }
+
+  // Timer চালাও (Adsgram সাথে সাথে)
+  startTimer();
 }
 
 function launchAd(){ openAd(); }
-
-window.triggerPopup=function(){}; // আর দরকার নেই
+window.triggerPopup=function(){};
 
 function startTimer(){
   clearInterval(window._adTimer);
+  var total=_timerRemaining;
+  var circumference=188.5;
+  // Ring সেট করো
+  var ring=document.getElementById('progressRing');
+  if(ring) ring.style.strokeDashoffset='0';
+
   window._adTimer=setInterval(function(){
-    if(!_adActive) return;
+    if(!_adActive){clearInterval(window._adTimer);return;}
     _timerRemaining--;
     document.getElementById('timerNum').textContent=_timerRemaining;
+    // Ring progress আপডেট
+    if(ring){
+      var offset=circumference*(1-_timerRemaining/total);
+      ring.style.strokeDashoffset=offset;
+    }
     if(_timerRemaining<=0){
       clearInterval(window._adTimer);
       document.removeEventListener('visibilitychange',onVisChange);
       _adActive=false; window._adActive=false;
       _adWatched=true;
+      document.getElementById('timerNum').textContent='🎉';
       document.getElementById('adModal').classList.remove('on');
-      autoGivePoints();
+      setTimeout(function(){ autoGivePoints(); },300);
     }
   },1000);
 }
@@ -350,10 +379,18 @@ function openConv(){
 function closeConv(){document.getElementById('convModal').classList.remove('on');}
 window.openConv=openConv;window.closeConv=closeConv;
 window.doConvert=function(){closeConv();window._doConvert();};
+
+// Adsgram Init — Block ID: 25155
+var AdController = null;
+window.addEventListener('load', function(){
+  if(window.Adsgram){
+    AdController = window.Adsgram.init({ blockId: '25155' });
+    window._adsgramReady = true;
+  }
+});
 </script>
 
 <!-- Firebase Module -->
-<script src='//libtl.com/sdk.js' data-zone='10729825' data-sdk='show_10729825'></script>
 <script type="module">
 import { auth, db } from './firebase-config.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
