@@ -212,7 +212,30 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const tg = window.Telegram?.WebApp; if(tg) { tg.expand(); tg.BackButton.show(); tg.BackButton.onClick(()=>{ window.location.href='home.html'; }); }
+    const tg = window.Telegram?.WebApp;
+    if(tg){
+      tg.expand();
+      tg.BackButton.show();
+      tg.BackButton.onClick(()=>{
+        if(spinIsRunning) {
+          showToast('⚠️ বিজ্ঞাপন দেখা শেষ করুন!', true);
+          return;
+        }
+        window.location.href='home.html';
+      });
+    }
+
+    // Browser back button block করো Ad চলার সময়
+    history.pushState(null, '', location.href);
+    window.addEventListener('popstate', (e) => {
+      if(spinIsRunning) {
+        // Back ব্লক করো — আবার forward state push করো
+        history.pushState(null, '', location.href);
+        showToast('⚠️ বিজ্ঞাপন দেখা শেষ করুন!', true);
+      } else {
+        window.location.href = 'home.html';
+      }
+    });
 
     let currentUser=null, userData=null;
     let adSettings = { spinPoints:10, pointsToTaka:0.01, minWithdraw:100 };
@@ -334,30 +357,68 @@
       requestAnimationFrame(animate);
     };
 
-    // ── Reward Ad — অবশ্যই দেখতে হবে ──
+    // ── Reward Ad — অবশ্যই সম্পূর্ণ দেখতে হবে ──
+    let adStartTime = 0;
+    const MIN_AD_WATCH_SECONDS = 10; // কমপক্ষে ১০ সেকেন্ড দেখতে হবে
+    let adWatchTimer = null;
+    let adWatchedEnough = false;
+
     function showRewardAd() {
-      if(window.show_10729825) {
-        window.show_10729825()
-          .then(() => {
-            // Ad সম্পূর্ণ দেখা হয়েছে — পয়েন্ট দাও
-            givePoints();
-          })
-          .catch(() => {
-            // Ad বন্ধ করা হয়েছে বা ব্যর্থ — পয়েন্ট নেই, স্পিন রিসেট
-            spinIsRunning = false;
-            spinResult = 0;
-            document.getElementById('spinBtn').style.display = 'flex';
-            document.getElementById('spinBtn').disabled = false;
-            showToast('⚠️ সম্পূর্ণ বিজ্ঞাপন না দেখলে পয়েন্ট পাবেন না!', true);
-          });
-      } else {
-        // Ad SDK নেই — পয়েন্ট নেই
+      if(!window.show_10729825) {
+        // Ad SDK নেই
         spinIsRunning = false;
         spinResult = 0;
         document.getElementById('spinBtn').style.display = 'none';
         document.getElementById('adStatusMsg').style.display = 'block';
         showToast('⚠️ বিজ্ঞাপন লোড হয়নি! পয়েন্ট পাওয়া যাবে না।', true);
+        return;
       }
+
+      // Ad শুরুর সময় রেকর্ড করো
+      adStartTime = Date.now();
+      adWatchedEnough = false;
+
+      // ১০ সেকেন্ড পর mark করো যে যথেষ্ট দেখা হয়েছে
+      clearTimeout(adWatchTimer);
+      adWatchTimer = setTimeout(() => {
+        adWatchedEnough = true;
+      }, MIN_AD_WATCH_SECONDS * 1000);
+
+      window.show_10729825()
+        .then(() => {
+          clearTimeout(adWatchTimer);
+          const watchedSeconds = (Date.now() - adStartTime) / 1000;
+
+          // সম্পূর্ণ দেখা হয়েছে কিনা যাচাই করো
+          if(adWatchedEnough || watchedSeconds >= MIN_AD_WATCH_SECONDS) {
+            // ✅ পয়েন্ট দাও
+            givePoints();
+          } else {
+            // ❌ খুব তাড়াতাড়ি বন্ধ হয়েছে — পয়েন্ট নেই
+            spinIsRunning = false;
+            spinResult = 0;
+            document.getElementById('spinBtn').style.display = 'flex';
+            document.getElementById('spinBtn').disabled = false;
+            showToast(`⚠️ সম্পূর্ণ বিজ্ঞাপন দেখুন! (${Math.round(watchedSeconds)}/${MIN_AD_WATCH_SECONDS} সেকেন্ড)`, true);
+          }
+        })
+        .catch(() => {
+          clearTimeout(adWatchTimer);
+          const watchedSeconds = (Date.now() - adStartTime) / 1000;
+
+          // Back button বা বন্ধ — সময় যাচাই করো
+          if(adWatchedEnough || watchedSeconds >= MIN_AD_WATCH_SECONDS) {
+            // যথেষ্ট সময় দেখেছে — পয়েন্ট দাও
+            givePoints();
+          } else {
+            // কম সময় দেখেছে — পয়েন্ট নেই
+            spinIsRunning = false;
+            spinResult = 0;
+            document.getElementById('spinBtn').style.display = 'flex';
+            document.getElementById('spinBtn').disabled = false;
+            showToast('⚠️ সম্পূর্ণ বিজ্ঞাপন না দেখলে পয়েন্ট পাবেন না!', true);
+          }
+        });
     }
 
     window.givePoints = async () => {
