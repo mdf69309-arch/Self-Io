@@ -221,29 +221,25 @@ function openAd(){
   _adWatched=false;
   _adActive=true;
   window._adActive=true;
-  _timerRemaining=5;
+  _timerRemaining=15; // ১৫ সেকেন্ড দেখতে হবে
   _adPaused=false;
   document.getElementById('claimBtn').style.display='none';
   document.getElementById('timerNum').textContent=_timerRemaining;
   document.getElementById('adModal').classList.add('on');
   _adStartTime=Date.now();
 
-  // Page visibility — Ad এ ক্লিক করে বাইরে গেলে timer pause হবে
+  // Page visibility — Ad এ ক্লিক করে বাইরে গেলে timer pause
   document.addEventListener('visibilitychange', onVisChange);
 
-  // Monetag Ad চেষ্টা করো
+  // Monetag Ad চালাও — কিন্তু promise এ পয়েন্ট দেবো না
+  // শুধু timer শেষ হলেই পয়েন্ট পাবে
   if(window.show_10729825){
     window.show_10729825()
-      .then(function(){
-        // Monetag Ad সম্পূর্ণ দেখা হয়েছে
-        if(_adActive) { _adWatched=true; autoComplete(); }
-      })
-      .catch(function(){
-        // Monetag Ad বন্ধ — timer এ নির্ভর করো
-      });
+      .then(function(){ /* পয়েন্ট দেবো না এখানে */ })
+      .catch(function(){ /* ignore */ });
   }
 
-  // Fallback timer
+  // Timer — এটাই একমাত্র পয়েন্ট দেওয়ার উপায়
   startTimer();
 }
 
@@ -253,10 +249,11 @@ function onVisChange(){
     // Ad এ click করে বাইরে গেছে — timer pause
     _adPaused=true;
     clearInterval(window._adTimer);
+    document.getElementById('adModal').classList.remove('on');
   } else {
-    // ফিরে এসেছে — Ad modal দেখাও, timer resume করো
+    // ফিরে এসেছে — Ad modal দেখাও, timer resume
     document.getElementById('adModal').classList.add('on');
-    if(_adPaused && _adActive){
+    if(_adActive){
       _adPaused=false;
       startTimer();
     }
@@ -267,7 +264,7 @@ function startTimer(){
   clearInterval(window._adTimer);
   document.getElementById('timerNum').textContent=_timerRemaining;
   window._adTimer=setInterval(function(){
-    if(_adPaused) return; // pause এ থাকলে count করো না
+    if(_adPaused) return;
     _timerRemaining--;
     if(_timerRemaining>0){
       document.getElementById('timerNum').textContent=_timerRemaining;
@@ -278,14 +275,6 @@ function startTimer(){
       _adWatched=true;
     }
   },1000);
-}
-
-function autoComplete(){
-  clearInterval(window._adTimer);
-  document.removeEventListener('visibilitychange', onVisChange);
-  _adActive=false; window._adActive=false;
-  document.getElementById('adModal').classList.remove('on');
-  claimPts();
 }
 
 function claimPts(){
