@@ -8,50 +8,50 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0f172a;--card:#1e293b;--card2:#162032;
-      --accent:#f59e0b;--green:#10b981;--red:#ef4444;
-      --blue:#3b82f6;--text:#f1f5f9;--muted:#64748b;
-      --border:rgba(255,255,255,0.08);
+      --bg:#0f172a; --card:#1e293b; --card2:#162032;
+      --accent:#f59e0b; --green:#10b981; --red:#ef4444;
+      --blue:#3b82f6; --purple:#8b5cf6;
+      --text:#f1f5f9; --muted:#64748b; --border:rgba(255,255,255,0.08);
     }
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
     body{font-family:'Noto Sans Bengali','Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:30px;}
 
-    /* Header */
+    /* ── Header ── */
     .header{background:linear-gradient(135deg,#1e293b,#162032);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
-    .header-left{display:flex;align-items:center;gap:10px;}
     .header-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--accent);}
     .logout-btn{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;padding:7px 14px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;}
 
-    /* Stats */
+    /* ── Stats ── */
     .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px 14px 0;}
     .stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;align-items:center;gap:10px;}
     .stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-    .si-yellow{background:rgba(245,158,11,0.15);}
-    .si-green{background:rgba(16,185,129,0.15);}
-    .si-red{background:rgba(239,68,68,0.15);}
-    .si-blue{background:rgba(59,130,246,0.15);}
+    .si-y{background:rgba(245,158,11,0.15);}
+    .si-g{background:rgba(16,185,129,0.15);}
+    .si-r{background:rgba(239,68,68,0.15);}
+    .si-b{background:rgba(59,130,246,0.15);}
     .stat-val{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--accent);}
     .stat-lbl{font-size:11px;color:var(--muted);margin-top:1px;}
 
-    /* Tabs */
+    /* ── Tabs ── */
     .nav-tabs{display:flex;gap:6px;padding:14px 14px 0;overflow-x:auto;scrollbar-width:none;}
     .nav-tabs::-webkit-scrollbar{display:none;}
     .nav-tab{flex-shrink:0;padding:8px 16px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--border);white-space:nowrap;transition:all .2s;}
     .nav-tab.active{background:linear-gradient(135deg,var(--accent),#f97316);color:#000;border-color:transparent;}
     .badge-count{display:inline-block;background:var(--red);color:#fff;border-radius:8px;padding:1px 5px;font-size:10px;font-weight:700;margin-left:3px;}
 
-    /* Container */
+    /* ── Container ── */
     .container{padding:14px;}
     .sec{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:12px;}
     .sec-title{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 
-    /* Fields */
+    /* ── Fields ── */
     .field{margin-bottom:12px;}
     .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600;}
-    .field input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;}
-    .field input:focus{border-color:var(--accent);}
+    .field input,.field select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;}
+    .field input:focus,.field select:focus{border-color:var(--accent);}
+    .field select option{background:#1e293b;}
 
-    /* Buttons */
+    /* ── Buttons ── */
     .btn{width:100%;padding:12px;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .15s;}
     .btn:active{transform:scale(0.98);}
     .btn-gold{background:linear-gradient(135deg,var(--accent),#f97316);color:#000;}
@@ -59,14 +59,14 @@
     .btn-row{display:flex;gap:10px;}
     .btn-row .btn{flex:1;}
 
-    /* Rate preview */
+    /* ── Rate preview ── */
     .rate-preview{background:rgba(16,185,129,0.08);border-radius:12px;padding:12px;margin-top:10px;}
     .info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
     .info-row:last-child{border-bottom:none;}
     .info-lbl{color:var(--muted);}
-    .info-val{font-weight:700;color:var(--text);}
+    .info-val{font-weight:700;}
 
-    /* YT Link */
+    /* ── YT Link ── */
     .yt-preview{display:none;background:rgba(255,0,0,0.06);border:1px solid rgba(255,0,0,0.2);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:12px;color:#fca5a5;word-break:break-all;}
     .yt-preview.show{display:block;}
     .yt-preview strong{display:block;font-size:11px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;color:#f87171;}
@@ -75,11 +75,10 @@
     .saved-pill-text{font-size:12px;color:#6ee7b7;word-break:break-all;flex:1;}
     .saved-pill-del{background:none;border:none;color:#fca5a5;font-size:16px;cursor:pointer;flex-shrink:0;}
 
-    /* Withdraw */
+    /* ── Withdraw ── */
     .filter-row{display:flex;gap:6px;margin-bottom:12px;}
     .filter-btn{flex:1;padding:8px;border:1px solid var(--border);border-radius:10px;background:var(--card2);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
     .filter-btn.active{background:linear-gradient(135deg,var(--accent),#f97316);color:#000;border-color:transparent;}
-
     .wr-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:8px;}
     .wr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
     .wr-name{font-size:14px;font-weight:700;}
@@ -92,41 +91,76 @@
     .btn-approve{flex:1;padding:8px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:var(--green);border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
     .btn-reject{flex:1;padding:8px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
 
-    /* Users */
-    .search-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;color:var(--text);font-size:13px;font-family:inherit;outline:none;margin-bottom:12px;}
-    .search-input:focus{border-color:var(--accent);}
-    .user-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:8px;}
-    .user-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
-    .user-name{font-size:14px;font-weight:700;}
-    .user-pts{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--accent);}
-    .user-meta{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.7;}
-    .user-btns{display:flex;gap:6px;flex-wrap:wrap;}
-    .ubtn{flex:1;min-width:60px;padding:7px;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
-    .ubtn-green{background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:var(--green);}
-    .ubtn-gold{background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:var(--accent);}
-    .ubtn-red{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;}
+    /* ══════════════════════════════════
+       USER MANAGEMENT — উন্নত ডিজাইন
+    ══════════════════════════════════ */
+    .search-wrap{position:relative;margin-bottom:12px;}
+    .search-wrap input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:11px 14px 11px 40px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .2s;}
+    .search-wrap input:focus{border-color:var(--accent);}
+    .search-wrap::before{content:'🔍';position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;}
 
-    /* Notice */
-    .field textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;resize:none;height:80px;line-height:1.5;}
-    .field textarea:focus{border-color:var(--accent);}
+    .sort-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;}
+    .sort-row::-webkit-scrollbar{display:none;}
+    .sort-btn{flex-shrink:0;padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--card2);color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .2s;}
+    .sort-btn.active{background:rgba(245,158,11,0.2);border-color:rgba(245,158,11,0.4);color:var(--accent);}
 
-    /* Empty / Loading */
+    .user-count{font-size:12px;color:var(--muted);margin-bottom:10px;}
+
+    .user-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:8px;transition:border-color .2s;}
+    .user-card:hover{border-color:rgba(245,158,11,0.25);}
+    .user-card.banned{border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.03);}
+    .user-card.admin-user{border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04);}
+
+    .uc-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+    .uc-avatar{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;font-family:'Sora',sans-serif;flex-shrink:0;color:#fff;}
+    .uc-info{flex:1;min-width:0;}
+    .uc-name{font-size:14px;font-weight:700;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+    .uc-email{font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .uc-tag{font-size:10px;padding:2px 7px;border-radius:6px;font-weight:700;}
+    .tag-admin{background:rgba(245,158,11,0.2);color:var(--accent);}
+    .tag-banned{background:rgba(239,68,68,0.2);color:#fca5a5;}
+
+    .uc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
+    .uc-stat{background:rgba(255,255,255,0.04);border-radius:9px;padding:8px 6px;text-align:center;}
+    .uc-stat-val{font-family:'Sora',sans-serif;font-size:14px;font-weight:800;}
+    .uc-stat-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+    .c-pts{color:var(--accent);}
+    .c-bal{color:var(--green);}
+    .c-spin{color:var(--blue);}
+
+    .uc-device{font-size:11px;color:var(--muted);margin-bottom:10px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:8px;}
+
+    .uc-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
+    .ua-btn{padding:9px 6px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid transparent;text-align:center;transition:all .2s;}
+    .ua-btn:active{transform:scale(0.96);}
+    .ua-green{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.25);color:var(--green);}
+    .ua-gold{background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.25);color:var(--accent);}
+    .ua-blue{background:rgba(59,130,246,0.12);border-color:rgba(59,130,246,0.25);color:var(--blue);}
+    .ua-red{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.25);color:#fca5a5;}
+    .ua-purple{background:rgba(139,92,246,0.12);border-color:rgba(139,92,246,0.25);color:var(--purple);}
+    .ua-del{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);color:#fca5a5;}
+
+    /* ── Notice ── */
+    /* ── Empty / Loading ── */
     .empty{text-align:center;padding:28px;color:var(--muted);font-size:13px;}
     .loading-txt{text-align:center;padding:20px;color:var(--muted);font-size:13px;}
 
-    /* Dialog */
-    .dialog{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:2000;align-items:center;justify-content:center;}
+    /* ── Dialog ── */
+    .dialog{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;padding:20px;}
     .dialog.show{display:flex;}
-    .dbox{background:#1e293b;border:1px solid var(--border);border-radius:18px;padding:22px;width:88%;max-width:320px;}
-    .dbox h3{font-size:16px;font-weight:800;margin-bottom:14px;}
+    .dbox{background:#1e293b;border:1px solid var(--border);border-radius:20px;padding:22px;width:100%;max-width:320px;}
+    .dbox h3{font-size:16px;font-weight:800;margin-bottom:6px;}
+    .dbox p{font-size:12px;color:var(--muted);margin-bottom:14px;}
     .dbox input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;font-family:inherit;outline:none;margin-bottom:12px;}
     .dbox input:focus{border-color:var(--accent);}
     .dbtns{display:flex;gap:8px;}
     .dbtns button{flex:1;padding:11px;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;}
     .dbtn-ok{background:linear-gradient(135deg,var(--accent),#f97316);color:#000;}
+    .dbtn-green{background:linear-gradient(135deg,var(--green),#059669);color:#fff;}
+    .dbtn-red{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;}
     .dbtn-no{background:rgba(255,255,255,0.08);color:var(--muted);}
 
-    /* Toast */
+    /* ── Toast ── */
     .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--green);color:#fff;padding:10px 20px;border-radius:11px;font-size:13px;font-weight:700;opacity:0;transition:all .3s;z-index:3000;white-space:nowrap;pointer-events:none;}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   </style>
@@ -134,7 +168,7 @@
 <body>
 
 <div class="header">
-  <div class="header-left">
+  <div style="display:flex;align-items:center;gap:10px;">
     <span style="font-size:22px;">👑</span>
     <span class="header-title">Admin Panel</span>
   </div>
@@ -143,80 +177,44 @@
 
 <!-- Stats -->
 <div class="stats-grid">
-  <div class="stat-card">
-    <div class="stat-icon si-yellow">👥</div>
-    <div><div class="stat-val" id="totalUsers">-</div><div class="stat-lbl">মোট ইউজার</div></div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon si-green">⭐</div>
-    <div><div class="stat-val" id="totalPoints">-</div><div class="stat-lbl">মোট পয়েন্ট</div></div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon si-red">⏳</div>
-    <div><div class="stat-val" id="pendingCount">-</div><div class="stat-lbl">পেন্ডিং উইথড্র</div></div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon si-blue">✅</div>
-    <div><div class="stat-val" id="approvedCount">-</div><div class="stat-lbl">অনুমোদিত</div></div>
-  </div>
+  <div class="stat-card"><div class="stat-icon si-y">👥</div><div><div class="stat-val" id="totalUsers">-</div><div class="stat-lbl">মোট ইউজার</div></div></div>
+  <div class="stat-card"><div class="stat-icon si-g">⭐</div><div><div class="stat-val" id="totalPoints">-</div><div class="stat-lbl">মোট পয়েন্ট</div></div></div>
+  <div class="stat-card"><div class="stat-icon si-r">⏳</div><div><div class="stat-val" id="pendingCount">-</div><div class="stat-lbl">পেন্ডিং</div></div></div>
+  <div class="stat-card"><div class="stat-icon si-b">✅</div><div><div class="stat-val" id="approvedCount">-</div><div class="stat-lbl">অনুমোদিত</div></div></div>
 </div>
 
 <!-- Tabs -->
 <div class="nav-tabs">
-  <div class="nav-tab active" onclick="switchTab('rate')">💱 রেট</div>
-  <div class="nav-tab"        onclick="switchTab('links')">🔗 লিংক</div>
+  <div class="nav-tab active" onclick="switchTab('users')">👥 ইউজার</div>
   <div class="nav-tab"        onclick="switchTab('withdraw')">💸 উইথড্র <span class="badge-count" id="pendingBadge">0</span></div>
-  <div class="nav-tab"        onclick="switchTab('users')">👥 ইউজার</div>
+  <div class="nav-tab"        onclick="switchTab('rate')">💱 রেট</div>
+  <div class="nav-tab"        onclick="switchTab('links')">🔗 লিংক</div>
   <div class="nav-tab"        onclick="switchTab('notice')">📢 নোটিশ</div>
   <div class="nav-tab"        onclick="switchTab('admin')">👑 অ্যাডমিন</div>
 </div>
 
 <div class="container">
 
-  <!-- ══ Rate Tab ══ -->
-  <div id="tab-rate">
-    <div class="sec">
-      <div class="sec-title">💱 পয়েন্ট → টাকা রেট</div>
-      <div class="field">
-        <label>১ পয়েন্ট = কত টাকা?</label>
-        <input type="number" id="pointsToTaka" placeholder="যেমন: 0.01" step="0.0001" oninput="updateRatePreview()">
-      </div>
-      <div class="field">
-        <label>সর্বনিম্ন উইথড্র (পয়েন্ট)</label>
-        <input type="number" id="minWithdraw" placeholder="যেমন: 100">
-      </div>
-      <div class="field">
-        <label>সর্বনিম্ন উইথড্র (টাকা ৳)</label>
-        <input type="number" id="minTaka" placeholder="যেমন: 10" step="0.5">
-      </div>
-      <div class="rate-preview">
-        <div class="info-row"><span class="info-lbl">১০০ পয়েন্ট =</span><span class="info-val" id="rateP1">৳1.00</span></div>
-        <div class="info-row"><span class="info-lbl">৫০০ পয়েন্ট =</span><span class="info-val" id="rateP2">৳5.00</span></div>
-        <div class="info-row"><span class="info-lbl">১০০০ পয়েন্ট =</span><span class="info-val" id="rateP3">৳10.00</span></div>
-      </div>
-      <button class="btn btn-gold" style="margin-top:14px;" onclick="saveRateSettings()">💾 রেট সেভ করুন</button>
-    </div>
-  </div>
+  <!-- ══ Users Tab ══ -->
+  <div id="tab-users">
+    <div class="sec" style="padding:14px;">
 
-  <!-- ══ Links Tab ══ -->
-  <div id="tab-links" style="display:none;">
-    <div class="sec">
-      <div class="sec-title">▶️ How to Work — YouTube লিংক</div>
-      <div class="field">
-        <label>YouTube ভিডিও লিংক</label>
-        <input type="url" id="howtworkYtLink"
-          placeholder="https://youtu.be/... অথবা https://youtube.com/watch?v=..."
-          oninput="previewYtLink()">
+      <!-- Search -->
+      <div class="search-wrap">
+        <input type="text" id="searchUser" placeholder="নাম বা ইমেইল খুঁজুন..." oninput="searchUsers()">
       </div>
-      <div class="yt-preview" id="ytPreviewBox">
-        <strong>🔗 লিংক প্রিভিউ</strong>
-        <span id="ytPreviewUrl"></span>
+
+      <!-- Sort -->
+      <div class="sort-row">
+        <button class="sort-btn active" id="sort-new"    onclick="sortUsers('new')">🕐 নতুন</button>
+        <button class="sort-btn"        id="sort-pts"    onclick="sortUsers('pts')">⭐ পয়েন্ট</button>
+        <button class="sort-btn"        id="sort-bal"    onclick="sortUsers('bal')">💰 ব্যালেন্স</button>
+        <button class="sort-btn"        id="sort-banned" onclick="sortUsers('banned')">🚫 ব্যান</button>
+        <button class="sort-btn"        id="sort-admin"  onclick="sortUsers('admin')">👑 অ্যাডমিন</button>
       </div>
-      <div class="saved-pill" id="savedPill">
-        <span class="saved-pill-text" id="savedPillText">—</span>
-        <button class="saved-pill-del" onclick="clearYtLink()">🗑️</button>
-      </div>
-      <button class="btn btn-gold" style="margin-top:12px;" onclick="saveHowtworkLink()">💾 লিংক সেভ করুন</button>
+
+      <div class="user-count" id="userCount">লোড হচ্ছে...</div>
+      <div id="usersList"><div class="loading-txt">⏳ লোড হচ্ছে...</div></div>
     </div>
   </div>
 
@@ -232,13 +230,35 @@
     </div>
   </div>
 
-  <!-- ══ Users Tab ══ -->
-  <div id="tab-users" style="display:none;">
-    <div class="sec" style="padding:14px;">
-      <input type="text" class="search-input" id="searchUser"
-        placeholder="🔍 নাম বা ইমেইল খুঁজুন..."
-        oninput="searchUsers()">
-      <div id="usersList"><div class="loading-txt">লোড হচ্ছে...</div></div>
+  <!-- ══ Rate Tab ══ -->
+  <div id="tab-rate" style="display:none;">
+    <div class="sec">
+      <div class="sec-title">💱 পয়েন্ট → টাকা রেট</div>
+      <div class="field"><label>১ পয়েন্ট = কত টাকা?</label><input type="number" id="pointsToTaka" placeholder="0.01" step="0.0001" oninput="updateRatePreview()"></div>
+      <div class="field"><label>সর্বনিম্ন উইথড্র (পয়েন্ট)</label><input type="number" id="minWithdraw" placeholder="100"></div>
+      <div class="field"><label>সর্বনিম্ন উইথড্র (টাকা ৳)</label><input type="number" id="minTaka" placeholder="10" step="0.5"></div>
+      <div class="rate-preview">
+        <div class="info-row"><span class="info-lbl">১০০ পয়েন্ট =</span><span class="info-val" id="rateP1">৳1.00</span></div>
+        <div class="info-row"><span class="info-lbl">৫০০ পয়েন্ট =</span><span class="info-val" id="rateP2">৳5.00</span></div>
+        <div class="info-row"><span class="info-lbl">১০০০ পয়েন্ট =</span><span class="info-val" id="rateP3">৳10.00</span></div>
+      </div>
+      <button class="btn btn-gold" style="margin-top:14px;" onclick="saveRateSettings()">💾 রেট সেভ করুন</button>
+    </div>
+  </div>
+
+  <!-- ══ Links Tab ══ -->
+  <div id="tab-links" style="display:none;">
+    <div class="sec">
+      <div class="sec-title">▶️ How to Work — YouTube লিংক</div>
+      <div class="field"><label>YouTube ভিডিও লিংক</label>
+        <input type="url" id="howtworkYtLink" placeholder="https://youtu.be/..." oninput="previewYtLink()">
+      </div>
+      <div class="yt-preview" id="ytPreviewBox"><strong>🔗 লিংক প্রিভিউ</strong><span id="ytPreviewUrl"></span></div>
+      <div class="saved-pill" id="savedPill">
+        <span class="saved-pill-text" id="savedPillText">—</span>
+        <button class="saved-pill-del" onclick="clearYtLink()">🗑️</button>
+      </div>
+      <button class="btn btn-gold" style="margin-top:12px;" onclick="saveHowtworkLink()">💾 লিংক সেভ করুন</button>
     </div>
   </div>
 
@@ -246,9 +266,8 @@
   <div id="tab-notice" style="display:none;">
     <div class="sec">
       <div class="sec-title">📢 মার্কি নোটিশ</div>
-      <div class="field">
-        <label>নোটিশ টেক্সট</label>
-        <input type="text" id="marqueeText" placeholder="যেমন: আজ বিশেষ অফার! দ্বিগুণ পয়েন্ট পাবেন!">
+      <div class="field"><label>নোটিশ টেক্সট</label>
+        <input type="text" id="marqueeText" placeholder="যেমন: আজ বিশেষ অফার!">
       </div>
       <button class="btn btn-gold" onclick="saveNotice()">💾 নোটিশ সেভ করুন</button>
     </div>
@@ -258,10 +277,7 @@
   <div id="tab-admin" style="display:none;">
     <div class="sec">
       <div class="sec-title">👑 অ্যাডমিন ম্যানেজ</div>
-      <div class="field">
-        <label>ইউজার UID</label>
-        <input type="text" id="adminUid" placeholder="Firebase UID দিন">
-      </div>
+      <div class="field"><label>ইউজার UID</label><input type="text" id="adminUid" placeholder="Firebase UID দিন"></div>
       <div class="btn-row">
         <button class="btn btn-gold"  onclick="makeAdmin()">👑 অ্যাডমিন করুন</button>
         <button class="btn btn-green" onclick="removeAdmin()">🔻 অ্যাডমিন সরান</button>
@@ -269,16 +285,56 @@
     </div>
   </div>
 
-</div>
+</div><!-- /container -->
 
-<!-- Add Points Dialog -->
-<div class="dialog" id="addPtsDialog">
+<!-- ══ Dialogs ══ -->
+
+<!-- Add Points -->
+<div class="dialog" id="dlgAddPts">
   <div class="dbox">
     <h3>⭐ পয়েন্ট যোগ করুন</h3>
-    <input type="number" id="addPtsAmount" placeholder="পয়েন্ট পরিমাণ">
+    <p id="dlgAddPtsName">ইউজার: —</p>
+    <input type="number" id="addPtsAmount" placeholder="পয়েন্ট পরিমাণ (ঋণাত্মকও দেওয়া যাবে)">
     <div class="dbtns">
       <button class="dbtn-ok" onclick="confirmAddPoints()">✅ যোগ করুন</button>
-      <button class="dbtn-no" onclick="closeAddPts()">বাতিল</button>
+      <button class="dbtn-no" onclick="closeDlg('dlgAddPts')">বাতিল</button>
+    </div>
+  </div>
+</div>
+
+<!-- Set Balance -->
+<div class="dialog" id="dlgSetBal">
+  <div class="dbox">
+    <h3>💰 ব্যালেন্স সেট করুন</h3>
+    <p id="dlgSetBalName">ইউজার: —</p>
+    <input type="number" id="setBalAmount" placeholder="নতুন ব্যালেন্স (৳)" step="0.01">
+    <div class="dbtns">
+      <button class="dbtn-green" onclick="confirmSetBalance()">✅ সেট করুন</button>
+      <button class="dbtn-no"    onclick="closeDlg('dlgSetBal')">বাতিল</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reset Points -->
+<div class="dialog" id="dlgResetPts">
+  <div class="dbox">
+    <h3>🔄 পয়েন্ট রিসেট</h3>
+    <p id="dlgResetName">এই ইউজারের সব পয়েন্ট শূন্য হয়ে যাবে!</p>
+    <div class="dbtns">
+      <button class="dbtn-red" onclick="confirmResetPoints()">⚠️ রিসেট করুন</button>
+      <button class="dbtn-no"  onclick="closeDlg('dlgResetPts')">বাতিল</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete User -->
+<div class="dialog" id="dlgDelete">
+  <div class="dbox">
+    <h3>🗑️ ইউজার ডিলিট</h3>
+    <p id="dlgDeleteName">এই ইউজারের সব ডেটা মুছে যাবে! এটি পূর্বাবস্থায় ফেরানো যাবে না।</p>
+    <div class="dbtns">
+      <button class="dbtn-red" onclick="confirmDeleteUser()">🗑️ ডিলিট করুন</button>
+      <button class="dbtn-no"  onclick="closeDlg('dlgDelete')">বাতিল</button>
     </div>
   </div>
 </div>
@@ -290,7 +346,7 @@ import { auth, db } from './firebase-config.js';
 import { onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import {
-  doc, getDoc, setDoc, updateDoc,
+  doc, getDoc, setDoc, updateDoc, deleteDoc,
   collection, getDocs, query, orderBy,
   serverTimestamp, increment
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
@@ -298,7 +354,9 @@ import {
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.expand(); tg.BackButton.show(); tg.BackButton.onClick(()=>{ location.href='home.html'; }); }
 
-let currentUser=null, allUsers=[], allWR=[], selectedUserId=null;
+let currentUser=null, allUsers=[], allWR=[];
+let selectedUid=null, selectedName='';
+let currentSort='new', currentSearch='';
 
 /* ── Auth ── */
 onAuthStateChanged(auth, async(user)=>{
@@ -308,24 +366,24 @@ onAuthStateChanged(auth, async(user)=>{
   currentUser = user;
   loadSettings();
   loadStats();
+  loadUsers();
 });
 
 /* ── Tab Switch ── */
 window.switchTab = (tab)=>{
-  ['rate','links','withdraw','users','notice','admin'].forEach(t=>{
+  ['users','withdraw','rate','links','notice','admin'].forEach(t=>{
     document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
   });
   document.querySelectorAll('.nav-tab').forEach((el,i)=>{
-    el.classList.toggle('active', ['rate','links','withdraw','users','notice','admin'][i]===tab);
+    el.classList.toggle('active', ['users','withdraw','rate','links','notice','admin'][i]===tab);
   });
   if (tab==='withdraw') loadWithdrawRequests('all');
-  if (tab==='users')    loadUsers();
   if (tab==='links')    loadLinks();
 };
 
 /* ── Stats ── */
 async function loadStats(){
-  const [uSnap, wSnap] = await Promise.all([
+  const [uSnap,wSnap] = await Promise.all([
     getDocs(collection(db,'users')),
     getDocs(collection(db,'withdrawRequests'))
   ]);
@@ -333,7 +391,6 @@ async function loadStats(){
   uSnap.forEach(d=>{ totalPts += d.data().points||0; });
   document.getElementById('totalUsers').textContent  = uSnap.size;
   document.getElementById('totalPoints').textContent = totalPts;
-
   let pending=0, approved=0;
   wSnap.forEach(d=>{
     if (d.data().status==='pending')  pending++;
@@ -344,95 +401,190 @@ async function loadStats(){
   document.getElementById('pendingBadge').textContent  = pending;
 }
 
-/* ── Load Settings ── */
-async function loadSettings(){
-  const snap = await getDoc(doc(db,'settings','adConfig'));
-  if (snap.exists()){
-    const d = snap.data();
-    document.getElementById('pointsToTaka').value = d.pointsToTaka || 0.01;
-    document.getElementById('minWithdraw').value  = d.minWithdraw  || 100;
-    document.getElementById('minTaka').value      = d.minTaka      || 10;
-    updateRatePreview();
+/* ════════════════════════════════════════
+   USER MANAGEMENT
+════════════════════════════════════════ */
+async function loadUsers(){
+  document.getElementById('usersList').innerHTML='<div class="loading-txt">⏳ লোড হচ্ছে...</div>';
+  const snap = await getDocs(collection(db,'users'));
+  allUsers=[];
+  snap.forEach(d=> allUsers.push({id:d.id,...d.data()}));
+  applyUsersFilter();
+}
+
+/* Search + Sort + Render */
+function applyUsersFilter(){
+  let list = [...allUsers];
+
+  /* Search */
+  if (currentSearch.trim()){
+    const q = currentSearch.toLowerCase();
+    list = list.filter(u=>
+      (u.name||'').toLowerCase().includes(q)||
+      (u.email||'').toLowerCase().includes(q)||
+      (u.id||'').toLowerCase().includes(q)
+    );
   }
-  const nSnap = await getDoc(doc(db,'settings','notice'));
-  if (nSnap.exists()){
-    document.getElementById('marqueeText').value = nSnap.data().text || '';
-  }
+
+  /* Sort */
+  if (currentSort==='new')    list.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  if (currentSort==='pts')    list.sort((a,b)=>(b.points||0)-(a.points||0));
+  if (currentSort==='bal')    list.sort((a,b)=>(b.balance||0)-(a.balance||0));
+  if (currentSort==='banned') list = list.filter(u=>u.banned);
+  if (currentSort==='admin')  list = list.filter(u=>u.isAdmin);
+
+  renderUsers(list);
 }
 
-/* ── Rate ── */
-window.updateRatePreview = function(){
-  const r = parseFloat(document.getElementById('pointsToTaka')?.value)||0.01;
-  document.getElementById('rateP1').textContent = '৳'+(100*r).toFixed(2);
-  document.getElementById('rateP2').textContent = '৳'+(500*r).toFixed(2);
-  document.getElementById('rateP3').textContent = '৳'+(1000*r).toFixed(2);
-};
+/* Avatar colors */
+const AV_COLS=['#e8380d','#7c3aed','#0891b2','#047857','#b45309','#be123c','#1d4ed8'];
+function avCol(name){ let h=0; for(let c of (name||'?')) h=(h<<5)-h+c.charCodeAt(0); return AV_COLS[Math.abs(h)%AV_COLS.length]; }
+function initials(name){ if(!name) return '?'; const p=name.trim().split(' '); return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():name.slice(0,2).toUpperCase(); }
 
-window.saveRateSettings = async()=>{
-  const rate = parseFloat(document.getElementById('pointsToTaka').value)||0.01;
-  const min  = parseInt(document.getElementById('minWithdraw').value)||100;
-  const minT = parseFloat(document.getElementById('minTaka').value)||10;
-  await setDoc(doc(db,'settings','adConfig'),{
-    pointsToTaka: rate, minWithdraw: min, minTaka: minT
-  },{merge:true});
-  updateRatePreview();
-  showToast('✅ রেট সেভ হয়েছে!');
-};
+function renderUsers(list){
+  document.getElementById('userCount').textContent = `মোট ${list.length} জন ইউজার`;
+  const c = document.getElementById('usersList');
+  if (!list.length){ c.innerHTML='<div class="empty">কোনো ইউজার পাওয়া যায়নি</div>'; return; }
 
-/* ════════════════════════════════════
-   LINKS — YouTube
-════════════════════════════════════ */
-async function loadLinks(){
-  const snap = await getDoc(doc(db,'settings','links'));
-  if (snap.exists() && snap.data().howtworkYt){
-    const url = snap.data().howtworkYt;
-    document.getElementById('howtworkYtLink').value = url;
-    showSavedPill(url);
-    previewYtLink();
-  }
+  c.innerHTML = list.map(u=>`
+    <div class="user-card ${u.banned?'banned':''} ${u.isAdmin?'admin-user':''}">
+
+      <!-- Header -->
+      <div class="uc-header">
+        <div class="uc-avatar" style="background:${avCol(u.name)}">${initials(u.name)}</div>
+        <div class="uc-info">
+          <div class="uc-name">
+            ${u.name||'অজানা'}
+            ${u.isAdmin ? '<span class="uc-tag tag-admin">👑 Admin</span>' : ''}
+            ${u.banned  ? '<span class="uc-tag tag-banned">🚫 Banned</span>' : ''}
+          </div>
+          <div class="uc-email">${u.email||'—'}</div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="uc-stats">
+        <div class="uc-stat">
+          <div class="uc-stat-val c-pts">${u.points||0}</div>
+          <div class="uc-stat-lbl">⭐ পয়েন্ট</div>
+        </div>
+        <div class="uc-stat">
+          <div class="uc-stat-val c-bal">৳${(u.balance||0).toFixed(2)}</div>
+          <div class="uc-stat-lbl">💰 ব্যালেন্স</div>
+        </div>
+        <div class="uc-stat">
+          <div class="uc-stat-val c-spin">${u.spinCount||0}</div>
+          <div class="uc-stat-lbl">🎡 স্পিন</div>
+        </div>
+      </div>
+
+      <!-- Device -->
+      <div class="uc-device">📱 UID: ${u.id?.slice(0,20)}... &nbsp;|&nbsp; Device: ${u.deviceId?.slice(0,12)||'N/A'}...</div>
+
+      <!-- Actions -->
+      <div class="uc-actions">
+        <button class="ua-btn ua-green"  onclick="openAddPts('${u.id}','${(u.name||'').replace(/'/g,"\\'")}')">⭐ পয়েন্ট যোগ</button>
+        <button class="ua-btn ua-blue"   onclick="openSetBal('${u.id}','${(u.name||'').replace(/'/g,"\\'")}',${u.balance||0})">💰 ব্যালেন্স সেট</button>
+        <button class="ua-btn ua-gold"   onclick="toggleAdmin('${u.id}',${!!u.isAdmin})">${u.isAdmin?'👤 অ্যাডমিন সরান':'👑 অ্যাডমিন করুন'}</button>
+        <button class="ua-btn ua-purple" onclick="openResetPts('${u.id}','${(u.name||'').replace(/'/g,"\\'")}')">🔄 পয়েন্ট রিসেট</button>
+        <button class="ua-btn ua-red"    onclick="toggleBan('${u.id}',${!!u.banned})">${u.banned?'✅ আনব্যান':'🚫 ব্যান'}</button>
+        <button class="ua-btn ua-del"    onclick="openDelete('${u.id}','${(u.name||'').replace(/'/g,"\\'")}')">🗑️ ডিলিট</button>
+      </div>
+    </div>`).join('');
 }
 
-function isValidYt(url){
-  return /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\/.+/.test(url.trim());
-}
-
-window.previewYtLink = function(){
-  const url = document.getElementById('howtworkYtLink').value.trim();
-  const box  = document.getElementById('ytPreviewBox');
-  document.getElementById('ytPreviewUrl').textContent = url;
-  box.classList.toggle('show', !!(url && isValidYt(url)));
+window.searchUsers = ()=>{
+  currentSearch = document.getElementById('searchUser').value;
+  applyUsersFilter();
 };
 
-window.saveHowtworkLink = async()=>{
-  const url = document.getElementById('howtworkYtLink').value.trim();
-  if (!url)           { showToast('লিংক দিন!',true); return; }
-  if (!isValidYt(url)){ showToast('সঠিক YouTube লিংক দিন!',true); return; }
-  await setDoc(doc(db,'settings','links'),{ howtworkYt:url, updatedAt:serverTimestamp() },{merge:true});
-  showSavedPill(url);
-  showToast('✅ লিংক সেভ হয়েছে!');
+window.sortUsers = (type)=>{
+  currentSort = type;
+  document.querySelectorAll('.sort-btn').forEach(b=> b.classList.remove('active'));
+  document.getElementById('sort-'+type)?.classList.add('active');
+  applyUsersFilter();
 };
 
-window.clearYtLink = async()=>{
-  if (!confirm('লিংক মুছে ফেলবেন?')) return;
-  await setDoc(doc(db,'settings','links'),{howtworkYt:''},{ merge:true });
-  document.getElementById('howtworkYtLink').value='';
-  document.getElementById('ytPreviewBox').classList.remove('show');
-  document.getElementById('savedPill').classList.remove('show');
-  showToast('🗑️ লিংক মুছে ফেলা হয়েছে');
+/* ── Actions ── */
+window.toggleAdmin = async(uid,isAdmin)=>{
+  await updateDoc(doc(db,'users',uid),{isAdmin:!isAdmin});
+  showToast(isAdmin?'👤 অ্যাডমিন সরানো হয়েছে':'👑 অ্যাডমিন করা হয়েছে');
+  await loadUsers(); loadStats();
 };
 
-function showSavedPill(url){
-  document.getElementById('savedPillText').textContent = url;
-  document.getElementById('savedPill').classList.add('show');
-}
+window.toggleBan = async(uid,isBanned)=>{
+  await updateDoc(doc(db,'users',uid),{banned:!isBanned, deviceId:isBanned?null:''});
+  showToast(isBanned?'✅ আনব্যান হয়েছে':'🚫 ব্যান করা হয়েছে');
+  await loadUsers();
+};
 
-/* ════════════════════════════════════
+/* Add Points */
+window.openAddPts = (uid,name)=>{
+  selectedUid=uid; selectedName=name;
+  document.getElementById('dlgAddPtsName').textContent='ইউজার: '+name;
+  document.getElementById('addPtsAmount').value='';
+  showDlg('dlgAddPts');
+};
+window.confirmAddPoints = async()=>{
+  const pts = parseInt(document.getElementById('addPtsAmount').value)||0;
+  if (!pts||!selectedUid){ showToast('পয়েন্ট দিন!',true); return; }
+  await updateDoc(doc(db,'users',selectedUid),{points:increment(pts)});
+  showToast(`✅ ${pts>0?'+':''}${pts} পয়েন্ট — ${selectedName}`);
+  closeDlg('dlgAddPts'); await loadUsers(); loadStats();
+};
+
+/* Set Balance */
+window.openSetBal = (uid,name,current)=>{
+  selectedUid=uid; selectedName=name;
+  document.getElementById('dlgSetBalName').textContent='ইউজার: '+name+' | বর্তমান: ৳'+parseFloat(current).toFixed(2);
+  document.getElementById('setBalAmount').value=parseFloat(current).toFixed(2);
+  showDlg('dlgSetBal');
+};
+window.confirmSetBalance = async()=>{
+  const bal = parseFloat(document.getElementById('setBalAmount').value);
+  if (isNaN(bal)||!selectedUid){ showToast('ব্যালেন্স দিন!',true); return; }
+  await updateDoc(doc(db,'users',selectedUid),{balance:bal});
+  showToast(`✅ ব্যালেন্স ৳${bal.toFixed(2)} সেট হয়েছে`);
+  closeDlg('dlgSetBal'); await loadUsers(); loadStats();
+};
+
+/* Reset Points */
+window.openResetPts = (uid,name)=>{
+  selectedUid=uid; selectedName=name;
+  document.getElementById('dlgResetName').textContent=name+' — সব পয়েন্ট শূন্য হয়ে যাবে!';
+  showDlg('dlgResetPts');
+};
+window.confirmResetPoints = async()=>{
+  await updateDoc(doc(db,'users',selectedUid),{points:0});
+  showToast('🔄 পয়েন্ট রিসেট হয়েছে — '+selectedName);
+  closeDlg('dlgResetPts'); await loadUsers(); loadStats();
+};
+
+/* Delete User */
+window.openDelete = (uid,name)=>{
+  selectedUid=uid; selectedName=name;
+  document.getElementById('dlgDeleteName').textContent='⚠️ "'+name+'" — এই ইউজার চিরতরে মুছে যাবে!';
+  showDlg('dlgDelete');
+};
+window.confirmDeleteUser = async()=>{
+  await deleteDoc(doc(db,'users',selectedUid));
+  showToast('🗑️ ইউজার ডিলিট হয়েছে');
+  closeDlg('dlgDelete');
+  allUsers = allUsers.filter(u=>u.id!==selectedUid);
+  applyUsersFilter(); loadStats();
+};
+
+/* Dialog helpers */
+function showDlg(id){ document.getElementById(id).classList.add('show'); }
+window.closeDlg = (id)=>{ document.getElementById(id).classList.remove('show'); selectedUid=null; };
+
+/* ════════════════════════════════════════
    WITHDRAW
-════════════════════════════════════ */
+════════════════════════════════════════ */
 window.filterWR = (f)=>{
-  ['All','Pending','Approved'].forEach(x=>{
-    document.getElementById('f'+x).classList.toggle('active', x.toLowerCase()===f);
-  });
+  ['All','Pending','Approved'].forEach(x=>
+    document.getElementById('f'+x)?.classList.toggle('active', x.toLowerCase()===f)
+  );
   loadWithdrawRequests(f);
 };
 
@@ -441,7 +593,7 @@ async function loadWithdrawRequests(filter='all'){
   c.innerHTML='<div class="loading-txt">লোড হচ্ছে...</div>';
   const snap = await getDocs(query(collection(db,'withdrawRequests'),orderBy('createdAt','desc')));
   allWR=[];
-  snap.forEach(d=>allWR.push({id:d.id,...d.data()}));
+  snap.forEach(d=> allWR.push({id:d.id,...d.data()}));
   const list = filter==='all' ? allWR : allWR.filter(w=>w.status===filter);
   if (!list.length){ c.innerHTML='<div class="empty">কোনো রিকোয়েস্ট নেই</div>'; return; }
   c.innerHTML = list.map(w=>`
@@ -463,106 +615,99 @@ async function loadWithdrawRequests(filter='all'){
 
 window.updateWR = async(id,status)=>{
   await updateDoc(doc(db,'withdrawRequests',id),{status,updatedAt:serverTimestamp()});
-  showToast(status==='approved'?'✅ অনুমোদন করা হয়েছে':'❌ বাতিল করা হয়েছে');
+  showToast(status==='approved'?'✅ অনুমোদন হয়েছে':'❌ বাতিল হয়েছে');
   loadWithdrawRequests('all'); loadStats();
 };
 
-/* ════════════════════════════════════
-   USERS
-════════════════════════════════════ */
-async function loadUsers(){
-  document.getElementById('usersList').innerHTML='<div class="loading-txt">লোড হচ্ছে...</div>';
-  const snap = await getDocs(collection(db,'users'));
-  allUsers=[];
-  snap.forEach(d=>allUsers.push({id:d.id,...d.data()}));
-  renderUsers(allUsers);
+/* ════════════════════════════════════════
+   RATE
+════════════════════════════════════════ */
+async function loadSettings(){
+  const snap = await getDoc(doc(db,'settings','adConfig'));
+  if (snap.exists()){
+    const d=snap.data();
+    document.getElementById('pointsToTaka').value = d.pointsToTaka||0.01;
+    document.getElementById('minWithdraw').value  = d.minWithdraw ||100;
+    document.getElementById('minTaka').value      = d.minTaka     ||10;
+    updateRatePreview();
+  }
+  const n = await getDoc(doc(db,'settings','notice'));
+  if (n.exists()) document.getElementById('marqueeText').value = n.data().text||'';
 }
 
-function renderUsers(list){
-  const c = document.getElementById('usersList');
-  if (!list.length){ c.innerHTML='<div class="empty">কোনো ইউজার নেই</div>'; return; }
-  c.innerHTML = list.map(u=>`
-    <div class="user-item">
-      <div class="user-top">
-        <span class="user-name">${u.name||'অজানা'} ${u.isAdmin?'👑':''} ${u.banned?'🚫':''}</span>
-        <span class="user-pts">${u.points||0}</span>
-      </div>
-      <div class="user-meta">
-        📧 ${u.email||'—'}<br>
-        💰 ব্যালেন্স: ৳${(u.balance||0).toFixed(2)}<br>
-        📱 ${u.deviceId?.slice(0,16)||'N/A'}...
-      </div>
-      <div class="user-btns">
-        <button class="ubtn ubtn-green" onclick="openAddPts('${u.id}')">+পয়েন্ট</button>
-        <button class="ubtn ubtn-gold"  onclick="toggleAdmin('${u.id}',${!!u.isAdmin})">${u.isAdmin?'অ্যাডমিন সরান':'অ্যাডমিন'}</button>
-        <button class="ubtn ubtn-red"   onclick="toggleBan('${u.id}',${!!u.banned})">${u.banned?'আনব্যান':'ব্যান'}</button>
-      </div>
-    </div>`).join('');
-}
-
-window.searchUsers = ()=>{
-  const q = document.getElementById('searchUser').value.toLowerCase();
-  renderUsers(allUsers.filter(u=>
-    (u.name||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q)
-  ));
+window.updateRatePreview = ()=>{
+  const r = parseFloat(document.getElementById('pointsToTaka')?.value)||0.01;
+  document.getElementById('rateP1').textContent = '৳'+(100*r).toFixed(2);
+  document.getElementById('rateP2').textContent = '৳'+(500*r).toFixed(2);
+  document.getElementById('rateP3').textContent = '৳'+(1000*r).toFixed(2);
 };
 
-window.toggleAdmin = async(uid,isAdmin)=>{
-  await updateDoc(doc(db,'users',uid),{isAdmin:!isAdmin});
-  showToast(isAdmin?'👤 অ্যাডমিন সরানো হয়েছে':'👑 অ্যাডমিন করা হয়েছে');
-  loadUsers();
-};
-
-window.toggleBan = async(uid,isBanned)=>{
-  await updateDoc(doc(db,'users',uid),{banned:!isBanned,deviceId:isBanned?null:''});
-  showToast(isBanned?'✅ আনব্যান হয়েছে':'🚫 ব্যান করা হয়েছে');
-  loadUsers();
-};
-
-window.openAddPts = (uid)=>{
-  selectedUserId=uid;
-  document.getElementById('addPtsAmount').value='';
-  document.getElementById('addPtsDialog').classList.add('show');
-};
-window.closeAddPts = ()=>{
-  document.getElementById('addPtsDialog').classList.remove('show');
-  selectedUserId=null;
-};
-window.confirmAddPoints = async()=>{
-  const pts = parseInt(document.getElementById('addPtsAmount').value)||0;
-  if (!pts||!selectedUserId){ showToast('পয়েন্ট দিন!',true); return; }
-  await updateDoc(doc(db,'users',selectedUserId),{points:increment(pts)});
-  showToast(`✅ ${pts} পয়েন্ট যোগ হয়েছে!`);
-  closeAddPts(); loadUsers(); loadStats();
-};
-
-/* ════════════════════════════════════
-   NOTICE
-════════════════════════════════════ */
-window.saveNotice = async()=>{
-  await setDoc(doc(db,'settings','notice'),{
-    text: document.getElementById('marqueeText').value,
-    updatedAt: serverTimestamp()
+window.saveRateSettings = async()=>{
+  await setDoc(doc(db,'settings','adConfig'),{
+    pointsToTaka: parseFloat(document.getElementById('pointsToTaka').value)||0.01,
+    minWithdraw:  parseInt(document.getElementById('minWithdraw').value)||100,
+    minTaka:      parseFloat(document.getElementById('minTaka').value)||10,
   },{merge:true});
+  updateRatePreview();
+  showToast('✅ রেট সেভ হয়েছে!');
+};
+
+/* ════════════════════════════════════════
+   LINKS
+════════════════════════════════════════ */
+async function loadLinks(){
+  const snap = await getDoc(doc(db,'settings','links'));
+  if (snap.exists()&&snap.data().howtworkYt){
+    const url=snap.data().howtworkYt;
+    document.getElementById('howtworkYtLink').value=url;
+    showSavedPill(url); previewYtLink();
+  }
+}
+function isValidYt(url){ return /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\/.+/.test(url.trim()); }
+window.previewYtLink = ()=>{
+  const url=document.getElementById('howtworkYtLink').value.trim();
+  document.getElementById('ytPreviewUrl').textContent=url;
+  document.getElementById('ytPreviewBox').classList.toggle('show',!!(url&&isValidYt(url)));
+};
+window.saveHowtworkLink = async()=>{
+  const url=document.getElementById('howtworkYtLink').value.trim();
+  if (!url){ showToast('লিংক দিন!',true); return; }
+  if (!isValidYt(url)){ showToast('সঠিক YouTube লিংক দিন!',true); return; }
+  await setDoc(doc(db,'settings','links'),{howtworkYt:url,updatedAt:serverTimestamp()},{merge:true});
+  showSavedPill(url); showToast('✅ লিংক সেভ হয়েছে!');
+};
+window.clearYtLink = async()=>{
+  if (!confirm('লিংক মুছে ফেলবেন?')) return;
+  await setDoc(doc(db,'settings','links'),{howtworkYt:''},{merge:true});
+  document.getElementById('howtworkYtLink').value='';
+  document.getElementById('ytPreviewBox').classList.remove('show');
+  document.getElementById('savedPill').classList.remove('show');
+  showToast('🗑️ লিংক মুছে ফেলা হয়েছে');
+};
+function showSavedPill(url){
+  document.getElementById('savedPillText').textContent=url;
+  document.getElementById('savedPill').classList.add('show');
+}
+
+/* ════════════════════════════════════════
+   NOTICE + ADMIN
+════════════════════════════════════════ */
+window.saveNotice = async()=>{
+  await setDoc(doc(db,'settings','notice'),{text:document.getElementById('marqueeText').value,updatedAt:serverTimestamp()},{merge:true});
   showToast('✅ নোটিশ সেভ হয়েছে!');
 };
-
-/* ════════════════════════════════════
-   ADMIN MANAGE
-════════════════════════════════════ */
 window.makeAdmin = async()=>{
-  const uid = document.getElementById('adminUid').value.trim();
+  const uid=document.getElementById('adminUid').value.trim();
   if (!uid){ showToast('UID দিন!',true); return; }
   await updateDoc(doc(db,'users',uid),{isAdmin:true});
   showToast('✅ অ্যাডমিন করা হয়েছে!');
 };
 window.removeAdmin = async()=>{
-  const uid = document.getElementById('adminUid').value.trim();
+  const uid=document.getElementById('adminUid').value.trim();
   if (!uid){ showToast('UID দিন!',true); return; }
   await updateDoc(doc(db,'users',uid),{isAdmin:false});
   showToast('✅ অ্যাডমিন সরানো হয়েছে!');
 };
-
 window.doLogout = async()=>{ await signOut(auth); location.href='index.html'; };
 
 function showToast(msg,isError=false){
