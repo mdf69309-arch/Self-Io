@@ -144,7 +144,7 @@
     <div class="section">
       <div class="section-title">Work System</div>
       <div class="grid-3">
-        <div class="menu-card" onclick="openWithAd('howtwork.html')">
+        <div class="menu-card" onclick="openHowtwork()">
           <div class="card-img bg-red">▶️</div>
           <div class="card-label">How to Work</div>
         </div>
@@ -434,6 +434,27 @@
     /* ── Admin ── */
     window.goAdmin = () => {
       if (userData?.isAdmin) window.location.href = 'admin.html';
+    };
+
+    /* ── How to Work: Firestore থেকে YouTube লিংক পড়ে ওপেন করে ── */
+    window.openHowtwork = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'settings', 'links'));
+        const url  = snap.exists() ? snap.data().howtworkYt : '';
+        if (url && url.trim()) {
+          /* Telegram WebApp এ openLink ব্যবহার করো */
+          const tgApp = window.Telegram?.WebApp;
+          if (tgApp) {
+            tgApp.openLink(url.trim());
+          } else {
+            window.open(url.trim(), '_blank');
+          }
+        } else {
+          window.showToast('⚠️ ভিডিও লিংক এখনো সেট হয়নি!', true);
+        }
+      } catch (e) {
+        window.showToast('লোড ব্যর্থ হয়েছে!', true);
+      }
     };
 
     function updateUI() {
