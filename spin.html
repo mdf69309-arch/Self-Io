@@ -138,10 +138,17 @@
 
   <!-- Spin Button -->
   <div class="spin-btn-wrap">
-    <button class="btn-spin" id="spinBtn" onclick="startSpin()" disabled>
+    <button class="btn-spin" id="spinBtn" onclick="startSpin()" style="display:none">
       🎯 স্পিন করুন
     </button>
-    <div class="spin-warning">⚠️ পয়েন্ট পেতে বিজ্ঞাপন দেখা বাধ্যতামূলক</div>
+    <!-- Ad লোড না হলে এই বার্তা দেখাবে -->
+    <div id="adStatusMsg" style="display:none;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:16px;text-align:center;margin:0 16px;">
+      <div style="font-size:28px;margin-bottom:8px;">⚠️</div>
+      <div style="font-size:15px;font-weight:700;color:#fca5a5;margin-bottom:6px;">বিজ্ঞাপন লোড হয়নি!</div>
+      <div style="font-size:13px;color:#94a3b8;margin-bottom:14px;">স্পিন করতে বিজ্ঞাপন লোড হওয়া বাধ্যতামূলক।</div>
+      <button onclick="location.reload()" style="background:linear-gradient(135deg,#e8380d,#ff6b35);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;padding:10px 24px;cursor:pointer;font-family:inherit;">🔄 পুনরায় লোড করুন</button>
+    </div>
+    <div class="spin-warning" id="spinWarning" style="display:none">⚠️ পয়েন্ট পেতে বিজ্ঞাপন দেখা বাধ্যতামূলক</div>
   </div>
 
   <!-- Info Cards -->
@@ -254,24 +261,51 @@
     }
     drawWheel(currentAngle);
 
-    // ── পেজ লোড হলে আগে Ad লোড করবো ──
+    let adLoaded = false; // Ad লোড হয়েছে কিনা track করো
+
+    // ── পেজ লোড হলে Ad লোড করবো — না হলে বাটন লুকানো থাকবে ──
     async function loadInitialAd() {
       document.getElementById('loadingOverlay').classList.remove('hide');
+      document.getElementById('spinBtn').style.display = 'none'; // বাটন লুকাও
       document.getElementById('spinBtn').disabled = true;
 
-      if(window.show_10729825) {
-        // Ad SDK রেডি হওয়ার জন্য ২ সেকেন্ড অপেক্ষা
-        await new Promise(r => setTimeout(r, 2000));
+      // SDK লোড হওয়ার জন্য অপেক্ষা করো (max 8 seconds)
+      let tries = 0;
+      const maxTries = 16;
+      while(tries < maxTries) {
+        await new Promise(r => setTimeout(r, 500));
+        tries++;
+        if(window.show_10729825) {
+          adLoaded = true;
+          break;
+        }
       }
+
       document.getElementById('loadingOverlay').classList.add('hide');
-      document.getElementById('spinBtn').disabled = false;
+
+      if(adLoaded) {
+        // Ad লোড হয়েছে — বাটন দেখাও
+        document.getElementById('spinBtn').style.display = 'flex';
+        document.getElementById('spinBtn').disabled = false;
+        document.getElementById('adStatusMsg').style.display = 'none';
+        document.getElementById('spinWarning').style.display = 'block';
+      } else {
+        // Ad লোড হয়নি — বাটন লুকানো, বার্তা দেখাও
+        document.getElementById('spinBtn').style.display = 'none';
+        document.getElementById('adStatusMsg').style.display = 'block';
+      }
     }
 
-    // ── স্পিন শুরু ──
+    // ── স্পিন শুরু — শুধু Ad লোড থাকলেই ──
     window.startSpin = () => {
       if(spinIsRunning) return;
+      if(!adLoaded) {
+        showToast('⚠️ বিজ্ঞাপন লোড হয়নি! পেজ রিলোড করুন।', true);
+        return;
+      }
       spinIsRunning = true;
       document.getElementById('spinBtn').disabled = true;
+      document.getElementById('spinBtn').style.display = 'none'; // স্পিনের সময় বাটন লুকাও
 
       const totalRot = (6+Math.random()*6)*2*Math.PI;
       const dur = 4500;
@@ -286,67 +320,63 @@
         if(p < 1) { requestAnimationFrame(animate); return; }
 
         // ── সঠিক সেগমেন্ট calculation ──
-        // Pointer উপরে (top = -PI/2)
-        // চাকা যে কোণে আছে তার থেকে বের করবো pointer কোন segment এ পয়েন্ট করছে
         const arc = (2*Math.PI) / segments.length;
-        // currentAngle normalize করো 0 to 2PI এর মধ্যে
         let normalizedAngle = currentAngle % (2*Math.PI);
         if(normalizedAngle < 0) normalizedAngle += 2*Math.PI;
-        // Pointer top এ আছে, তাই pointer angle = 3PI/2 (বা -PI/2)
-        // Segment index = pointer angle থেকে wheel angle বাদ দিয়ে
-        const pointerAngle = (3*Math.PI/2); // top position
+        const pointerAngle = (3*Math.PI/2);
         let relativeAngle = (pointerAngle - normalizedAngle + 2*Math.PI) % (2*Math.PI);
         const idx = Math.floor(relativeAngle / arc) % segments.length;
         spinResult = parseInt(segments[idx]) || 0;
 
-        console.log('Stopped at segment:', segments[idx], 'idx:', idx, 'pts:', spinResult);
-
-        // স্পিন শেষে Ad দেখাও
+        // স্পিন শেষে আবার Ad দেখাও — না দেখলে পয়েন্ট নেই
         showRewardAd();
       }
       requestAnimationFrame(animate);
     };
 
-    // ── Reward Ad দেখাও ──
+    // ── Reward Ad — অবশ্যই দেখতে হবে ──
     function showRewardAd() {
       if(window.show_10729825) {
         window.show_10729825()
-          .then(() => { givePoints(); })
-          .catch(() => { showManualAd(); });
+          .then(() => {
+            // Ad সম্পূর্ণ দেখা হয়েছে — পয়েন্ট দাও
+            givePoints();
+          })
+          .catch(() => {
+            // Ad বন্ধ করা হয়েছে বা ব্যর্থ — পয়েন্ট নেই, স্পিন রিসেট
+            spinIsRunning = false;
+            spinResult = 0;
+            document.getElementById('spinBtn').style.display = 'flex';
+            document.getElementById('spinBtn').disabled = false;
+            showToast('⚠️ সম্পূর্ণ বিজ্ঞাপন না দেখলে পয়েন্ট পাবেন না!', true);
+          });
       } else {
-        showManualAd();
+        // Ad SDK নেই — পয়েন্ট নেই
+        spinIsRunning = false;
+        spinResult = 0;
+        document.getElementById('spinBtn').style.display = 'none';
+        document.getElementById('adStatusMsg').style.display = 'block';
+        showToast('⚠️ বিজ্ঞাপন লোড হয়নি! পয়েন্ট পাওয়া যাবে না।', true);
       }
-    }
-
-    function showManualAd() {
-      document.getElementById('adModal').classList.add('show');
-      document.getElementById('claimBtn').style.display = 'none';
-      let t = 5; document.getElementById('adTimer').textContent = t;
-      clearInterval(adInterval);
-      adInterval = setInterval(() => {
-        t--; document.getElementById('adTimer').textContent = t;
-        if(t<=0) {
-          clearInterval(adInterval);
-          document.getElementById('adTimer').textContent = '✅';
-          document.getElementById('claimBtn').style.display = 'block';
-        }
-      }, 1000);
     }
 
     window.givePoints = async () => {
       document.getElementById('adModal').classList.remove('show');
       if(!currentUser || spinResult <= 0) {
         spinIsRunning = false;
+        document.getElementById('spinBtn').style.display = 'flex';
         document.getElementById('spinBtn').disabled = false;
         if(spinResult === 0) showToast('😅 এবার পয়েন্ট হয়নি! আবার চেষ্টা করুন');
         return;
       }
-      const pts = spinResult * Math.max(1, Math.floor((adSettings.spinPoints||10)/10));
+      const pts = spinResult;
       await updateDoc(doc(db,'users',currentUser.uid), { points:increment(pts), spinCount:increment(1) });
       userData.points = (userData.points||0) + pts;
-      updateUI();
+      document.getElementById('headerPoints').textContent = userData.points;
       addHistory(pts);
       spinIsRunning = false;
+      // পয়েন্ট দেওয়ার পর আবার বাটন দেখাও — নতুন Ad লোড হবে
+      document.getElementById('spinBtn').style.display = 'flex';
       document.getElementById('spinBtn').disabled = false;
       showToast(`🎉 +${pts} পয়েন্ট পেলেন!`);
     };
