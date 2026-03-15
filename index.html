@@ -8,10 +8,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0a0e1a; --card:#111827;
-      --accent:#f59e0b; --accent2:#ef4444;
-      --green:#10b981; --text:#f1f5f9;
-      --muted:#64748b; --border:rgba(245,158,11,0.2);
+      --bg:#0a0e1a;--card:#111827;
+      --accent:#f59e0b;--accent2:#ef4444;
+      --green:#10b981;--text:#f1f5f9;
+      --muted:#64748b;--border:rgba(245,158,11,0.2);
     }
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
@@ -26,44 +26,39 @@
       background:
         radial-gradient(ellipse at 30% 20%,rgba(245,158,11,0.08) 0%,transparent 50%),
         radial-gradient(ellipse at 70% 80%,rgba(239,68,68,0.06) 0%,transparent 50%);
-      pointer-events:none;animation:bgPulse 8s ease-in-out infinite alternate;
+      pointer-events:none;animation:bgP 8s ease-in-out infinite alternate;
     }
-    @keyframes bgPulse{0%{opacity:.5}100%{opacity:1}}
+    @keyframes bgP{0%{opacity:.5}100%{opacity:1}}
 
-    /* ── Splash ── */
+    /* Splash */
     #splashScreen{
       position:fixed;inset:0;background:var(--bg);
-      display:flex;flex-direction:column;
-      align-items:center;justify-content:center;gap:16px;z-index:999;
+      display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:16px;z-index:999;
     }
-    .splash-icon{font-size:64px;animation:sBounce 1s ease-in-out infinite alternate;}
-    @keyframes sBounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
-    .splash-title{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--accent),#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-    .splash-sub{font-size:13px;color:var(--muted);}
-    .splash-bar-wrap{width:200px;height:5px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;}
-    .splash-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;animation:sLoad 1.5s ease forwards;}
-    @keyframes sLoad{from{width:0%}to{width:85%}}
+    .si{font-size:64px;animation:sb 1s ease-in-out infinite alternate;}
+    @keyframes sb{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+    .st{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--accent),#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .ss{font-size:13px;color:var(--muted);}
+    .sbw{width:200px;height:5px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;}
+    .sb{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;animation:sl 1.5s ease forwards;}
+    @keyframes sl{from{width:0%}to{width:85%}}
 
-    /* ── Card ── */
+    /* Main */
     #mainCard{display:none;width:100%;max-width:380px;position:relative;z-index:1;}
     .logo-wrap{text-align:center;margin-bottom:24px;}
     .logo-icon{width:68px;height:68px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 10px;box-shadow:0 0 40px rgba(245,158,11,0.3);}
     .logo-title{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--accent),#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
     .logo-sub{font-size:13px;color:var(--muted);margin-top:3px;}
 
-    .card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:26px 22px;animation:fadeUp .5s ease both;}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:26px 22px;animation:fu .5s ease both;}
+    @keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-    /* Tabs */
     .tabs{display:flex;background:rgba(255,255,255,0.05);border-radius:12px;padding:4px;margin-bottom:22px;}
     .tab{flex:1;padding:9px;text-align:center;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);transition:all .3s;}
     .tab.active{background:linear-gradient(135deg,var(--accent),#f97316);color:#000;}
+    .form-panel{display:none;} .form-panel.active{display:block;}
 
-    /* Form panels */
-    .form-panel{display:none;}
-    .form-panel.active{display:block;}
-
-    /* Fields */
     .fg{margin-bottom:14px;}
     .fg label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:700;}
     .fg input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .3s;}
@@ -72,35 +67,30 @@
     .pw-wrap input{padding-right:46px;}
     .eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;cursor:pointer;opacity:.6;}
 
-    /* Buttons */
     .btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),#f97316);border:none;border-radius:13px;color:#000;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:6px;box-shadow:0 4px 20px rgba(245,158,11,0.3);transition:transform .2s;}
     .btn-primary:active{transform:scale(0.98);}
     .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 
-    /* Reset password link */
     .reset-link{text-align:center;margin-top:12px;font-size:12px;color:var(--muted);}
     .reset-link span{color:var(--accent);cursor:pointer;font-weight:700;text-decoration:underline;}
 
-    /* Messages */
-    .err{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fca5a5;padding:9px 13px;border-radius:10px;font-size:12px;margin-top:10px;display:none;}
-    .suc{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#6ee7b7;padding:9px 13px;border-radius:10px;font-size:12px;margin-top:10px;display:none;}
+    .err{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fca5a5;padding:9px 13px;border-radius:10px;font-size:12px;margin-top:10px;display:none;line-height:1.6;}
+    .suc{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#6ee7b7;padding:9px 13px;border-radius:10px;font-size:12px;margin-top:10px;display:none;line-height:1.6;}
+    .inf{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#fcd34d;padding:9px 13px;border-radius:10px;font-size:12px;margin-top:10px;display:none;line-height:1.6;}
 
-    /* Loading spinner */
-    .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spinR .6s linear infinite;vertical-align:middle;margin-right:5px;}
-    @keyframes spinR{to{transform:rotate(360deg)}}
+    .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:sr .6s linear infinite;vertical-align:middle;margin-right:5px;}
+    @keyframes sr{to{transform:rotate(360deg)}}
 
-    /* ── Password Reset Overlay ── */
+    /* Reset Overlay */
     .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:999;align-items:center;justify-content:center;padding:20px;}
     .overlay.on{display:flex;}
     .ovbox{background:#111827;border:1px solid var(--border);border-radius:22px;padding:24px 20px;width:100%;max-width:360px;}
-    .ov-title{font-size:17px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+    .ov-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .ov-title{font-size:17px;font-weight:800;}
+    .ov-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
     .ov-sub{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6;}
-    .ov-close{float:right;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;}
-
-    /* Steps */
-    .step{display:none;}
-    .step.active{display:block;}
-    .step-label{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;}
+    .step{display:none;} .step.active{display:block;}
+    .step-lbl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;}
     .step-num{width:20px;height:20px;border-radius:50%;background:rgba(245,158,11,0.2);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;}
   </style>
 </head>
@@ -108,10 +98,10 @@
 
 <!-- Splash -->
 <div id="splashScreen">
-  <div class="splash-icon">💰</div>
-  <div class="splash-title">EarnZone</div>
-  <div class="splash-sub">লোড হচ্ছে...</div>
-  <div class="splash-bar-wrap"><div class="splash-bar"></div></div>
+  <div class="si">💰</div>
+  <div class="st">EarnZone</div>
+  <div class="ss">লোড হচ্ছে...</div>
+  <div class="sbw"><div class="sb"></div></div>
 </div>
 
 <!-- Main Card -->
@@ -141,6 +131,7 @@
       <button class="btn-primary" id="loginBtn" onclick="doLogin()">লগইন করুন</button>
       <div class="reset-link">পাসওয়ার্ড ভুলে গেছেন? <span onclick="openReset()">রিসেট করুন</span></div>
       <div class="err" id="loginErr"></div>
+      <div class="inf" id="loginInfo"></div>
     </div>
 
     <!-- Signup -->
@@ -161,92 +152,64 @@
   </div>
 </div>
 
-<!-- ══ Password Reset Overlay ══ -->
+<!-- Password Reset Overlay -->
 <div class="overlay" id="resetOverlay">
   <div class="ovbox">
-    <div class="ov-title">
-      🔑 পাসওয়ার্ড রিসেট
+    <div class="ov-head">
+      <div class="ov-title">🔑 পাসওয়ার্ড রিসেট</div>
       <button class="ov-close" onclick="closeReset()">✕</button>
     </div>
+    <div class="ov-sub" id="ovSub">নিবন্ধিত ইমেইল দিন। ডিভাইস যাচাই হলে রিসেট ইমেইল পাঠানো হবে।</div>
 
     <!-- Step 1: Email -->
-    <div class="step active" id="step1">
-      <div class="ov-sub">আপনার নিবন্ধিত ইমেইল দিন। ডিভাইস যাচাই হলে নতুন পাসওয়ার্ড সেট করতে পারবেন।</div>
-      <div class="step-label"><div class="step-num">1</div>ইমেইল যাচাই</div>
+    <div class="step active" id="rstep1">
+      <div class="step-lbl"><div class="step-num">1</div>ইমেইল যাচাই</div>
       <div class="fg"><input type="email" id="resetEmail" placeholder="আপনার ইমেইল দিন"></div>
-      <button class="btn-primary" id="resetStep1Btn" onclick="verifyResetEmail()">পরবর্তী ›</button>
-      <div class="err" id="resetErr1"></div>
+      <button class="btn-primary" id="rstep1Btn" onclick="verifyResetEmail()">পরবর্তী ›</button>
+      <div class="err" id="rErr1"></div>
     </div>
 
-    <!-- Step 2: New Password -->
-    <div class="step" id="step2">
-      <div class="ov-sub" id="resetStep2Sub">ডিভাইস যাচাই সফল! এখন নতুন পাসওয়ার্ড সেট করুন।</div>
-      <div class="step-label"><div class="step-num">2</div>নতুন পাসওয়ার্ড</div>
-      <div class="fg">
-        <label>নতুন পাসওয়ার্ড</label>
-        <div class="pw-wrap">
-          <input type="password" id="newPass1" placeholder="নতুন পাসওয়ার্ড (৬+ অক্ষর)">
-          <span class="eye" onclick="togglePw('newPass1',this)">👁️</span>
-        </div>
-      </div>
-      <div class="fg">
-        <label>পাসওয়ার্ড নিশ্চিত করুন</label>
-        <div class="pw-wrap">
-          <input type="password" id="newPass2" placeholder="আবার পাসওয়ার্ড দিন">
-          <span class="eye" onclick="togglePw('newPass2',this)">👁️</span>
-        </div>
-      </div>
-      <button class="btn-primary" id="resetStep2Btn" onclick="doPasswordReset()">✅ পাসওয়ার্ড সেট করুন</button>
-      <div class="err" id="resetErr2"></div>
-      <div class="suc" id="resetSuc2"></div>
+    <!-- Step 2: Confirm -->
+    <div class="step" id="rstep2">
+      <div class="step-lbl"><div class="step-num">2</div>রিসেট ইমেইল</div>
+      <div class="suc" id="rSuc2" style="display:block;"></div>
     </div>
-
   </div>
 </div>
 
-<!-- Non-module helpers -->
 <script>
-window.togglePw = (id,btn)=>{
-  const el=document.getElementById(id);
-  el.type=el.type==='password'?'text':'password';
-  btn.textContent=el.type==='password'?'👁️':'🙈';
+window.togglePw=(id,btn)=>{ const e=document.getElementById(id); e.type=e.type==='password'?'text':'password'; btn.textContent=e.type==='password'?'👁️':'🙈'; };
+window.switchTab=(tab)=>{
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup')));
+  document.getElementById('loginPanel').classList.toggle('active',tab==='login');
+  document.getElementById('signupPanel').classList.toggle('active',tab==='signup');
 };
-window.switchTab = (tab)=>{
-  document.querySelectorAll('.tab').forEach((t,i)=>
-    t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup'))
-  );
-  document.getElementById('loginPanel').classList.toggle('active',  tab==='login');
-  document.getElementById('signupPanel').classList.toggle('active', tab==='signup');
-};
-window.openReset = ()=>{ document.getElementById('resetOverlay').classList.add('on'); };
-window.closeReset = ()=>{
+window.openReset=()=>{ document.getElementById('resetOverlay').classList.add('on'); };
+window.closeReset=()=>{
   document.getElementById('resetOverlay').classList.remove('on');
-  document.getElementById('step1').classList.add('active');
-  document.getElementById('step2').classList.remove('active');
+  document.getElementById('rstep1').classList.add('active');
+  document.getElementById('rstep2').classList.remove('active');
   document.getElementById('resetEmail').value='';
-  document.getElementById('newPass1').value='';
-  document.getElementById('newPass2').value='';
-  hideMsg('resetErr1'); hideMsg('resetErr2'); hideMsg('resetSuc2');
+  ['rErr1'].forEach(id=>{ const e=document.getElementById(id); if(e) e.style.display='none'; });
 };
-function showMsg(id,msg){ const e=document.getElementById(id); e.innerHTML=msg; e.style.display='block'; }
-function hideMsg(id){ document.getElementById(id).style.display='none'; }
+function showMsg(id,msg,type='err'){
+  const e=document.getElementById(id);
+  e.innerHTML=msg; e.className=type; e.style.display='block';
+}
+function hideMsg(id){ const e=document.getElementById(id); if(e) e.style.display='none'; }
 </script>
 
 <script type="module">
 import { auth, db } from './firebase-config.js';
 import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  updatePassword,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
+  onAuthStateChanged, signInWithEmailAndPassword,
+  createUserWithEmailAndPassword, signOut,
   sendPasswordResetEmail
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import {
-  doc, setDoc, getDoc, updateDoc,
-  query, collection, where, getDocs, serverTimestamp
+  doc, setDoc, getDoc, updateDoc, addDoc,
+  query, collection, where, getDocs,
+  serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const tg = window.Telegram?.WebApp;
@@ -266,60 +229,121 @@ function getDeviceId(){
 }
 const DEVICE_ID=getDeviceId();
 
-/* ── Auth check → redirect ── */
+/* ── Splash → auth check ── */
 let _checked=false;
-onAuthStateChanged(auth, async(user)=>{
-  if (_checked) return;
-  _checked=true;
-  if (user){
+onAuthStateChanged(auth,async(user)=>{
+  if(_checked) return; _checked=true;
+  if(user){
     try{
       const snap=await getDoc(doc(db,'users',user.uid));
-      if(!snap.exists()){ await signOut(auth); showLoginForm(); return; }
-      const data=snap.data();
-      if(data.deviceId&&data.deviceId!==DEVICE_ID){ await signOut(auth); localStorage.removeItem('_did'); showErrLogin('🚫 অন্য ডিভাইস থেকে লগইন করা আছে!'); showLoginForm(); return; }
+      if(!snap.exists()){ await signOut(auth); showForm(); return; }
+      const d=snap.data();
+      if(d.deviceId&&d.deviceId!==DEVICE_ID){ await signOut(auth); showForm(); return; }
       window.location.replace('home.html');
-    } catch{ showLoginForm(); }
-  } else { showLoginForm(); }
+    }catch{ showForm(); }
+  } else { showForm(); }
 });
-
-function showLoginForm(){
+function showForm(){
   document.getElementById('splashScreen').style.display='none';
   document.getElementById('mainCard').style.display='block';
 }
-function showErrLogin(msg){ setTimeout(()=>{ showMsg('loginErr',msg); },100); }
 
-/* ══════════════════════════════
+/* ════════════════════════════════
    LOGIN
-══════════════════════════════ */
+════════════════════════════════ */
 window.doLogin=async()=>{
   const email=document.getElementById('loginEmail').value.trim();
-  const pass=document.getElementById('loginPass').value;
-  const btn=document.getElementById('loginBtn');
-  hideMsg('loginErr');
+  const pass =document.getElementById('loginPass').value;
+  const btn  =document.getElementById('loginBtn');
+  hideMsg('loginErr'); hideMsg('loginInfo');
   if(!email||!pass){ showMsg('loginErr','সব তথ্য দিন'); return; }
   btn.innerHTML='<span class="spin"></span>লগইন হচ্ছে...'; btn.disabled=true;
+
   try{
     const cred=await signInWithEmailAndPassword(auth,email,pass);
     const snap=await getDoc(doc(db,'users',cred.user.uid));
     if(!snap.exists()){ await signOut(auth); showMsg('loginErr','অ্যাকাউন্ট পাওয়া যায়নি!'); btn.innerHTML='লগইন করুন'; btn.disabled=false; return; }
     const data=snap.data();
-    if(data.banned){ await signOut(auth); showMsg('loginErr','🚫 আপনার অ্যাকাউন্ট ব্যান করা হয়েছে!'); btn.innerHTML='লগইন করুন'; btn.disabled=false; return; }
-    if(data.deviceId&&data.deviceId!==DEVICE_ID){ await signOut(auth); showMsg('loginErr','🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত!<br><small>একটি অ্যাকাউন্ট শুধু একটি ডিভাইসে ব্যবহার করা যাবে।</small>'); btn.innerHTML='লগইন করুন'; btn.disabled=false; return; }
-    await updateDoc(doc(db,'users',cred.user.uid),{deviceId:DEVICE_ID,lastLogin:serverTimestamp()});
-  } catch(e){
-    const msg=e.code==='auth/wrong-password'||e.code==='auth/user-not-found'||e.code==='auth/invalid-credential'?'ইমেইল বা পাসওয়ার্ড ভুল!':'লগইন ব্যর্থ হয়েছে!';
-    showMsg('loginErr',msg); btn.innerHTML='লগইন করুন'; btn.disabled=false;
+
+    /* ── ব্যান চেক ── */
+    if(data.banned){
+      await signOut(auth);
+      showMsg('loginErr','🚫 আপনার অ্যাকাউন্ট ব্যান করা হয়েছে!');
+      btn.innerHTML='লগইন করুন'; btn.disabled=false; return;
+    }
+
+    /* ── Device চেক ── */
+    if(data.deviceId && data.deviceId!==DEVICE_ID){
+      await signOut(auth);
+
+      /* ── নতুন ডিভাইস রিকোয়েস্ট Firestore এ সেভ করো ── */
+      await saveDeviceRequest(cred.user.uid, data.name||'অজানা', email, data.deviceId);
+
+      showMsg('loginErr',
+        '🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত!<br>' +
+        '<small>নতুন ডিভাইস হিসেবে রিকোয়েস্ট পাঠানো হয়েছে।<br>' +
+        'Admin অনুমোদন করলে এই ডিভাইসে লগইন করতে পারবেন।</small>'
+      );
+      btn.innerHTML='লগইন করুন'; btn.disabled=false; return;
+    }
+
+    /* ── Device সেভ/আপডেট ── */
+    await updateDoc(doc(db,'users',cred.user.uid),{
+      deviceId:DEVICE_ID, lastLogin:serverTimestamp()
+    });
+    /* onAuthStateChanged → home.html */
+
+  }catch(e){
+    const msg=
+      e.code==='auth/wrong-password'||
+      e.code==='auth/user-not-found'||
+      e.code==='auth/invalid-credential'
+        ? 'ইমেইল বা পাসওয়ার্ড ভুল!'
+        : 'লগইন ব্যর্থ হয়েছে!';
+    showMsg('loginErr',msg);
+    btn.innerHTML='লগইন করুন'; btn.disabled=false;
   }
 };
 
-/* ══════════════════════════════
+/* নতুন ডিভাইস রিকোয়েস্ট সেভ */
+async function saveDeviceRequest(userId, userName, email, oldDeviceId){
+  try{
+    /* একই pending রিকোয়েস্ট আগে থেকে আছে কিনা চেক */
+    const q=query(
+      collection(db,'loginRequests'),
+      where('userId','==',userId),
+      where('status','==','pending')
+    );
+    const existing=await getDocs(q);
+    if(!existing.empty){
+      /* আগের রিকোয়েস্ট আছে — শুধু newDeviceId আপডেট করো */
+      await updateDoc(doc(db,'loginRequests',existing.docs[0].id),{
+        newDeviceId: DEVICE_ID,
+        requestedAt: serverTimestamp()
+      });
+      return;
+    }
+    /* নতুন রিকোয়েস্ট তৈরি করো */
+    await addDoc(collection(db,'loginRequests'),{
+      userId,
+      userName,
+      email,
+      oldDeviceId,
+      newDeviceId: DEVICE_ID,
+      status:      'pending',
+      requestedAt: serverTimestamp()
+    });
+  }catch(e){ console.error('saveDeviceRequest:',e); }
+}
+
+/* ════════════════════════════════
    SIGNUP
-══════════════════════════════ */
+════════════════════════════════ */
 window.doSignup=async()=>{
-  const name=document.getElementById('signupName').value.trim();
+  const name =document.getElementById('signupName').value.trim();
   const email=document.getElementById('signupEmail').value.trim();
-  const pass=document.getElementById('signupPass').value;
-  const btn=document.getElementById('signupBtn');
+  const pass =document.getElementById('signupPass').value;
+  const btn  =document.getElementById('signupBtn');
   hideMsg('signupErr'); hideMsg('signupSuc');
   if(!name||!email||!pass){ showMsg('signupErr','সব তথ্য দিন'); return; }
   if(pass.length<6){ showMsg('signupErr','পাসওয়ার্ড কমপক্ষে ৬ অক্ষর'); return; }
@@ -336,98 +360,50 @@ window.doSignup=async()=>{
     });
     const s=document.getElementById('signupSuc');
     s.textContent='✅ অ্যাকাউন্ট তৈরি হয়েছে! হোমে যাচ্ছি...'; s.style.display='block';
-  } catch(e){
+  }catch(e){
     showMsg('signupErr',e.code==='auth/email-already-in-use'?'এই ইমেইল আগেই ব্যবহৃত!':'সাইনআপ ব্যর্থ হয়েছে');
     btn.innerHTML='অ্যাকাউন্ট খুলুন'; btn.disabled=false;
   }
 };
 
-/* ══════════════════════════════
+/* ════════════════════════════════
    PASSWORD RESET
-   Step 1: Email + Device check
-   Step 2: New password set
-══════════════════════════════ */
-let _resetUserUid = null;
-let _resetUserEmail = null;
-
-window.verifyResetEmail = async()=>{
-  const email = document.getElementById('resetEmail').value.trim();
-  const btn   = document.getElementById('resetStep1Btn');
-  hideMsg('resetErr1');
-  if (!email) { showMsg('resetErr1','ইমেইল দিন!'); return; }
-
+   Device ID যাচাই → Firebase reset email
+════════════════════════════════ */
+window.verifyResetEmail=async()=>{
+  const email=document.getElementById('resetEmail').value.trim();
+  const btn  =document.getElementById('rstep1Btn');
+  hideMsg('rErr1');
+  if(!email){ showMsg('rErr1','ইমেইল দিন!'); return; }
   btn.innerHTML='<span class="spin"></span>যাচাই হচ্ছে...'; btn.disabled=true;
 
-  try {
-    /* Firestore এ email দিয়ে ইউজার খোঁজো */
-    const q    = query(collection(db,'users'), where('email','==',email));
-    const snap = await getDocs(q);
+  try{
+    const q   =query(collection(db,'users'),where('email','==',email));
+    const snap=await getDocs(q);
+    if(snap.empty){ showMsg('rErr1','এই ইমেইলে কোনো অ্যাকাউন্ট নেই!'); btn.innerHTML='পরবর্তী ›'; btn.disabled=false; return; }
 
-    if (snap.empty) {
-      showMsg('resetErr1','এই ইমেইলে কোনো অ্যাকাউন্ট নেই!');
+    const data=snap.docs[0].data();
+
+    /* Device check */
+    if(data.deviceId && data.deviceId!==DEVICE_ID){
+      showMsg('rErr1','🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত!<br><small>শুধু নিবন্ধিত ডিভাইস থেকে পাসওয়ার্ড রিসেট করা যাবে।</small>');
       btn.innerHTML='পরবর্তী ›'; btn.disabled=false; return;
     }
 
-    const userDoc  = snap.docs[0];
-    const userData = userDoc.data();
+    /* Send reset email */
+    await sendPasswordResetEmail(auth,email);
 
-    /* ── Device ID মিলিয়ে দেখো ── */
-    if (userData.deviceId && userData.deviceId !== DEVICE_ID) {
-      showMsg('resetErr1','🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত!<br><small>শুধু নিবন্ধিত ডিভাইস থেকে পাসওয়ার্ড রিসেট করা যাবে।</small>');
-      btn.innerHTML='পরবর্তী ›'; btn.disabled=false; return;
-    }
+    document.getElementById('rstep1').classList.remove('active');
+    document.getElementById('rstep2').classList.add('active');
+    document.getElementById('ovSub').textContent='';
+    document.getElementById('rSuc2').innerHTML=
+      '✅ রিসেট ইমেইল পাঠানো হয়েছে!<br>' +
+      '<small>'+email+' চেক করুন এবং লিংকে ক্লিক করে নতুন পাসওয়ার্ড সেট করুন।</small>';
 
-    /* Device match → Step 2 দেখাও */
-    _resetUserUid   = userDoc.id;
-    _resetUserEmail = email;
-
-    document.getElementById('step1').classList.remove('active');
-    document.getElementById('step2').classList.add('active');
-    document.getElementById('resetStep2Sub').textContent = '✅ ডিভাইস যাচাই সফল! '+email+' — নতুন পাসওয়ার্ড সেট করুন।';
-
-  } catch(e) {
-    console.error(e);
-    showMsg('resetErr1','যাচাই ব্যর্থ হয়েছে! আবার চেষ্টা করুন।');
-    btn.innerHTML='পরবর্তী ›'; btn.disabled=false;
+  }catch(e){
+    showMsg('rErr1','ব্যর্থ হয়েছে! আবার চেষ্টা করুন।');
   }
   btn.innerHTML='পরবর্তী ›'; btn.disabled=false;
-};
-
-window.doPasswordReset = async()=>{
-  const p1  = document.getElementById('newPass1').value;
-  const p2  = document.getElementById('newPass2').value;
-  const btn = document.getElementById('resetStep2Btn');
-  hideMsg('resetErr2'); hideMsg('resetSuc2');
-
-  if (!p1||!p2)      { showMsg('resetErr2','পাসওয়ার্ড দিন!'); return; }
-  if (p1.length < 6) { showMsg('resetErr2','পাসওয়ার্ড কমপক্ষে ৬ অক্ষর!'); return; }
-  if (p1 !== p2)     { showMsg('resetErr2','পাসওয়ার্ড দুটো মিলছে না!'); return; }
-
-  btn.innerHTML='<span class="spin"></span>সেট হচ্ছে...'; btn.disabled=true;
-
-  try {
-    /*
-      Firebase Auth এ পাসওয়ার্ড সরাসরি client থেকে
-      update করতে হলে user কে re-authenticate করতে হয়।
-      কিন্তু এখানে ইউজার লগইন নেই।
-      তাই sendPasswordResetEmail ব্যবহার করছি —
-      তবে আগে device verify হয়েছে।
-    */
-    await sendPasswordResetEmail(auth, _resetUserEmail);
-
-    const s=document.getElementById('resetSuc2');
-    s.innerHTML='✅ পাসওয়ার্ড রিসেট ইমেইল পাঠানো হয়েছে!<br><small>'+_resetUserEmail+' চেক করুন এবং লিংকে ক্লিক করে নতুন পাসওয়ার্ড সেট করুন।</small>';
-    s.style.display='block';
-    btn.style.display='none';
-
-    /* ৫ সেকেন্ড পর overlay বন্ধ */
-    setTimeout(()=>{ window.closeReset(); btn.innerHTML='✅ পাসওয়ার্ড সেট করুন'; btn.disabled=false; btn.style.display='block'; }, 5000);
-
-  } catch(e) {
-    console.error(e);
-    showMsg('resetErr2','ব্যর্থ হয়েছে! আবার চেষ্টা করুন।');
-    btn.innerHTML='✅ পাসওয়ার্ড সেট করুন'; btn.disabled=false;
-  }
 };
 </script>
 </body>
