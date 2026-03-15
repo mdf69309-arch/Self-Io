@@ -211,37 +211,67 @@ function doSpin(){
 }
 
 var _adWatched=false;
+var _adStartTime=0;
+var _adPaused=false;
+var _timerRemaining=5;
+var _adActive=false;
+window._adActive=false; // module script থেকে access করতে
 
 function openAd(){
   _adWatched=false;
+  _adActive=true;
+  window._adActive=true;
+  _timerRemaining=5;
+  _adPaused=false;
   document.getElementById('claimBtn').style.display='none';
+  document.getElementById('timerNum').textContent=_timerRemaining;
   document.getElementById('adModal').classList.add('on');
+  _adStartTime=Date.now();
+
+  // Page visibility — Ad এ ক্লিক করে বাইরে গেলে timer pause হবে
+  document.addEventListener('visibilitychange', onVisChange);
 
   // Monetag Ad চেষ্টা করো
   if(window.show_10729825){
-    var adStart=Date.now();
     window.show_10729825()
       .then(function(){
-        var s=(Date.now()-adStart)/1000;
-        _adWatched=(s>=8);
-        if(_adWatched){document.getElementById('adModal').classList.remove('on');claimPts();}
-        else{document.getElementById('timerNum').textContent='✅';document.getElementById('claimBtn').style.display='block';}
+        // Monetag Ad সম্পূর্ণ দেখা হয়েছে
+        if(_adActive) { _adWatched=true; autoComplete(); }
       })
       .catch(function(){
-        var s=(Date.now()-adStart)/1000;
-        if(s>=8){document.getElementById('adModal').classList.remove('on');claimPts();}
-        else{document.getElementById('timerNum').textContent='⚠️';document.getElementById('claimBtn').style.display='none';}
+        // Monetag Ad বন্ধ — timer এ নির্ভর করো
       });
   }
 
-  // Timer সবসময় চলবে (Fallback)
-  var t=5;
-  document.getElementById('timerNum').textContent=t;
+  // Fallback timer
+  startTimer();
+}
+
+function onVisChange(){
+  if(!_adActive) return;
+  if(document.hidden){
+    // Ad এ click করে বাইরে গেছে — timer pause
+    _adPaused=true;
+    clearInterval(window._adTimer);
+  } else {
+    // ফিরে এসেছে — Ad modal দেখাও, timer resume করো
+    document.getElementById('adModal').classList.add('on');
+    if(_adPaused && _adActive){
+      _adPaused=false;
+      startTimer();
+    }
+  }
+}
+
+function startTimer(){
   clearInterval(window._adTimer);
+  document.getElementById('timerNum').textContent=_timerRemaining;
   window._adTimer=setInterval(function(){
-    t--;
-    if(t>0){document.getElementById('timerNum').textContent=t;}
-    else{
+    if(_adPaused) return; // pause এ থাকলে count করো না
+    _timerRemaining--;
+    if(_timerRemaining>0){
+      document.getElementById('timerNum').textContent=_timerRemaining;
+    } else {
       clearInterval(window._adTimer);
       document.getElementById('timerNum').textContent='✅';
       document.getElementById('claimBtn').style.display='block';
@@ -250,8 +280,18 @@ function openAd(){
   },1000);
 }
 
+function autoComplete(){
+  clearInterval(window._adTimer);
+  document.removeEventListener('visibilitychange', onVisChange);
+  _adActive=false; window._adActive=false;
+  document.getElementById('adModal').classList.remove('on');
+  claimPts();
+}
+
 function claimPts(){
   clearInterval(window._adTimer);
+  document.removeEventListener('visibilitychange', onVisChange);
+  _adActive=false; window._adActive=false;
   document.getElementById('adModal').classList.remove('on');
   if(!_adWatched){showToast('⚠️ বিজ্ঞাপন সম্পূর্ণ দেখুন!',true);resetSpin();return;}
   if(_wonPts<=0){showToast('😅 এবার শূন্য! আবার চেষ্টা করুন');resetSpin();return;}
@@ -260,6 +300,8 @@ function claimPts(){
 
 function cancelAd(){
   clearInterval(window._adTimer);
+  document.removeEventListener('visibilitychange', onVisChange);
+  _adActive=false; window._adActive=false;
   document.getElementById('adModal').classList.remove('on');
   showToast('❌ বিজ্ঞাপন না দেখলে পয়েন্ট নেই!',true);
   resetSpin();
@@ -299,7 +341,39 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/fi
 import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const tg=window.Telegram?.WebApp;
-if(tg){tg.expand();tg.BackButton.show();tg.BackButton.onClick(()=>{if(!window._spinning)location.href='home.html';});}
+if(tg){
+  tg.expand();
+  tg.BackButton.show();
+  tg.BackButton.onClick(()=>{
+    if(window._adActive){
+      // Ad চলছে — modal দেখাও, back করতে দেবো না
+      document.getElementById('adModal').classList.add('on');
+      window.showToast('⚠️ আগে বিজ্ঞাপন দেখুন!', true);
+      return;
+    }
+    if(window._spinning){
+      window.showToast('⚠️ স্পিন শেষ হতে দিন!', true);
+      return;
+    }
+    location.href='home.html';
+  });
+}
+
+// Browser back button block
+history.pushState(null,'',location.href);
+window.addEventListener('popstate',()=>{
+  if(window._adActive){
+    history.pushState(null,'',location.href);
+    document.getElementById('adModal').classList.add('on');
+    window.showToast('⚠️ আগে বিজ্ঞাপন দেখুন!', true);
+    return;
+  }
+  if(window._spinning){
+    history.pushState(null,'',location.href);
+    return;
+  }
+  location.href='home.html';
+});
 
 let user=null,uData=null,cfg={spinPoints:10,pointsToTaka:0.01,minWithdraw:100};
 let hist=[];
