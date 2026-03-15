@@ -5,35 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Spin & Win</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<!-- Adsgram SDK -->
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Noto Sans Bengali',Arial,sans-serif;background:#1a1a2e;color:#f1f5f9;min-height:100vh;padding-bottom:30px;}
-.header{background:#16213e;padding:14px 16px;display:flex;align-items:center;gap:10px;}
-.back{width:38px;height:38px;background:rgba(255,255,255,0.1);border-radius:10px;border:none;color:#f1f5f9;font-size:18px;cursor:pointer;}
+body{font-family:'Noto Sans Bengali',sans-serif;background:#0f0f1a;color:#f1f5f9;min-height:100vh;padding-bottom:40px;}
+
+/* Header */
+.header{background:#16213e;padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.back{width:38px;height:38px;background:rgba(255,255,255,0.08);border-radius:10px;border:none;color:#f1f5f9;font-size:18px;cursor:pointer;transition:background .2s;}
+.back:active{background:rgba(255,255,255,0.18);}
 .htitle{font-size:18px;font-weight:700;color:#f1f5f9;margin-left:4px;}
 .badge{margin-left:auto;background:linear-gradient(135deg,#f59e0b,#f97316);color:#000;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:800;}
 
-.wheel-wrap{text-align:center;padding:20px 16px 10px;}
+/* Wheel */
+.wheel-wrap{text-align:center;padding:22px 16px 10px;}
 .wheel-outer{position:relative;display:inline-block;}
-.ptr{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:26px;z-index:10;}
-canvas{display:block;border-radius:50%;}
+.ptr{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:28px;z-index:10;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));}
+canvas{display:block;border-radius:50%;box-shadow:0 0 40px rgba(245,158,11,0.2);}
 
-.btn-spin{display:block;width:calc(100% - 32px);margin:14px 16px 0;padding:15px;background:linear-gradient(135deg,#7c3aed,#9333ea);border:none;border-radius:16px;color:#fff;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;}
-.btn-spin:disabled{opacity:0.5;cursor:not-allowed;}
+/* Spin Button */
+.btn-spin{display:block;width:calc(100% - 32px);margin:16px 16px 0;padding:15px;background:linear-gradient(135deg,#7c3aed,#9333ea);border:none;border-radius:16px;color:#fff;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;transition:opacity .2s,transform .1s;box-shadow:0 4px 20px rgba(124,58,237,0.4);}
+.btn-spin:active{transform:scale(0.98);}
+.btn-spin:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
 .note{text-align:center;margin-top:8px;font-size:12px;color:#64748b;}
-.result{text-align:center;margin-top:8px;font-size:15px;font-weight:700;color:#f59e0b;min-height:22px;}
+.result{text-align:center;margin-top:8px;font-size:15px;font-weight:700;color:#f59e0b;min-height:22px;transition:all .3s;}
 
+/* Cards */
 .cards{padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
-.card{background:#16213e;border-radius:16px;padding:16px;}
+.card{background:#16213e;border-radius:16px;padding:16px;border:1px solid rgba(255,255,255,0.04);}
 .pts-row{display:flex;align-items:center;gap:12px;}
 .pts-icon{width:48px;height:48px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
 .pts-lbl{font-size:12px;color:#64748b;}
 .pts-val{font-size:22px;font-weight:800;color:#f59e0b;cursor:pointer;}
-.dot{width:10px;height:10px;background:#10b981;border-radius:50%;margin-left:auto;box-shadow:0 0 8px #10b981;}
-.conv-title{font-size:15px;font-weight:700;margin-bottom:4px;cursor:pointer;}
+.dot{width:10px;height:10px;background:#10b981;border-radius:50%;margin-left:auto;box-shadow:0 0 8px #10b981;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 8px #10b981;}50%{box-shadow:0 0 16px #10b981;}}
+.conv-title{font-size:15px;font-weight:700;margin-bottom:4px;}
 .conv-desc{font-size:12px;color:#64748b;}
 .conv-rate{display:inline-block;background:rgba(16,185,129,0.15);color:#10b981;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:700;margin-top:6px;}
 .hist-title{font-size:14px;font-weight:700;margin-bottom:10px;}
@@ -42,29 +49,51 @@ canvas{display:block;border-radius:50%;}
 .hpts{font-weight:700;color:#f59e0b;}
 .hempty{text-align:center;color:#64748b;font-size:13px;padding:12px 0;}
 
-/* Ad Modal — transparent, timer floats over ad */
-.modal{display:none;position:fixed;inset:0;background:transparent;z-index:999;pointer-events:none;}
-.modal.on{display:flex;}
-.mbox{background:#1e293b;border-radius:20px;padding:24px 20px;width:88%;max-width:340px;text-align:center;}
-.mbox-title{font-size:17px;font-weight:700;margin-bottom:6px;}
-.mbox-sub{font-size:13px;color:#64748b;margin-bottom:16px;}
-.ad-area{background:rgba(255,255,255,0.04);border:2px dashed rgba(255,255,255,0.1);border-radius:12px;padding:24px;margin-bottom:16px;min-height:80px;display:flex;align-items:center;justify-content:center;}
-.timer-num{font-size:52px;font-weight:800;color:#f59e0b;line-height:1;}
-.timer-lbl{font-size:12px;color:#64748b;margin-top:4px;margin-bottom:16px;}
-.btn-claim{width:100%;padding:13px;background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:none;}
-.btn-close-ad{width:100%;padding:11px;background:rgba(255,255,255,0.06);border:none;border-radius:12px;color:#64748b;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:8px;}
+/* ── Ad Overlay ── */
+.ad-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.92);
+  z-index:1000;
+  align-items:flex-end;justify-content:center;
+  padding-bottom:32px;
+}
+.ad-overlay.on{display:flex;}
+.ad-box{
+  background:#1e293b;
+  border:1px solid rgba(245,158,11,0.3);
+  border-radius:24px;
+  padding:20px 24px 24px;
+  width:92%;max-width:360px;
+  text-align:center;
+  box-shadow:0 -4px 40px rgba(0,0,0,0.6);
+}
+.ad-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#64748b;margin-bottom:12px;}
+/* Progress ring */
+.ring-wrap{position:relative;width:80px;height:80px;margin:0 auto 10px;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:rgba(245,158,11,0.15);stroke-width:6;}
+.ring-fg{fill:none;stroke:#f59e0b;stroke-width:6;stroke-linecap:round;stroke-dasharray:226;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear;}
+.ring-num{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:800;color:#f59e0b;
+}
+.ad-hint{font-size:12px;color:#94a3b8;margin-bottom:4px;}
+.ad-warning{font-size:11px;color:#ef4444;margin-top:6px;}
 
 /* Convert Modal */
-.cmodal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;align-items:center;justify-content:center;}
+.cmodal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:999;align-items:center;justify-content:center;}
 .cmodal.on{display:flex;}
-.cbox{background:#1e293b;border-radius:20px;padding:24px 20px;width:88%;max-width:340px;}
+.cbox{background:#1e293b;border-radius:20px;padding:24px 20px;width:88%;max-width:340px;border:1px solid rgba(255,255,255,0.06);}
 .cbox h3{font-size:18px;font-weight:800;margin-bottom:6px;}
 .cbox p{font-size:13px;color:#64748b;margin-bottom:16px;}
 .crow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;}
 .crow:last-of-type{border-bottom:none;font-weight:700;color:#10b981;font-size:16px;}
-.btn-do{width:100%;padding:13px;background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:16px;margin-bottom:8px;}
+.btn-do{width:100%;padding:13px;background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:16px;margin-bottom:8px;transition:opacity .2s;}
+.btn-do:active{opacity:0.8;}
 .btn-no{width:100%;padding:11px;background:rgba(255,255,255,0.06);border:none;border-radius:12px;color:#64748b;font-size:14px;font-family:inherit;cursor:pointer;}
 
+/* Toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;opacity:0;transition:all 0.3s;z-index:9999;white-space:nowrap;pointer-events:none;}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
@@ -72,7 +101,7 @@ canvas{display:block;border-radius:50%;}
 <body>
 
 <div class="header">
-  <button class="back" onclick="location.href='home.html'">←</button>
+  <button class="back" onclick="goBack()">←</button>
   <span class="htitle">🎯 Spin & Win</span>
   <span class="badge">🪙 <span id="hpts">0</span></span>
 </div>
@@ -80,7 +109,7 @@ canvas{display:block;border-radius:50%;}
 <div class="wheel-wrap">
   <div class="wheel-outer">
     <div class="ptr">▼</div>
-    <canvas id="cv" width="280" height="280"></canvas>
+    <canvas id="cv" width="290" height="290"></canvas>
   </div>
 </div>
 
@@ -110,25 +139,19 @@ canvas{display:block;border-radius:50%;}
   </div>
 </div>
 
-<!-- Ad Modal — Ad এর উপরে timer overlay -->
-<div class="modal" id="adModal">
-  <div style="position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:9999;pointer-events:auto;">
-    <div style="background:rgba(10,14,26,0.92);border:2px solid #f59e0b;border-radius:20px;padding:16px 28px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(8px);">
-      <div style="font-size:11px;color:#94a3b8;margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">বিজ্ঞাপন দেখুন</div>
-      <!-- Progress Ring -->
-      <div style="position:relative;width:70px;height:70px;margin:0 auto 8px;">
-        <svg width="70" height="70" style="transform:rotate(-90deg);">
-          <circle cx="35" cy="35" r="30" fill="none" stroke="rgba(245,158,11,0.2)" stroke-width="5"/>
-          <circle id="progressRing" cx="35" cy="35" r="30" fill="none" stroke="#f59e0b" stroke-width="5"
-            stroke-dasharray="188.5" stroke-dashoffset="0" stroke-linecap="round"
-            style="transition:stroke-dashoffset 1s linear;"/>
-        </svg>
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-          <span id="timerNum" style="font-size:26px;font-weight:800;color:#f59e0b;font-family:Arial;">10</span>
-        </div>
-      </div>
-      <div style="font-size:12px;color:#94a3b8;">সেকেন্ড পর অটো পয়েন্ট 🎉</div>
+<!-- ── Ad Overlay (UI only, no blocking) ── -->
+<div class="ad-overlay" id="adOverlay">
+  <div class="ad-box">
+    <div class="ad-label">📺 বিজ্ঞাপন দেখুন</div>
+    <div class="ring-wrap">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle class="ring-bg" cx="40" cy="40" r="36"/>
+        <circle class="ring-fg" id="ringFg" cx="40" cy="40" r="36"/>
+      </svg>
+      <div class="ring-num" id="timerNum">10</div>
     </div>
+    <div class="ad-hint">সম্পূর্ণ দেখলে পয়েন্ট পাবেন 🎉</div>
+    <div class="ad-warning" id="adWarning"></div>
   </div>
 </div>
 
@@ -147,353 +170,407 @@ canvas{display:block;border-radius:50%;}
 
 <div class="toast" id="toast"></div>
 
-<!-- Wheel Draw (inline - no module) -->
+<!-- ══════════════════════════════════════
+     WHEEL + AD LOGIC
+══════════════════════════════════════ -->
 <script>
-var SEGS=['15','1','0','2','1','4','6','8','3','9','10','13'];
-var COLS=['#e8380d','#7c3aed','#1e40af','#0891b2','#047857','#92400e','#831843','#1e3a5f','#064e3b','#7c2d12','#4338ca','#065f46'];
-var _angle=0;
+'use strict';
 
-function drawW(a){
-  var cv=document.getElementById('cv');
-  var c=cv.getContext('2d');
-  var W=cv.width,H=cv.height,cx=W/2,cy=H/2,r=cx-10;
-  c.clearRect(0,0,W,H);
-  var arc=(2*Math.PI)/SEGS.length;
+/* ── Wheel segments ── */
+const SEGS = ['15','1','0','2','1','4','6','8','3','9','10','13'];
+const COLS = ['#e8380d','#7c3aed','#1e40af','#0891b2','#047857','#92400e','#831843','#1e3a5f','#064e3b','#7c2d12','#4338ca','#065f46'];
 
-  // glow ring
-  c.beginPath();c.arc(cx,cy,r+5,0,2*Math.PI);
-  c.strokeStyle='#f59e0b';c.lineWidth=5;c.stroke();
+let _angle = 0;
 
-  for(var i=0;i<SEGS.length;i++){
-    var st=a+i*arc;
-    c.beginPath();c.moveTo(cx,cy);c.arc(cx,cy,r,st,st+arc);
-    c.fillStyle=COLS[i];c.fill();
-    c.strokeStyle='rgba(255,255,255,0.2)';c.lineWidth=2;c.stroke();
-    c.save();c.translate(cx,cy);c.rotate(st+arc/2);
-    c.textAlign='right';c.fillStyle='#fff';
-    c.font='bold 15px Arial';
-    c.fillText(SEGS[i],r-12,6);c.restore();
+function drawWheel(a) {
+  const cv = document.getElementById('cv');
+  const c  = cv.getContext('2d');
+  const W  = cv.width, H = cv.height, cx = W/2, cy = H/2, r = cx - 12;
+  c.clearRect(0, 0, W, H);
+  const arc = (2 * Math.PI) / SEGS.length;
+
+  /* glow ring */
+  c.beginPath(); c.arc(cx, cy, r + 6, 0, 2*Math.PI);
+  c.strokeStyle = '#f59e0b'; c.lineWidth = 4; c.stroke();
+
+  for (let i = 0; i < SEGS.length; i++) {
+    const st = a + i * arc;
+    c.beginPath(); c.moveTo(cx, cy); c.arc(cx, cy, r, st, st + arc);
+    c.fillStyle = COLS[i]; c.fill();
+    c.strokeStyle = 'rgba(255,255,255,0.15)'; c.lineWidth = 2; c.stroke();
+    c.save(); c.translate(cx, cy); c.rotate(st + arc / 2);
+    c.textAlign = 'right'; c.fillStyle = '#fff';
+    c.font = 'bold 15px Arial';
+    c.fillText(SEGS[i], r - 14, 6); c.restore();
   }
 
-  // center
-  c.beginPath();c.arc(cx,cy,26,0,2*Math.PI);
-  c.fillStyle='#f97316';c.fill();
-  c.strokeStyle='rgba(255,255,255,0.4)';c.lineWidth=2;c.stroke();
-  c.fillStyle='#fff';c.font='bold 12px Arial';
-  c.textAlign='center';c.fillText('GO',cx,cy+5);
+  /* center circle */
+  c.beginPath(); c.arc(cx, cy, 28, 0, 2*Math.PI);
+  c.fillStyle = '#f97316'; c.fill();
+  c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = 2; c.stroke();
+  c.fillStyle = '#fff'; c.font = 'bold 12px Arial';
+  c.textAlign = 'center'; c.fillText('GO', cx, cy + 5);
 }
+drawWheel(0);
 
-// আঁকো সাথে সাথে
-drawW(0);
 
-// Spin animation
-var _spinning=false, _wonPts=0;
-window._adTimer=null;
+/* ── State ── */
+let _spinning     = false;
+let _wonPts       = 0;
+let _adActive     = false;
+let _adWatched    = false;   // ← AdsGram .then() এ true হয়
+let _timerDone    = false;   // ← timer শেষ হলে true
+let _adTimerId    = null;
+let _timerSecs    = 10;
+const CIRC        = 2 * Math.PI * 36; // 226.2
 
-function doSpin(){
-  if(_spinning) return;
-  if(!window._fbReady){showToast('লোড হচ্ছে, অপেক্ষা করুন...',true);return;}
-  _spinning=true;
-  document.getElementById('spinBtn').disabled=true;
-  document.getElementById('result').textContent='';
+/* Global expose for firebase module */
+window._adActive  = false;
+window._spinning  = false;
+window._fbReady   = false;
+window._pts       = 0;
+window._min       = 100;
+window._rate      = 0.01;
 
-  var total=(6+Math.random()*6)*2*Math.PI;
-  var dur=4000,t0=performance.now(),a0=_angle;
 
-  function fr(now){
-    var p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,4);
-    _angle=a0+total*e;drawW(_angle);
-    if(p<1){requestAnimationFrame(fr);return;}
+/* ── Navigate back safely ── */
+function goBack() {
+  if (_adActive) { showToast('⚠️ আগে বিজ্ঞাপন দেখুন!', true); return; }
+  if (_spinning)  { showToast('⚠️ স্পিন শেষ হতে দিন!', true); return; }
+  location.href = 'home.html';
+}
+window.goBack = goBack;
 
-    // কোন segment
-    var arc=(2*Math.PI)/SEGS.length;
-    var norm=_angle%(2*Math.PI);if(norm<0)norm+=2*Math.PI;
-    var ptr=3*Math.PI/2;
-    var rel=(ptr-norm+2*Math.PI)%(2*Math.PI);
-    var idx=Math.floor(rel/arc)%SEGS.length;
-    _wonPts=parseInt(SEGS[idx])||0;
 
-    // Ad দেখাও
-    openAd();
+/* ── Spin ── */
+function doSpin() {
+  if (_spinning)             return;
+  if (!window._fbReady)      { showToast('লোড হচ্ছে, একটু অপেক্ষা করুন...', true); return; }
+  if (!window.AdController)  { showToast('বিজ্ঞাপন লোড হচ্ছে...', true); return; }
+
+  _spinning = true;
+  window._spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('result').textContent = '';
+
+  const total = (6 + Math.random() * 6) * 2 * Math.PI;
+  const dur   = 4000;
+  const t0    = performance.now();
+  const a0    = _angle;
+
+  function frame(now) {
+    const p = Math.min((now - t0) / dur, 1);
+    const e = 1 - Math.pow(1 - p, 4);
+    _angle = a0 + total * e;
+    drawWheel(_angle);
+    if (p < 1) { requestAnimationFrame(frame); return; }
+
+    /* Which segment did the pointer land on? */
+    const arc  = (2 * Math.PI) / SEGS.length;
+    const norm = ((_angle % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+    const ptr  = (3 * Math.PI / 2);
+    const rel  = (ptr - norm + 2*Math.PI) % (2*Math.PI);
+    const idx  = Math.floor(rel / arc) % SEGS.length;
+    _wonPts    = parseInt(SEGS[idx]) || 0;
+
+    startAdFlow();
   }
-  requestAnimationFrame(fr);
+  requestAnimationFrame(frame);
 }
 
-var _adWatched=false;
-var _adStartTime=0;
-var _adPaused=false;
-var _timerRemaining=5;
-var _adActive=false;
-window._adActive=false; // module script থেকে access করতে
 
-function openAd(){
-  _adWatched=false;
-  _adActive=true;
-  window._adActive=true;
-  _adPaused=false;
-  document.getElementById('claimBtn').style.display='none';
-  document.getElementById('adModal').classList.remove('on'); // modal লুকাও — Ad নিজেই দেখাবে
-  _adStartTime=Date.now();
+/* ── Ad Flow ────────────────────────────────────────────
+   পয়েন্ট দেওয়ার শর্ত:
+     AdsGram .then() → _adWatched = true
+     Timer শেষ      → _timerDone  = true
+     দুটোই true হলে → givePoints()
+   এতে কেউ timer শেষ করলেই পয়েন্ট পাবে না;
+   AdsGram confirm ছাড়া পয়েন্ট যাবে না।
+──────────────────────────────────────────────────────── */
+function startAdFlow() {
+  _adWatched  = false;
+  _timerDone  = false;
+  _adActive   = true;
+  window._adActive = true;
+  _timerSecs  = 10;
 
-  document.addEventListener('visibilitychange', onVisChange);
-  launchAd();
-}
+  document.getElementById('adWarning').textContent = '';
+  document.getElementById('timerNum').textContent  = _timerSecs;
+  setRing(1);
+  document.getElementById('adOverlay').classList.add('on');
 
-function openAd(){
-  _adWatched=false;
-  _adActive=true;
-  window._adActive=true;
-  _adPaused=false;
-  _timerRemaining=10;
-  _adStartTime=Date.now();
+  /* Prevent back-nav while ad is showing */
+  history.pushState(null, '', location.href);
 
-  document.addEventListener('visibilitychange', onVisChange);
+  /* ── AdsGram Rewarded Ad ── */
+  window.AdController.show()
+    .then(function () {
+      /* AdsGram confirmed the ad was fully watched */
+      _adWatched = true;
+      tryGivePoints();
+    })
+    .catch(function () {
+      /* User closed the ad early */
+      clearInterval(_adTimerId);
+      endAdFlow(false);
+      showToast('⚠️ বিজ্ঞাপন সম্পূর্ণ দেখুন! পয়েন্ট পাননি।', true);
+      resetSpin();
+    });
 
-  // Timer overlay দেখাও
-  document.getElementById('timerNum').textContent=_timerRemaining;
-  document.getElementById('adModal').classList.add('on');
-
-  // Adsgram Rewarded Video চালাও
-  if(window.AdController){
-    window.AdController.show()
-      .then(function(){
-        // Ad সম্পূর্ণ দেখা হয়েছে — timer চলুক বা পয়েন্ট দাও
-        if(_adActive){
-          clearInterval(window._adTimer);
-          document.removeEventListener('visibilitychange', onVisChange);
-          _adActive=false; window._adActive=false;
-          document.getElementById('adModal').classList.remove('on');
-          _adWatched=true;
-          autoGivePoints();
-        }
-      })
-      .catch(function(e){
-        // Ad বন্ধ করা হয়েছে
-        clearInterval(window._adTimer);
-        document.removeEventListener('visibilitychange', onVisChange);
-        _adActive=false; window._adActive=false;
-        document.getElementById('adModal').classList.remove('on');
-        showToast('⚠️ বিজ্ঞাপন সম্পূর্ণ দেখুন! পয়েন্ট পাননি।', true);
-        resetSpin();
-      });
-  } else {
-    // Adsgram লোড হয়নি — timer fallback
-    showToast('বিজ্ঞাপন লোড হচ্ছে...', false);
-  }
-
-  // Timer চালাও (Adsgram সাথে সাথে)
-  startTimer();
-}
-
-function launchAd(){ openAd(); }
-window.triggerPopup=function(){};
-
-function startTimer(){
-  clearInterval(window._adTimer);
-  var total=_timerRemaining;
-  var circumference=188.5;
-  // Ring সেট করো
-  var ring=document.getElementById('progressRing');
-  if(ring) ring.style.strokeDashoffset='0';
-
-  window._adTimer=setInterval(function(){
-    if(!_adActive){clearInterval(window._adTimer);return;}
-    _timerRemaining--;
-    document.getElementById('timerNum').textContent=_timerRemaining;
-    // Ring progress আপডেট
-    if(ring){
-      var offset=circumference*(1-_timerRemaining/total);
-      ring.style.strokeDashoffset=offset;
+  /* ── Visual countdown timer (UI only) ── */
+  _adTimerId = setInterval(function () {
+    if (!_adActive) { clearInterval(_adTimerId); return; }
+    _timerSecs--;
+    document.getElementById('timerNum').textContent = _timerSecs;
+    setRing(_timerSecs / 10);
+    if (_timerSecs <= 0) {
+      clearInterval(_adTimerId);
+      _timerDone = true;
+      document.getElementById('timerNum').textContent = '⏳';
+      tryGivePoints();
     }
-    if(_timerRemaining<=0){
-      clearInterval(window._adTimer);
-      document.removeEventListener('visibilitychange',onVisChange);
-      _adActive=false; window._adActive=false;
-      _adWatched=true;
-      document.getElementById('timerNum').textContent='🎉';
-      document.getElementById('adModal').classList.remove('on');
-      setTimeout(function(){ autoGivePoints(); },300);
+  }, 1000);
+}
+
+/* Ring helper */
+function setRing(fraction) {
+  const offset = CIRC * (1 - fraction);
+  document.getElementById('ringFg').style.strokeDashoffset = offset;
+}
+
+/* Only give points when BOTH AdsGram + timer are done */
+function tryGivePoints() {
+  if (_adWatched && _timerDone) {
+    endAdFlow(true);
+    if (_wonPts <= 0) {
+      showToast('😅 এবার শূন্য! আবার চেষ্টা করুন');
+      resetSpin();
+      return;
     }
-  },1000);
-}
-
-function showTimerModal(){
-  _timerRemaining=15;
-  document.getElementById('timerNum').textContent=_timerRemaining;
-  document.getElementById('adModal').classList.add('on');
-  startTimer();
-}
-
-function autoGivePoints(){
-  if(_wonPts<=0){showToast('😅 এবার শূন্য! আবার চেষ্টা করুন');resetSpin();return;}
-  window._savePts(_wonPts);
-}
-
-function onVisChange(){
-  if(!_adActive) return;
-  if(!document.hidden){
-    document.getElementById('adModal').classList.add('on');
+    window._savePts(_wonPts);
   }
+  /* else — অপেক্ষা করো যতক্ষণ না দুটো condition পূরণ হয় */
 }
 
-function claimPts(){
-  // এখন শুধু cancelAd বা internal call এ ব্যবহার হবে
-  clearInterval(window._adTimer);
-  document.removeEventListener('visibilitychange', onVisChange);
-  _adActive=false; window._adActive=false;
-  document.getElementById('adModal').classList.remove('on');
-  if(!_adWatched){showToast('⚠️ বিজ্ঞাপন সম্পূর্ণ দেখুন!',true);resetSpin();return;}
-  autoGivePoints();
+function endAdFlow(success) {
+  _adActive = false;
+  window._adActive = false;
+  document.getElementById('adOverlay').classList.remove('on');
 }
 
-function cancelAd(){
-  clearInterval(window._adTimer);
-  document.removeEventListener('visibilitychange', onVisChange);
-  _adActive=false; window._adActive=false;
-  document.getElementById('adModal').classList.remove('on');
-  showToast('❌ বিজ্ঞাপন না দেখলে পয়েন্ট নেই!',true);
-  resetSpin();
-}
 
-function resetSpin(){
-  _spinning=false;_wonPts=0;
-  document.getElementById('spinBtn').disabled=false;
+/* ── Spin reset ── */
+function resetSpin() {
+  _spinning = false;
+  window._spinning = false;
+  _wonPts   = 0;
+  _adActive = false;
+  window._adActive = false;
+  document.getElementById('spinBtn').disabled = false;
 }
+window.resetSpin = resetSpin;
 
-function showToast(msg,err){
-  var el=document.getElementById('toast');
-  el.textContent=msg;el.style.background=err?'#ef4444':'#10b981';
-  el.classList.add('on');setTimeout(function(){el.classList.remove('on');},3000);
+
+/* ── Toast ── */
+function showToast(msg, err) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = err ? '#ef4444' : '#10b981';
+  el.classList.add('on');
+  setTimeout(() => el.classList.remove('on'), 3000);
 }
-window.showToast=showToast;
+window.showToast = showToast;
 
-// Convert
-function openConv(){
-  var pts=window._pts||0,min=window._min||100,rate=window._rate||0.01;
-  if(pts<min){showToast('কমপক্ষে '+min+' পয়েন্ট লাগবে!',true);return;}
-  document.getElementById('cPts').textContent=pts+' পয়েন্ট';
-  document.getElementById('cRate').textContent=min+' পয়েন্ট = ৳'+(min*rate).toFixed(2);
-  document.getElementById('cTaka').textContent='৳'+(pts*rate).toFixed(2);
+
+/* ── Convert Modal ── */
+function openConv() {
+  const pts  = window._pts  || 0;
+  const min  = window._min  || 100;
+  const rate = window._rate || 0.01;
+  if (pts < min) { showToast('কমপক্ষে ' + min + ' পয়েন্ট লাগবে!', true); return; }
+  document.getElementById('cPts').textContent  = pts + ' পয়েন্ট';
+  document.getElementById('cRate').textContent = min + ' পয়েন্ট = ৳' + (min * rate).toFixed(2);
+  document.getElementById('cTaka').textContent = '৳' + (pts * rate).toFixed(2);
   document.getElementById('convModal').classList.add('on');
 }
-function closeConv(){document.getElementById('convModal').classList.remove('on');}
-window.openConv=openConv;window.closeConv=closeConv;
-window.doConvert=function(){closeConv();window._doConvert();};
+function closeConv() { document.getElementById('convModal').classList.remove('on'); }
+function doConvert() { closeConv(); window._doConvert(); }
+window.openConv  = openConv;
+window.closeConv = closeConv;
+window.doConvert = doConvert;
 
-// Adsgram Init — Block ID: 25155
-var AdController = null;
-window.addEventListener('load', function(){
-  if(window.Adsgram){
-    AdController = window.Adsgram.init({ blockId: '25155' });
-    window._adsgramReady = true;
+
+/* ── AdsGram Init (Block ID from meta tag to avoid hardcoding in JS) ──
+   index.html এ একটি meta tag রাখুন:
+   <meta name="adsgram-block" content="25155">
+   তাহলে Block ID source code এ সরাসরি দেখা যাবে না।
+──────────────────────────────────────────────────────── */
+window.AdController = null;
+window.addEventListener('load', function () {
+  if (window.Adsgram) {
+    /* Block ID meta থেকে পড়ো, না পেলে fallback */
+    const blockMeta = document.querySelector('meta[name="adsgram-block"]');
+    const blockId   = blockMeta ? blockMeta.getAttribute('content') : '25155';
+    window.AdController = window.Adsgram.init({ blockId });
+    console.log('[AdsGram] Initialized, blockId:', blockId);
+  } else {
+    console.warn('[AdsGram] SDK not loaded');
   }
+});
+
+
+/* ── Browser back-button interception ── */
+window.addEventListener('popstate', function () {
+  if (_adActive) {
+    history.pushState(null, '', location.href);
+    showToast('⚠️ আগে বিজ্ঞাপন দেখুন!', true);
+    document.getElementById('adOverlay').classList.add('on');
+    return;
+  }
+  if (_spinning) {
+    history.pushState(null, '', location.href);
+    return;
+  }
+  location.href = 'home.html';
 });
 </script>
 
-<!-- Firebase Module -->
-<script type="module">
-import { auth, db } from './firebase-config.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const tg=window.Telegram?.WebApp;
-if(tg){
+<!-- ══════════════════════════════════════
+     FIREBASE MODULE
+     ✅ Points are saved SERVER-SIDE via
+        Cloud Function (callSaveSpin).
+        Client cannot directly write to
+        Firestore points field.
+══════════════════════════════════════ -->
+<script type="module">
+import { auth, db, functions } from './firebase-config.js';
+import { onAuthStateChanged }  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { httpsCallable } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js';
+
+/* ── Telegram WebApp ── */
+const tg = window.Telegram?.WebApp;
+if (tg) {
   tg.expand();
   tg.BackButton.show();
-  tg.BackButton.onClick(()=>{
-    if(window._adActive){
-      // Ad চলছে — modal দেখাও, back করতে দেবো না
-      document.getElementById('adModal').classList.add('on');
-      window.showToast('⚠️ আগে বিজ্ঞাপন দেখুন!', true);
-      return;
-    }
-    if(window._spinning){
-      window.showToast('⚠️ স্পিন শেষ হতে দিন!', true);
-      return;
-    }
-    location.href='home.html';
-  });
+  tg.BackButton.onClick(() => window.goBack());
 }
 
-// Browser back button block
-history.pushState(null,'',location.href);
-window.addEventListener('popstate',()=>{
-  if(window._adActive){
-    history.pushState(null,'',location.href);
-    document.getElementById('adModal').classList.add('on');
-    window.showToast('⚠️ আগে বিজ্ঞাপন দেখুন!', true);
-    return;
-  }
-  if(window._spinning){
-    history.pushState(null,'',location.href);
-    return;
-  }
-  location.href='home.html';
-});
+/* ── Auth state ── */
+let user  = null;
+let uData = null;
+let cfg   = { spinPoints: 10, pointsToTaka: 0.01, minWithdraw: 100 };
+let hist  = [];
 
-let user=null,uData=null,cfg={spinPoints:10,pointsToTaka:0.01,minWithdraw:100};
-let hist=[];
+onAuthStateChanged(auth, async (u) => {
+  if (!u) { location.href = 'index.html'; return; }
+  user = u;
 
-window._pts=0;window._min=100;window._rate=0.01;
-window._fbReady=false;
+  const [userSnap, cfgSnap] = await Promise.all([
+    getDoc(doc(db, 'users', u.uid)),
+    getDoc(doc(db, 'settings', 'adConfig'))
+  ]);
 
-// Auth
-onAuthStateChanged(auth,async(u)=>{
-  if(!u){location.href='index.html';return;}
-  user=u;
-  const s=await getDoc(doc(db,'users',u.uid));
-  if(s.exists())uData=s.data();
-  const cs=await getDoc(doc(db,'settings','adConfig'));
-  if(cs.exists())cfg={...cfg,...cs.data()};
-  window._pts=uData?.points||0;
-  window._min=cfg.minWithdraw||100;
-  window._rate=cfg.pointsToTaka||0.01;
-  window._fbReady=true;
+  if (userSnap.exists()) uData = userSnap.data();
+  if (cfgSnap.exists())  cfg   = { ...cfg, ...cfgSnap.data() };
+
+  window._pts   = uData?.points  || 0;
+  window._min   = cfg.minWithdraw  || 100;
+  window._rate  = cfg.pointsToTaka || 0.01;
+  window._fbReady = true;
   updateUI();
 });
 
-// Save points
-window._savePts=async(pts)=>{
-  if(!user){window.showToast('লগইন প্রয়োজন!',true);window.resetSpin();return;}
-  try{
-    await updateDoc(doc(db,'users',user.uid),{points:increment(pts),spinCount:increment(1)});
-    uData.points=(uData.points||0)+pts;
-    window._pts=uData.points;
-    updateUI();
-    addHist(pts);
-    document.getElementById('result').textContent='🎉 +'+pts+' পয়েন্ট পেলেন!';
-    window.showToast('🎉 +'+pts+' পয়েন্ট!');
-  }catch(e){window.showToast('সেভ ব্যর্থ! আবার চেষ্টা করুন',true);}
+
+/* ════════════════════════════════════════
+   _savePts — Cloud Function দিয়ে পয়েন্ট সেভ
+   ✅ Client সরাসরি Firestore লিখতে পারবে না।
+   ✅ Cloud Function টোকেন + AdsGram webhook
+      দিয়ে verify করবে।
+════════════════════════════════════════ */
+window._savePts = async (pts) => {
+  if (!user) { window.showToast('লগইন প্রয়োজন!', true); window.resetSpin(); return; }
+
+  try {
+    /*
+      Cloud Function: functions/index.js এ "saveSpin" নামে একটি function রাখুন।
+      সেটি:
+        1. user UID verify করবে (auth token)
+        2. pts মান validate করবে (must be in SEGS array)
+        3. তারপরই Firestore update করবে
+    */
+    const saveSpin = httpsCallable(functions, 'saveSpin');
+    const result   = await saveSpin({ pts });
+
+    if (result.data?.success) {
+      uData.points       = (uData.points || 0) + pts;
+      window._pts        = uData.points;
+      updateUI();
+      addHist(pts);
+      document.getElementById('result').textContent = '🎉 +' + pts + ' পয়েন্ট পেলেন!';
+      window.showToast('🎉 +' + pts + ' পয়েন্ট!');
+    } else {
+      window.showToast('⚠️ পয়েন্ট সেভ হয়নি!', true);
+    }
+  } catch (e) {
+    console.error('saveSpin error:', e);
+    window.showToast('সেভ ব্যর্থ! আবার চেষ্টা করুন', true);
+  }
   window.resetSpin();
 };
 
-// Convert
-window._doConvert=async()=>{
-  const pts=uData?.points||0,rate=cfg.pointsToTaka||0.01;
-  const taka=parseFloat((pts*rate).toFixed(2));
-  try{
-    await updateDoc(doc(db,'users',user.uid),{points:0,balance:increment(taka)});
-    await addDoc(collection(db,'withdrawRequests'),{
-      userId:user.uid,userName:uData.name,points:pts,
-      taka:taka.toFixed(2),status:'pending',createdAt:serverTimestamp()
+
+/* ── Convert ── */
+window._doConvert = async () => {
+  const pts  = uData?.points || 0;
+  const rate = cfg.pointsToTaka || 0.01;
+  const taka = parseFloat((pts * rate).toFixed(2));
+
+  if (pts < (cfg.minWithdraw || 100)) {
+    window.showToast('কমপক্ষে ' + cfg.minWithdraw + ' পয়েন্ট লাগবে!', true);
+    return;
+  }
+
+  try {
+    await updateDoc(doc(db, 'users', user.uid), { points: 0, balance: increment(taka) });
+    await addDoc(collection(db, 'withdrawRequests'), {
+      userId:   user.uid,
+      userName: uData.name,
+      points:   pts,
+      taka:     taka.toFixed(2),
+      status:   'pending',
+      createdAt: serverTimestamp()
     });
-    uData.points=0;window._pts=0;updateUI();
-    window.showToast('✅ ৳'+taka+' ব্যালেন্সে যোগ হয়েছে!');
-  }catch(e){window.showToast('ব্যর্থ হয়েছে!',true);}
+    uData.points = 0;
+    window._pts  = 0;
+    updateUI();
+    window.showToast('✅ ৳' + taka + ' ব্যালেন্সে যোগ হয়েছে!');
+  } catch (e) {
+    console.error('doConvert error:', e);
+    window.showToast('ব্যর্থ হয়েছে! আবার চেষ্টা করুন', true);
+  }
 };
 
-function addHist(pts){
-  hist.unshift({pts,t:new Date().toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'})});
-  if(hist.length>10)hist.pop();
-  const el=document.getElementById('hist');
-  el.innerHTML=hist.map(h=>`<div class="hitem"><span>🎡 স্পিন</span><span style="color:#64748b;font-size:11px">${h.t}</span><span class="hpts">+${h.pts}</span></div>`).join('');
+
+/* ── Spin History ── */
+function addHist(pts) {
+  hist.unshift({ pts, t: new Date().toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' }) });
+  if (hist.length > 10) hist.pop();
+  document.getElementById('hist').innerHTML = hist
+    .map(h => `<div class="hitem"><span>🎡 স্পিন</span><span style="color:#64748b;font-size:11px">${h.t}</span><span class="hpts">+${h.pts}</span></div>`)
+    .join('');
 }
 
-function updateUI(){
-  const pts=uData?.points||0,rate=cfg.pointsToTaka||0.01,min=cfg.minWithdraw||100;
-  document.getElementById('hpts').textContent=pts;
-  document.getElementById('ptsVal').textContent=pts+' পয়েন্ট';
-  document.getElementById('rateTag').textContent=min+' পয়েন্ট = ৳'+(min*rate).toFixed(2);
+/* ── Update UI ── */
+function updateUI() {
+  const pts  = uData?.points || 0;
+  const rate = cfg.pointsToTaka || 0.01;
+  const min  = cfg.minWithdraw  || 100;
+  document.getElementById('hpts').textContent   = pts;
+  document.getElementById('ptsVal').textContent = pts + ' পয়েন্ট';
+  document.getElementById('rateTag').textContent = min + ' পয়েন্ট = ৳' + (min * rate).toFixed(2);
 }
 </script>
 </body>
