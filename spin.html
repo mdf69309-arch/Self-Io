@@ -217,12 +217,6 @@ function draw(a){
 window.onSpin = () => {
   if(isSpinning) return;
 
-  // SDK চেক
-  if(!window.show_10729825){
-    toast('⚠️ বিজ্ঞাপন লোড হয়নি, একটু অপেক্ষা করুন!', true);
-    return;
-  }
-
   isSpinning = true;
   document.getElementById('spinBtn').disabled = true;
   document.getElementById('resultTxt').textContent = '';
@@ -256,13 +250,19 @@ window.onSpin = () => {
 function showAd(){
   adStartTime = Date.now();
 
+  // SDK না থাকলে পয়েন্ট দেবে না
+  if(!window.show_10729825){
+    resetSpin();
+    toast('⚠️ বিজ্ঞাপন লোড হয়নি! পেজ রিলোড করুন।', true);
+    return;
+  }
+
   window.show_10729825()
     .then(()=>{
       const secs=(Date.now()-adStartTime)/1000;
       if(secs >= 8){
-        givePoints(); // সম্পূর্ণ দেখেছে
+        givePoints();
       } else {
-        // খুব তাড়াতাড়ি শেষ — পয়েন্ট নেই
         resetSpin();
         toast(`⚠️ সম্পূর্ণ বিজ্ঞাপন দেখুন! (${Math.round(secs)}s দেখেছেন)`, true);
       }
@@ -270,7 +270,7 @@ function showAd(){
     .catch(()=>{
       const secs=(Date.now()-adStartTime)/1000;
       if(secs >= 8){
-        givePoints(); // যথেষ্ট দেখেছে
+        givePoints();
       } else {
         resetSpin();
         toast('⚠️ সম্পূর্ণ বিজ্ঞাপন না দেখলে পয়েন্ট পাবেন না!', true);
