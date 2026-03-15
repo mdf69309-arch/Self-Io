@@ -163,8 +163,8 @@
     <div class="section">
       <div class="section-title">Task Work</div>
       <div class="grid-3">
-        <!-- Spin: সরাসরি যাবে — spin পেজ নিজেই Ad দেখায় -->
-        <div class="menu-card" onclick="location.href='spin.html'">
+        <!-- Spin Wheel: Ad নেই, সরাসরি spin.html এ যাবে -->
+        <div class="menu-card" onclick="goToSpin()">
           <div class="card-img bg-red">🎡</div>
           <div class="card-label">Spin Wheel</div>
         </div>
@@ -266,6 +266,9 @@
     let _adActive   = false;
     let _adWatched  = false; // AdsGram .then() confirm
     let _timerDone  = false; // visual timer done
+
+    /* ── Spin পেজে সরাসরি — কোনো Ad নেই ── */
+    window.goToSpin = function () { window.location.href = "spin.html"; };
 
     window.AdController = null;
     window.addEventListener('load', function () {
