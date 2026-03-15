@@ -28,6 +28,7 @@
     .wheel-section{padding:20px 16px;text-align:center;}
     .wheel-outer{position:relative;display:inline-block;}
     .pointer{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:28px;z-index:10;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));}
+    #wCanvas{display:block;width:280px;height:280px;border-radius:50%;}
 
     /* Spin Button */
     .spin-area{padding:0 16px;margin-top:16px;}
@@ -94,6 +95,57 @@
   </div>
 </div>
 
+<!-- Wheel drawing — inline, module এর বাইরে -->
+<script>
+(function(){
+  const cv = document.getElementById('wCanvas');
+  if(!cv) return;
+  const ctx = cv.getContext('2d');
+  const SEGS = ['15','1','0','2','1','4','6','8','3','9','10','13'];
+  const COLS = ['#e8380d','#7c3aed','#1e40af','#0891b2','#047857','#92400e','#831843','#1e3a5f','#064e3b','#7c2d12','#4338ca','#065f46'];
+  window._wheelAngle = 0;
+  window._wheelSegs = SEGS;
+  window._wheelCols = COLS;
+
+  window.drawWheel = function(a){
+    const W=cv.width, H=cv.height, cx=W/2, cy=H/2, r=cx-12;
+    ctx.clearRect(0,0,W,H);
+    const arc=(2*Math.PI)/SEGS.length;
+
+    // outer glow
+    ctx.beginPath(); ctx.arc(cx,cy,r+6,0,2*Math.PI);
+    const g=ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,'#f59e0b'); g.addColorStop(0.5,'#e8380d'); g.addColorStop(1,'#f59e0b');
+    ctx.strokeStyle=g; ctx.lineWidth=5; ctx.stroke();
+
+    SEGS.forEach((s,i)=>{
+      const st=a+i*arc;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,st,st+arc);
+      ctx.fillStyle=COLS[i]; ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.25)'; ctx.lineWidth=2; ctx.stroke();
+      ctx.save(); ctx.translate(cx,cy); ctx.rotate(st+arc/2);
+      ctx.textAlign='right'; ctx.fillStyle='#fff';
+      ctx.font='bold 15px Arial,sans-serif';
+      ctx.shadowColor='rgba(0,0,0,0.6)'; ctx.shadowBlur=4;
+      ctx.fillText(s, r-14, 6); ctx.restore();
+    });
+
+    // center circle
+    ctx.shadowBlur=0;
+    ctx.beginPath(); ctx.arc(cx,cy,28,0,2*Math.PI);
+    const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,28);
+    cg.addColorStop(0,'#f97316'); cg.addColorStop(1,'#c2410c');
+    ctx.fillStyle=cg; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='bold 12px Arial'; ctx.textAlign='center';
+    ctx.fillText('GO', cx, cy+5);
+  };
+
+  // সাথে সাথে আঁকো
+  window.drawWheel(0);
+})();
+</script>
+
 <div class="spin-area">
   <button class="btn-spin" id="spinBtn" onclick="onSpin()">🎯 স্পিন করুন</button>
   <div class="spin-note">⚠️ পয়েন্ট পেতে বিজ্ঞাপন দেখা বাধ্যতামূলক</div>
@@ -153,46 +205,13 @@ window.goBack = () => { if(!isSpinning) window.location.href='home.html'; };
 let user=null, uData=null, cfg={spinPoints:10,pointsToTaka:0.01,minWithdraw:100};
 let isSpinning=false, wonPts=0, history=[], adStartTime=0;
 
-// ── Wheel ──
-const cv = document.getElementById('wCanvas');
-const cx2 = cv.getContext('2d');
-const SEGS = ['15','1','0','2','1','4','6','8','3','9','10','13'];
-const COLS = ['#e8380d','#7c3aed','#1e40af','#0891b2','#047857','#92400e','#831843','#1e3a5f','#064e3b','#7c2d12','#4338ca','#065f46'];
+// ── Wheel (inline script এ আঁকা হয়, এখানে শুধু angle track) ──
 let wheelAngle = 0;
 
 function draw(a){
-  const W=cv.width, H=cv.height, cx=W/2, cy=H/2, r=cx-10;
-  cx2.clearRect(0,0,W,H);
-  const arc=(2*Math.PI)/SEGS.length;
-
-  // outer ring
-  cx2.beginPath(); cx2.arc(cx,cy,r+5,0,2*Math.PI);
-  const g=cx2.createLinearGradient(0,0,W,H);
-  g.addColorStop(0,'#f59e0b'); g.addColorStop(0.5,'#e8380d'); g.addColorStop(1,'#f59e0b');
-  cx2.strokeStyle=g; cx2.lineWidth=4; cx2.stroke();
-
-  SEGS.forEach((s,i)=>{
-    const st=a+i*arc;
-    cx2.beginPath(); cx2.moveTo(cx,cy); cx2.arc(cx,cy,r,st,st+arc);
-    cx2.fillStyle=COLS[i]; cx2.fill();
-    cx2.strokeStyle='rgba(255,255,255,0.2)'; cx2.lineWidth=1.5; cx2.stroke();
-    cx2.save(); cx2.translate(cx,cy); cx2.rotate(st+arc/2);
-    cx2.textAlign='right'; cx2.fillStyle='#fff';
-    cx2.font='bold 15px Sora,sans-serif';
-    cx2.shadowColor='rgba(0,0,0,0.5)'; cx2.shadowBlur=3;
-    cx2.fillText(s,r-12,6); cx2.restore();
-  });
-
-  // center
-  cx2.beginPath(); cx2.arc(cx,cy,26,0,2*Math.PI);
-  const cg=cx2.createRadialGradient(cx,cy,0,cx,cy,26);
-  cg.addColorStop(0,'#f97316'); cg.addColorStop(1,'#c2410c');
-  cx2.fillStyle=cg; cx2.fill();
-  cx2.strokeStyle='rgba(255,255,255,0.3)'; cx2.lineWidth=2; cx2.stroke();
-  cx2.fillStyle='#fff'; cx2.font='bold 11px Sora'; cx2.textAlign='center';
-  cx2.shadowBlur=0; cx2.fillText('GO',cx,cy+4);
+  wheelAngle = a;
+  if(window.drawWheel) window.drawWheel(a);
 }
-draw(wheelAngle);
 
 // ── Spin ──
 window.onSpin = () => {
@@ -218,6 +237,7 @@ window.onSpin = () => {
     if(p<1){ requestAnimationFrame(frame); return; }
 
     // কোন segment এ থামলো
+    const SEGS = window._wheelSegs || ['15','1','0','2','1','4','6','8','3','9','10','13'];
     const arc=(2*Math.PI)/SEGS.length;
     let norm = wheelAngle%(2*Math.PI);
     if(norm<0) norm+=2*Math.PI;
