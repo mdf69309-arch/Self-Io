@@ -7,428 +7,428 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0a0e1a;
-      --card: #111827;
-      --accent: #f59e0b;
-      --accent2: #ef4444;
-      --green: #10b981;
-      --text: #f1f5f9;
-      --muted: #64748b;
-      --border: rgba(245,158,11,0.2);
+    :root{
+      --bg:#0a0e1a; --card:#111827;
+      --accent:#f59e0b; --accent2:#ef4444;
+      --green:#10b981; --text:#f1f5f9;
+      --muted:#64748b; --border:rgba(245,158,11,0.2);
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Noto Sans Bengali', 'Sora', sans-serif;
-      background: var(--bg); color: var(--text);
-      min-height: 100vh; display: flex;
-      flex-direction: column; align-items: center;
-      justify-content: center; padding: 20px;
-      position: relative; overflow: hidden;
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      font-family:'Noto Sans Bengali','Sora',sans-serif;
+      background:var(--bg);color:var(--text);
+      min-height:100vh;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      padding:20px;position:relative;overflow:hidden;
     }
-    body::before {
-      content: '';
-      position: fixed; top: -50%; left: -50%;
-      width: 200%; height: 200%;
+    body::before{
+      content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;
       background:
-        radial-gradient(ellipse at 30% 20%, rgba(245,158,11,0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 70% 80%, rgba(239,68,68,0.06) 0%, transparent 50%);
-      pointer-events: none;
-      animation: bgPulse 8s ease-in-out infinite alternate;
+        radial-gradient(ellipse at 30% 20%,rgba(245,158,11,0.08) 0%,transparent 50%),
+        radial-gradient(ellipse at 70% 80%,rgba(239,68,68,0.06) 0%,transparent 50%);
+      pointer-events:none;animation:bgPulse 8s ease-in-out infinite alternate;
     }
-    @keyframes bgPulse { 0%{opacity:.5} 100%{opacity:1} }
+    @keyframes bgPulse{0%{opacity:.5}100%{opacity:1}}
 
-    /* ── Splash (auth চেক করার সময়) ── */
-    #splashScreen {
-      position: fixed; inset: 0; background: var(--bg);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 16px;
-      z-index: 999;
+    /* ── Splash ── */
+    #splashScreen{
+      position:fixed;inset:0;background:var(--bg);
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:16px;z-index:999;
     }
-    .splash-icon {
-      font-size: 64px;
-      animation: splashBounce 1s ease-in-out infinite alternate;
-    }
-    @keyframes splashBounce { from{transform:translateY(0)} to{transform:translateY(-12px)} }
-    .splash-title {
-      font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800;
-      background: linear-gradient(135deg, var(--accent), #fcd34d);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .splash-sub { font-size: 13px; color: var(--muted); }
-    .splash-bar-wrap {
-      width: 200px; height: 5px;
-      background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden;
-    }
-    .splash-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border-radius: 10px;
-      animation: splashLoad 1.5s ease-in-out forwards;
-    }
-    @keyframes splashLoad { from{width:0%} to{width:85%} }
+    .splash-icon{font-size:64px;animation:sBounce 1s ease-in-out infinite alternate;}
+    @keyframes sBounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+    .splash-title{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--accent),#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .splash-sub{font-size:13px;color:var(--muted);}
+    .splash-bar-wrap{width:200px;height:5px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;}
+    .splash-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;animation:sLoad 1.5s ease forwards;}
+    @keyframes sLoad{from{width:0%}to{width:85%}}
 
-    /* ── Login Card ── */
-    #loginCard { display: none; width: 100%; max-width: 380px; position: relative; z-index: 1; }
+    /* ── Card ── */
+    #mainCard{display:none;width:100%;max-width:380px;position:relative;z-index:1;}
+    .logo-wrap{text-align:center;margin-bottom:24px;}
+    .logo-icon{width:68px;height:68px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 10px;box-shadow:0 0 40px rgba(245,158,11,0.3);}
+    .logo-title{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--accent),#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .logo-sub{font-size:13px;color:var(--muted);margin-top:3px;}
 
-    .logo-wrap { text-align: center; margin-bottom: 28px; }
-    .logo-icon {
-      width: 72px; height: 72px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 20px; display: flex; align-items: center;
-      justify-content: center; font-size: 36px;
-      margin: 0 auto 12px;
-      box-shadow: 0 0 40px rgba(245,158,11,0.3);
-    }
-    .logo-title {
-      font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800;
-      background: linear-gradient(135deg, var(--accent), #fcd34d);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .logo-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:26px 22px;animation:fadeUp .5s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 24px; padding: 28px 24px;
-      animation: fadeUp 0.5s ease both;
-    }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    /* Tabs */
+    .tabs{display:flex;background:rgba(255,255,255,0.05);border-radius:12px;padding:4px;margin-bottom:22px;}
+    .tab{flex:1;padding:9px;text-align:center;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);transition:all .3s;}
+    .tab.active{background:linear-gradient(135deg,var(--accent),#f97316);color:#000;}
 
-    .tabs {
-      display: flex; background: rgba(255,255,255,0.05);
-      border-radius: 12px; padding: 4px; margin-bottom: 24px;
-    }
-    .tab {
-      flex: 1; padding: 10px; text-align: center; border-radius: 10px;
-      cursor: pointer; font-size: 14px; font-weight: 600;
-      color: var(--muted); transition: all .3s;
-    }
-    .tab.active { background: linear-gradient(135deg, var(--accent), #f97316); color: #000; }
+    /* Form panels */
+    .form-panel{display:none;}
+    .form-panel.active{display:block;}
 
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
-    .form-group input {
-      width: 100%; background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
-      padding: 13px 16px; color: var(--text); font-size: 15px;
-      font-family: inherit; outline: none; transition: border-color .3s;
-    }
-    .form-group input:focus { border-color: var(--accent); }
+    /* Fields */
+    .fg{margin-bottom:14px;}
+    .fg label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:700;}
+    .fg input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .3s;}
+    .fg input:focus{border-color:var(--accent);}
+    .pw-wrap{position:relative;}
+    .pw-wrap input{padding-right:46px;}
+    .eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;cursor:pointer;opacity:.6;}
 
-    .input-wrap { position: relative; display: flex; align-items: center; }
-    .input-wrap input { width: 100%; padding-right: 46px; }
-    .eye-btn {
-      position: absolute; right: 14px; font-size: 18px;
-      cursor: pointer; user-select: none; opacity: .6; transition: opacity .2s;
-    }
-    .eye-btn:hover { opacity: 1; }
+    /* Buttons */
+    .btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),#f97316);border:none;border-radius:13px;color:#000;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:6px;box-shadow:0 4px 20px rgba(245,158,11,0.3);transition:transform .2s;}
+    .btn-primary:active{transform:scale(0.98);}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 
-    .btn-primary {
-      width: 100%; padding: 14px;
-      background: linear-gradient(135deg, var(--accent), #f97316);
-      border: none; border-radius: 14px; color: #000;
-      font-size: 16px; font-weight: 700; font-family: inherit;
-      cursor: pointer; margin-top: 8px;
-      box-shadow: 0 4px 20px rgba(245,158,11,0.3);
-      transition: transform .2s, box-shadow .2s;
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,158,11,0.4); }
-    .btn-primary:active { transform: scale(0.98); }
-    .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    /* Reset password link */
+    .reset-link{text-align:center;margin-top:12px;font-size:12px;color:var(--muted);}
+    .reset-link span{color:var(--accent);cursor:pointer;font-weight:700;text-decoration:underline;}
 
-    .error-msg {
-      background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3);
-      color: #fca5a5; padding: 10px 14px; border-radius: 10px;
-      font-size: 13px; margin-top: 12px; display: none;
-    }
-    .success-msg {
-      background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3);
-      color: #6ee7b7; padding: 10px 14px; border-radius: 10px;
-      font-size: 13px; margin-top: 12px; display: none;
-    }
+    /* Messages */
+    .err{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fca5a5;padding:9px 13px;border-radius:10px;font-size:12px;margin-top:10px;display:none;}
+    .suc{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#6ee7b7;padding:9px 13px;border-radius:10px;font-size:12px;margin-top:10px;display:none;}
 
-    .loading {
-      display: inline-block; width: 18px; height: 18px;
-      border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
-      border-radius: 50%; animation: spin .6s linear infinite;
-      vertical-align: middle; margin-right: 6px;
-    }
-    @keyframes spin { to{transform:rotate(360deg)} }
+    /* Loading spinner */
+    .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spinR .6s linear infinite;vertical-align:middle;margin-right:5px;}
+    @keyframes spinR{to{transform:rotate(360deg)}}
 
-    .form-panel { display: none; }
-    .form-panel.active { display: block; }
+    /* ── Password Reset Overlay ── */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:999;align-items:center;justify-content:center;padding:20px;}
+    .overlay.on{display:flex;}
+    .ovbox{background:#111827;border:1px solid var(--border);border-radius:22px;padding:24px 20px;width:100%;max-width:360px;}
+    .ov-title{font-size:17px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+    .ov-sub{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6;}
+    .ov-close{float:right;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;}
+
+    /* Steps */
+    .step{display:none;}
+    .step.active{display:block;}
+    .step-label{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;}
+    .step-num{width:20px;height:20px;border-radius:50%;background:rgba(245,158,11,0.2);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;}
   </style>
 </head>
 <body>
 
-  <!-- ══ Splash Screen (auth চেক করার সময় দেখায়) ══ -->
-  <div id="splashScreen">
-    <div class="splash-icon">💰</div>
-    <div class="splash-title">EarnZone</div>
-    <div class="splash-sub">লোড হচ্ছে...</div>
-    <div class="splash-bar-wrap"><div class="splash-bar"></div></div>
+<!-- Splash -->
+<div id="splashScreen">
+  <div class="splash-icon">💰</div>
+  <div class="splash-title">EarnZone</div>
+  <div class="splash-sub">লোড হচ্ছে...</div>
+  <div class="splash-bar-wrap"><div class="splash-bar"></div></div>
+</div>
+
+<!-- Main Card -->
+<div id="mainCard">
+  <div class="logo-wrap">
+    <div class="logo-icon">💰</div>
+    <div class="logo-title">EarnZone</div>
+    <div class="logo-sub">দেখুন, খেলুন, আয় করুন!</div>
   </div>
 
-  <!-- ══ Login / Signup Card (auth চেক শেষে দেখায়) ══ -->
-  <div id="loginCard">
-    <div class="logo-wrap">
-      <div class="logo-icon">💰</div>
-      <div class="logo-title">EarnZone</div>
-      <div class="logo-sub">দেখুন, খেলুন, আয় করুন!</div>
+  <div class="card">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">লগইন</div>
+      <div class="tab"        onclick="switchTab('signup')">সাইনআপ</div>
     </div>
 
-    <div class="card">
-      <div class="tabs">
-        <div class="tab active" onclick="switchTab('login')">লগইন</div>
-        <div class="tab" onclick="switchTab('signup')">সাইনআপ</div>
+    <!-- Login -->
+    <div class="form-panel active" id="loginPanel">
+      <div class="fg"><label>ইমেইল</label><input type="email" id="loginEmail" placeholder="আপনার ইমেইল দিন"></div>
+      <div class="fg">
+        <label>পাসওয়ার্ড</label>
+        <div class="pw-wrap">
+          <input type="password" id="loginPass" placeholder="পাসওয়ার্ড দিন">
+          <span class="eye" onclick="togglePw('loginPass',this)">👁️</span>
+        </div>
       </div>
+      <button class="btn-primary" id="loginBtn" onclick="doLogin()">লগইন করুন</button>
+      <div class="reset-link">পাসওয়ার্ড ভুলে গেছেন? <span onclick="openReset()">রিসেট করুন</span></div>
+      <div class="err" id="loginErr"></div>
+    </div>
 
-      <!-- Login -->
-      <div class="form-panel active" id="loginPanel">
-        <div class="form-group">
-          <label>ইমেইল</label>
-          <input type="email" id="loginEmail" placeholder="আপনার ইমেইল দিন">
+    <!-- Signup -->
+    <div class="form-panel" id="signupPanel">
+      <div class="fg"><label>নাম</label><input type="text" id="signupName" placeholder="আপনার নাম দিন"></div>
+      <div class="fg"><label>ইমেইল</label><input type="email" id="signupEmail" placeholder="আপনার ইমেইল দিন"></div>
+      <div class="fg">
+        <label>পাসওয়ার্ড</label>
+        <div class="pw-wrap">
+          <input type="password" id="signupPass" placeholder="পাসওয়ার্ড (৬+ অক্ষর)">
+          <span class="eye" onclick="togglePw('signupPass',this)">👁️</span>
         </div>
-        <div class="form-group">
-          <label>পাসওয়ার্ড</label>
-          <div class="input-wrap">
-            <input type="password" id="loginPass" placeholder="পাসওয়ার্ড দিন">
-            <span class="eye-btn" onclick="togglePass('loginPass',this)">👁️</span>
-          </div>
-        </div>
-        <button class="btn-primary" onclick="doLogin()" id="loginBtn">লগইন করুন</button>
-        <div class="error-msg" id="loginError"></div>
       </div>
-
-      <!-- Signup -->
-      <div class="form-panel" id="signupPanel">
-        <div class="form-group">
-          <label>নাম</label>
-          <input type="text" id="signupName" placeholder="আপনার নাম দিন">
-        </div>
-        <div class="form-group">
-          <label>ইমেইল</label>
-          <input type="email" id="signupEmail" placeholder="আপনার ইমেইল দিন">
-        </div>
-        <div class="form-group">
-          <label>পাসওয়ার্ড</label>
-          <div class="input-wrap">
-            <input type="password" id="signupPass" placeholder="পাসওয়ার্ড দিন (৬+ অক্ষর)">
-            <span class="eye-btn" onclick="togglePass('signupPass',this)">👁️</span>
-          </div>
-        </div>
-        <button class="btn-primary" onclick="doSignup()" id="signupBtn">অ্যাকাউন্ট খুলুন</button>
-        <div class="error-msg" id="signupError"></div>
-        <div class="success-msg" id="signupSuccess"></div>
-      </div>
+      <button class="btn-primary" id="signupBtn" onclick="doSignup()">অ্যাকাউন্ট খুলুন</button>
+      <div class="err" id="signupErr"></div>
+      <div class="suc" id="signupSuc"></div>
     </div>
   </div>
+</div>
 
-  <!-- Non-module helpers -->
-  <script>
-    window.togglePass = (id, btn) => {
-      const el = document.getElementById(id);
-      el.type   = el.type === 'password' ? 'text' : 'password';
-      btn.textContent = el.type === 'password' ? '👁️' : '🙈';
-    };
-    window.switchTab = (tab) => {
-      document.querySelectorAll('.tab').forEach((t, i) => {
-        t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='signup'));
-      });
-      document.getElementById('loginPanel').classList.toggle('active',  tab==='login');
-      document.getElementById('signupPanel').classList.toggle('active', tab==='signup');
-    };
-  </script>
+<!-- ══ Password Reset Overlay ══ -->
+<div class="overlay" id="resetOverlay">
+  <div class="ovbox">
+    <div class="ov-title">
+      🔑 পাসওয়ার্ড রিসেট
+      <button class="ov-close" onclick="closeReset()">✕</button>
+    </div>
 
-  <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import {
-      onAuthStateChanged,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import {
-      doc, setDoc, getDoc, updateDoc,
-      query, collection, where, getDocs, serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <!-- Step 1: Email -->
+    <div class="step active" id="step1">
+      <div class="ov-sub">আপনার নিবন্ধিত ইমেইল দিন। ডিভাইস যাচাই হলে নতুন পাসওয়ার্ড সেট করতে পারবেন।</div>
+      <div class="step-label"><div class="step-num">1</div>ইমেইল যাচাই</div>
+      <div class="fg"><input type="email" id="resetEmail" placeholder="আপনার ইমেইল দিন"></div>
+      <button class="btn-primary" id="resetStep1Btn" onclick="verifyResetEmail()">পরবর্তী ›</button>
+      <div class="err" id="resetErr1"></div>
+    </div>
 
-    const tg = window.Telegram?.WebApp;
-    if (tg) tg.expand();
+    <!-- Step 2: New Password -->
+    <div class="step" id="step2">
+      <div class="ov-sub" id="resetStep2Sub">ডিভাইস যাচাই সফল! এখন নতুন পাসওয়ার্ড সেট করুন।</div>
+      <div class="step-label"><div class="step-num">2</div>নতুন পাসওয়ার্ড</div>
+      <div class="fg">
+        <label>নতুন পাসওয়ার্ড</label>
+        <div class="pw-wrap">
+          <input type="password" id="newPass1" placeholder="নতুন পাসওয়ার্ড (৬+ অক্ষর)">
+          <span class="eye" onclick="togglePw('newPass1',this)">👁️</span>
+        </div>
+      </div>
+      <div class="fg">
+        <label>পাসওয়ার্ড নিশ্চিত করুন</label>
+        <div class="pw-wrap">
+          <input type="password" id="newPass2" placeholder="আবার পাসওয়ার্ড দিন">
+          <span class="eye" onclick="togglePw('newPass2',this)">👁️</span>
+        </div>
+      </div>
+      <button class="btn-primary" id="resetStep2Btn" onclick="doPasswordReset()">✅ পাসওয়ার্ড সেট করুন</button>
+      <div class="err" id="resetErr2"></div>
+      <div class="suc" id="resetSuc2"></div>
+    </div>
 
-    /* ── Device Fingerprint ── */
-    function getDeviceId() {
-      let id = localStorage.getItem('_did');
-      if (!id) {
-        const raw = [
-          navigator.userAgent, navigator.language,
-          screen.width+'x'+screen.height,
-          new Date().getTimezoneOffset(),
-          navigator.hardwareConcurrency||0,
-          navigator.platform||''
-        ].join('|');
-        let hash = 0;
-        for (let i=0; i<raw.length; i++) { hash=((hash<<5)-hash)+raw.charCodeAt(i); hash|=0; }
-        id = Math.abs(hash).toString(36) + '-' + Date.now().toString(36);
-        localStorage.setItem('_did', id);
-      }
-      return id;
-    }
-    const DEVICE_ID = getDeviceId();
+  </div>
+</div>
 
-    /* ════════════════════════════════════════
-       AUTH STATE CHECK
-       ✅ লগইন থাকলে → home.html
-       ✅ লগইন না থাকলে → login form দেখাও
-       এই check টাই spinner দেখানোর কারণ।
-    ════════════════════════════════════════ */
-    let _authChecked = false;
+<!-- Non-module helpers -->
+<script>
+window.togglePw = (id,btn)=>{
+  const el=document.getElementById(id);
+  el.type=el.type==='password'?'text':'password';
+  btn.textContent=el.type==='password'?'👁️':'🙈';
+};
+window.switchTab = (tab)=>{
+  document.querySelectorAll('.tab').forEach((t,i)=>
+    t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup'))
+  );
+  document.getElementById('loginPanel').classList.toggle('active',  tab==='login');
+  document.getElementById('signupPanel').classList.toggle('active', tab==='signup');
+};
+window.openReset = ()=>{ document.getElementById('resetOverlay').classList.add('on'); };
+window.closeReset = ()=>{
+  document.getElementById('resetOverlay').classList.remove('on');
+  document.getElementById('step1').classList.add('active');
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('resetEmail').value='';
+  document.getElementById('newPass1').value='';
+  document.getElementById('newPass2').value='';
+  hideMsg('resetErr1'); hideMsg('resetErr2'); hideMsg('resetSuc2');
+};
+function showMsg(id,msg){ const e=document.getElementById(id); e.innerHTML=msg; e.style.display='block'; }
+function hideMsg(id){ document.getElementById(id).style.display='none'; }
+</script>
 
-    onAuthStateChanged(auth, async (user) => {
-      if (_authChecked) return; // একবারের বেশি চলবে না
-      _authChecked = true;
+<script type="module">
+import { auth, db } from './firebase-config.js';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  sendPasswordResetEmail
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import {
+  doc, setDoc, getDoc, updateDoc,
+  query, collection, where, getDocs, serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-      if (user) {
-        /* ── লগইন আছে → ডিভাইস যাচাই → home.html ── */
-        try {
-          const snap = await getDoc(doc(db, 'users', user.uid));
-          if (!snap.exists()) {
-            /* Firestore record নেই → logout করো */
-            await signOut(auth);
-            showLoginForm();
-            return;
-          }
-          const data = snap.data();
+const tg = window.Telegram?.WebApp;
+if (tg) tg.expand();
 
-          /* ডিভাইস mismatch চেক */
-          if (data.deviceId && data.deviceId !== DEVICE_ID) {
-            await signOut(auth);
-            localStorage.removeItem('_did');
-            showError('loginError', '🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত!');
-            showLoginForm();
-            return;
-          }
+/* ── Device ID ── */
+function getDeviceId(){
+  let id=localStorage.getItem('_did');
+  if(!id){
+    const raw=[navigator.userAgent,navigator.language,screen.width+'x'+screen.height,
+      new Date().getTimezoneOffset(),navigator.hardwareConcurrency||0,navigator.platform||''].join('|');
+    let h=0; for(let i=0;i<raw.length;i++){h=((h<<5)-h)+raw.charCodeAt(i);h|=0;}
+    id=Math.abs(h).toString(36)+'-'+Date.now().toString(36);
+    localStorage.setItem('_did',id);
+  }
+  return id;
+}
+const DEVICE_ID=getDeviceId();
 
-          /* সব ঠিক আছে → home এ যাও */
-          window.location.replace('home.html');
-        } catch (e) {
-          /* Firestore error → login form দেখাও */
-          showLoginForm();
-        }
-      } else {
-        /* ── লগইন নেই → login form দেখাও ── */
-        showLoginForm();
-      }
+/* ── Auth check → redirect ── */
+let _checked=false;
+onAuthStateChanged(auth, async(user)=>{
+  if (_checked) return;
+  _checked=true;
+  if (user){
+    try{
+      const snap=await getDoc(doc(db,'users',user.uid));
+      if(!snap.exists()){ await signOut(auth); showLoginForm(); return; }
+      const data=snap.data();
+      if(data.deviceId&&data.deviceId!==DEVICE_ID){ await signOut(auth); localStorage.removeItem('_did'); showErrLogin('🚫 অন্য ডিভাইস থেকে লগইন করা আছে!'); showLoginForm(); return; }
+      window.location.replace('home.html');
+    } catch{ showLoginForm(); }
+  } else { showLoginForm(); }
+});
+
+function showLoginForm(){
+  document.getElementById('splashScreen').style.display='none';
+  document.getElementById('mainCard').style.display='block';
+}
+function showErrLogin(msg){ setTimeout(()=>{ showMsg('loginErr',msg); },100); }
+
+/* ══════════════════════════════
+   LOGIN
+══════════════════════════════ */
+window.doLogin=async()=>{
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  const btn=document.getElementById('loginBtn');
+  hideMsg('loginErr');
+  if(!email||!pass){ showMsg('loginErr','সব তথ্য দিন'); return; }
+  btn.innerHTML='<span class="spin"></span>লগইন হচ্ছে...'; btn.disabled=true;
+  try{
+    const cred=await signInWithEmailAndPassword(auth,email,pass);
+    const snap=await getDoc(doc(db,'users',cred.user.uid));
+    if(!snap.exists()){ await signOut(auth); showMsg('loginErr','অ্যাকাউন্ট পাওয়া যায়নি!'); btn.innerHTML='লগইন করুন'; btn.disabled=false; return; }
+    const data=snap.data();
+    if(data.banned){ await signOut(auth); showMsg('loginErr','🚫 আপনার অ্যাকাউন্ট ব্যান করা হয়েছে!'); btn.innerHTML='লগইন করুন'; btn.disabled=false; return; }
+    if(data.deviceId&&data.deviceId!==DEVICE_ID){ await signOut(auth); showMsg('loginErr','🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত!<br><small>একটি অ্যাকাউন্ট শুধু একটি ডিভাইসে ব্যবহার করা যাবে।</small>'); btn.innerHTML='লগইন করুন'; btn.disabled=false; return; }
+    await updateDoc(doc(db,'users',cred.user.uid),{deviceId:DEVICE_ID,lastLogin:serverTimestamp()});
+  } catch(e){
+    const msg=e.code==='auth/wrong-password'||e.code==='auth/user-not-found'||e.code==='auth/invalid-credential'?'ইমেইল বা পাসওয়ার্ড ভুল!':'লগইন ব্যর্থ হয়েছে!';
+    showMsg('loginErr',msg); btn.innerHTML='লগইন করুন'; btn.disabled=false;
+  }
+};
+
+/* ══════════════════════════════
+   SIGNUP
+══════════════════════════════ */
+window.doSignup=async()=>{
+  const name=document.getElementById('signupName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim();
+  const pass=document.getElementById('signupPass').value;
+  const btn=document.getElementById('signupBtn');
+  hideMsg('signupErr'); hideMsg('signupSuc');
+  if(!name||!email||!pass){ showMsg('signupErr','সব তথ্য দিন'); return; }
+  if(pass.length<6){ showMsg('signupErr','পাসওয়ার্ড কমপক্ষে ৬ অক্ষর'); return; }
+  btn.innerHTML='<span class="spin"></span>তৈরি হচ্ছে...'; btn.disabled=true;
+  try{
+    const dq=query(collection(db,'users'),where('deviceId','==',DEVICE_ID));
+    const dSnap=await getDocs(dq);
+    if(!dSnap.empty){ showMsg('signupErr','🚫 এই ডিভাইসে আগেই একটি অ্যাকাউন্ট আছে!'); btn.innerHTML='অ্যাকাউন্ট খুলুন'; btn.disabled=false; return; }
+    const cred=await createUserWithEmailAndPassword(auth,email,pass);
+    await setDoc(doc(db,'users',cred.user.uid),{
+      name,email,points:0,balance:0,adCount:0,spinCount:0,
+      isAdmin:false,deviceId:DEVICE_ID,
+      createdAt:serverTimestamp(),lastLogin:serverTimestamp()
     });
+    const s=document.getElementById('signupSuc');
+    s.textContent='✅ অ্যাকাউন্ট তৈরি হয়েছে! হোমে যাচ্ছি...'; s.style.display='block';
+  } catch(e){
+    showMsg('signupErr',e.code==='auth/email-already-in-use'?'এই ইমেইল আগেই ব্যবহৃত!':'সাইনআপ ব্যর্থ হয়েছে');
+    btn.innerHTML='অ্যাকাউন্ট খুলুন'; btn.disabled=false;
+  }
+};
 
-    function showLoginForm() {
-      document.getElementById('splashScreen').style.display = 'none';
-      document.getElementById('loginCard').style.display    = 'block';
+/* ══════════════════════════════
+   PASSWORD RESET
+   Step 1: Email + Device check
+   Step 2: New password set
+══════════════════════════════ */
+let _resetUserUid = null;
+let _resetUserEmail = null;
+
+window.verifyResetEmail = async()=>{
+  const email = document.getElementById('resetEmail').value.trim();
+  const btn   = document.getElementById('resetStep1Btn');
+  hideMsg('resetErr1');
+  if (!email) { showMsg('resetErr1','ইমেইল দিন!'); return; }
+
+  btn.innerHTML='<span class="spin"></span>যাচাই হচ্ছে...'; btn.disabled=true;
+
+  try {
+    /* Firestore এ email দিয়ে ইউজার খোঁজো */
+    const q    = query(collection(db,'users'), where('email','==',email));
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      showMsg('resetErr1','এই ইমেইলে কোনো অ্যাকাউন্ট নেই!');
+      btn.innerHTML='পরবর্তী ›'; btn.disabled=false; return;
     }
 
-    function showError(id, msg) {
-      const el = document.getElementById(id);
-      el.innerHTML = msg; el.style.display = 'block';
+    const userDoc  = snap.docs[0];
+    const userData = userDoc.data();
+
+    /* ── Device ID মিলিয়ে দেখো ── */
+    if (userData.deviceId && userData.deviceId !== DEVICE_ID) {
+      showMsg('resetErr1','🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত!<br><small>শুধু নিবন্ধিত ডিভাইস থেকে পাসওয়ার্ড রিসেট করা যাবে।</small>');
+      btn.innerHTML='পরবর্তী ›'; btn.disabled=false; return;
     }
-    function hideError(id) {
-      document.getElementById(id).style.display = 'none';
-    }
 
-    /* ════════════════════════════════════════
-       LOGIN
-    ════════════════════════════════════════ */
-    window.doLogin = async () => {
-      const email = document.getElementById('loginEmail').value.trim();
-      const pass  = document.getElementById('loginPass').value;
-      const btn   = document.getElementById('loginBtn');
-      hideError('loginError');
+    /* Device match → Step 2 দেখাও */
+    _resetUserUid   = userDoc.id;
+    _resetUserEmail = email;
 
-      if (!email || !pass) { showError('loginError','সব তথ্য দিন'); return; }
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+    document.getElementById('resetStep2Sub').textContent = '✅ ডিভাইস যাচাই সফল! '+email+' — নতুন পাসওয়ার্ড সেট করুন।';
 
-      btn.innerHTML = '<span class="loading"></span>লগইন হচ্ছে...';
-      btn.disabled  = true;
+  } catch(e) {
+    console.error(e);
+    showMsg('resetErr1','যাচাই ব্যর্থ হয়েছে! আবার চেষ্টা করুন।');
+    btn.innerHTML='পরবর্তী ›'; btn.disabled=false;
+  }
+  btn.innerHTML='পরবর্তী ›'; btn.disabled=false;
+};
 
-      try {
-        const cred = await signInWithEmailAndPassword(auth, email, pass);
-        const snap = await getDoc(doc(db,'users',cred.user.uid));
+window.doPasswordReset = async()=>{
+  const p1  = document.getElementById('newPass1').value;
+  const p2  = document.getElementById('newPass2').value;
+  const btn = document.getElementById('resetStep2Btn');
+  hideMsg('resetErr2'); hideMsg('resetSuc2');
 
-        if (!snap.exists()) {
-          await signOut(auth);
-          showError('loginError','অ্যাকাউন্ট পাওয়া যায়নি!');
-          btn.innerHTML='লগইন করুন'; btn.disabled=false; return;
-        }
+  if (!p1||!p2)      { showMsg('resetErr2','পাসওয়ার্ড দিন!'); return; }
+  if (p1.length < 6) { showMsg('resetErr2','পাসওয়ার্ড কমপক্ষে ৬ অক্ষর!'); return; }
+  if (p1 !== p2)     { showMsg('resetErr2','পাসওয়ার্ড দুটো মিলছে না!'); return; }
 
-        const data = snap.data();
+  btn.innerHTML='<span class="spin"></span>সেট হচ্ছে...'; btn.disabled=true;
 
-        /* ডিভাইস চেক */
-        if (data.deviceId && data.deviceId !== DEVICE_ID) {
-          await signOut(auth);
-          showError('loginError','🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত!<br><small>একটি অ্যাকাউন্ট শুধু একটি ডিভাইসে ব্যবহার করা যাবে।</small>');
-          btn.innerHTML='লগইন করুন'; btn.disabled=false; return;
-        }
+  try {
+    /*
+      Firebase Auth এ পাসওয়ার্ড সরাসরি client থেকে
+      update করতে হলে user কে re-authenticate করতে হয়।
+      কিন্তু এখানে ইউজার লগইন নেই।
+      তাই sendPasswordResetEmail ব্যবহার করছি —
+      তবে আগে device verify হয়েছে।
+    */
+    await sendPasswordResetEmail(auth, _resetUserEmail);
 
-        /* ডিভাইস আপডেট */
-        await updateDoc(doc(db,'users',cred.user.uid),{
-          deviceId: DEVICE_ID, lastLogin: serverTimestamp()
-        });
+    const s=document.getElementById('resetSuc2');
+    s.innerHTML='✅ পাসওয়ার্ড রিসেট ইমেইল পাঠানো হয়েছে!<br><small>'+_resetUserEmail+' চেক করুন এবং লিংকে ক্লিক করে নতুন পাসওয়ার্ড সেট করুন।</small>';
+    s.style.display='block';
+    btn.style.display='none';
 
-        /* ─ onAuthStateChanged আবার fire হবে → home.html redirect হবে ─ */
+    /* ৫ সেকেন্ড পর overlay বন্ধ */
+    setTimeout(()=>{ window.closeReset(); btn.innerHTML='✅ পাসওয়ার্ড সেট করুন'; btn.disabled=false; btn.style.display='block'; }, 5000);
 
-      } catch (e) {
-        const msg = e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found'
-          ? 'ইমেইল বা পাসওয়ার্ড ভুল!'
-          : 'লগইন ব্যর্থ হয়েছে!';
-        showError('loginError', msg);
-        btn.innerHTML='লগইন করুন'; btn.disabled=false;
-      }
-    };
-
-    /* ════════════════════════════════════════
-       SIGNUP
-    ════════════════════════════════════════ */
-    window.doSignup = async () => {
-      const name  = document.getElementById('signupName').value.trim();
-      const email = document.getElementById('signupEmail').value.trim();
-      const pass  = document.getElementById('signupPass').value;
-      const btn   = document.getElementById('signupBtn');
-      hideError('signupError');
-      document.getElementById('signupSuccess').style.display='none';
-
-      if (!name||!email||!pass) { showError('signupError','সব তথ্য দিন'); return; }
-      if (pass.length < 6)     { showError('signupError','পাসওয়ার্ড কমপক্ষে ৬ অক্ষর'); return; }
-
-      btn.innerHTML='<span class="loading"></span>তৈরি হচ্ছে...';
-      btn.disabled=true;
-
-      try {
-        /* এই ডিভাইসে আগেই অ্যাকাউন্ট আছে কিনা */
-        const dq   = query(collection(db,'users'), where('deviceId','==',DEVICE_ID));
-        const dSnap= await getDocs(dq);
-        if (!dSnap.empty) {
-          showError('signupError','🚫 এই ডিভাইসে আগেই একটি অ্যাকাউন্ট তৈরি হয়েছে!');
-          btn.innerHTML='অ্যাকাউন্ট খুলুন'; btn.disabled=false; return;
-        }
-
-        const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        await setDoc(doc(db,'users',cred.user.uid),{
-          name, email, points:0, balance:0, adCount:0,
-          isAdmin: false, deviceId: DEVICE_ID,
-          createdAt: serverTimestamp(), lastLogin: serverTimestamp()
-        });
-
-        const sEl = document.getElementById('signupSuccess');
-        sEl.textContent='✅ অ্যাকাউন্ট তৈরি হয়েছে! হোমে যাচ্ছি...';
-        sEl.style.display='block';
-        /* onAuthStateChanged fire → home.html */
-
-      } catch (e) {
-        const msg = e.code==='auth/email-already-in-use'
-          ? 'এই ইমেইল আগেই ব্যবহৃত!'
-          : 'সাইনআপ ব্যর্থ হয়েছে';
-        showError('signupError', msg);
-        btn.innerHTML='অ্যাকাউন্ট খুলুন'; btn.disabled=false;
-      }
-    };
-  </script>
+  } catch(e) {
+    console.error(e);
+    showMsg('resetErr2','ব্যর্থ হয়েছে! আবার চেষ্টা করুন।');
+    btn.innerHTML='✅ পাসওয়ার্ড সেট করুন'; btn.disabled=false;
+  }
+};
+</script>
 </body>
 </html>
