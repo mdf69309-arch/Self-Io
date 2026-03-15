@@ -162,6 +162,7 @@
   <div class="nav-tab"        onclick="switchTab('rate')">💱 রেট</div>
   <div class="nav-tab"        onclick="switchTab('links')">🔗 লিংক</div>
   <div class="nav-tab"        onclick="switchTab('notice')">📢 নোটিশ</div>
+  <div class="nav-tab"        onclick="switchTab('helpline')">📞 হেল্পলাইন</div>
   <div class="nav-tab"        onclick="switchTab('admin')">👑 অ্যাডমিন</div>
 </div>
 
@@ -245,6 +246,38 @@
     </div>
   </div>
 
+  <!-- ══ Helpline ══ -->
+  <div id="tab-helpline" style="display:none;">
+    <div class="sec">
+      <div class="sec-title">📞 হেল্পলাইন লিংক সেটিংস</div>
+
+      <div class="field">
+        <label>✈️ Telegram লিংক</label>
+        <input type="url" id="hlTelegram" placeholder="https://t.me/username">
+      </div>
+      <div class="field">
+        <label>💬 WhatsApp লিংক</label>
+        <input type="url" id="hlWhatsapp" placeholder="https://wa.me/8801XXXXXXXXX">
+      </div>
+      <div class="field">
+        <label>📞 Call নম্বর</label>
+        <input type="tel" id="hlCall" placeholder="+8801XXXXXXXXX">
+      </div>
+
+      <!-- Preview -->
+      <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:12px;padding:12px;margin-bottom:14px;">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:700;">প্রিভিউ</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:12px;background:rgba(41,182,246,0.15);color:#29b6f6;padding:4px 10px;border-radius:8px;" id="prevTg">Telegram: —</span>
+          <span style="font-size:12px;background:rgba(37,211,102,0.15);color:#25d366;padding:4px 10px;border-radius:8px;" id="prevWa">WhatsApp: —</span>
+          <span style="font-size:12px;background:rgba(232,56,13,0.15);color:#ff6b35;padding:4px 10px;border-radius:8px;" id="prevCall">Call: —</span>
+        </div>
+      </div>
+
+      <button class="btn btn-gold" onclick="saveHelpline()">💾 হেল্পলাইন সেভ করুন</button>
+    </div>
+  </div>
+
   <!-- ══ Admin ══ -->
   <div id="tab-admin" style="display:none;">
     <div class="sec">
@@ -320,15 +353,16 @@ onAuthStateChanged(auth,async(user)=>{
 
 /* ── Tab ── */
 window.switchTab=(tab)=>{
-  ['users','device','withdraw','rate','links','notice','admin'].forEach(t=>{
+  ['users','device','withdraw','rate','links','notice','helpline','admin'].forEach(t=>{
     document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
   });
   document.querySelectorAll('.nav-tab').forEach((el,i)=>{
-    el.classList.toggle('active',['users','device','withdraw','rate','links','notice','admin'][i]===tab);
+    el.classList.toggle('active',['users','device','withdraw','rate','links','notice','helpline','admin'][i]===tab);
   });
   if(tab==='withdraw') loadWithdrawRequests('all');
   if(tab==='device')   loadDeviceRequests('all');
   if(tab==='links')    loadLinks();
+  if(tab==='helpline') loadHelplineSettings();
 };
 
 /* ── Stats ── */
@@ -537,6 +571,46 @@ function showSavedPill(url){document.getElementById('savedPillText').textContent
 
 /* ── Notice / Admin ── */
 window.saveNotice=async()=>{await setDoc(doc(db,'settings','notice'),{text:document.getElementById('marqueeText').value,updatedAt:serverTimestamp()},{merge:true});showToast('✅ নোটিশ সেভ হয়েছে!');};
+
+/* ════════ HELPLINE ════════ */
+async function loadHelplineSettings(){
+  try{
+    const snap=await getDoc(doc(db,'settings','helpline'));
+    if(snap.exists()){
+      const d=snap.data();
+      document.getElementById('hlTelegram').value=d.telegram||'';
+      document.getElementById('hlWhatsapp').value=d.whatsapp||'';
+      document.getElementById('hlCall').value=d.call||'';
+      updateHlPreview(d);
+    }
+  }catch(e){}
+  /* live preview on input */
+  ['hlTelegram','hlWhatsapp','hlCall'].forEach(id=>{
+    document.getElementById(id).oninput=()=>updateHlPreview({
+      telegram:document.getElementById('hlTelegram').value,
+      whatsapp:document.getElementById('hlWhatsapp').value,
+      call:document.getElementById('hlCall').value
+    });
+  });
+}
+
+function updateHlPreview(d){
+  document.getElementById('prevTg').textContent  = 'Telegram: '+(d.telegram?'✅ সেট আছে':'—');
+  document.getElementById('prevWa').textContent  = 'WhatsApp: '+(d.whatsapp?'✅ সেট আছে':'—');
+  document.getElementById('prevCall').textContent= 'Call: '+(d.call?'✅ সেট আছে':'—');
+}
+
+window.saveHelpline=async()=>{
+  const data={
+    telegram: document.getElementById('hlTelegram').value.trim(),
+    whatsapp: document.getElementById('hlWhatsapp').value.trim(),
+    call:     document.getElementById('hlCall').value.trim(),
+    updatedAt:serverTimestamp()
+  };
+  await setDoc(doc(db,'settings','helpline'),data,{merge:true});
+  updateHlPreview(data);
+  showToast('✅ হেল্পলাইন সেভ হয়েছে!');
+};
 window.makeAdmin=async()=>{const uid=document.getElementById('adminUid').value.trim();if(!uid){showToast('UID দিন!',true);return;}await updateDoc(doc(db,'users',uid),{isAdmin:true});showToast('✅ Admin করা হয়েছে!');};
 window.removeAdmin=async()=>{const uid=document.getElementById('adminUid').value.trim();if(!uid){showToast('UID দিন!',true);return;}await updateDoc(doc(db,'users',uid),{isAdmin:false});showToast('✅ Admin সরানো হয়েছে!');};
 window.doLogout=async()=>{await signOut(auth);location.href='index.html';};
