@@ -112,13 +112,12 @@ canvas{display:block;border-radius:50%;}
 <div class="modal" id="adModal">
   <div class="mbox">
     <div class="mbox-title">📺 বিজ্ঞাপন দেখুন</div>
-    <div class="mbox-sub">সম্পূর্ণ দেখলেই পয়েন্ট পাবেন!</div>
+    <div class="mbox-sub">সম্পূর্ণ দেখলেই স্বয়ংক্রিয়ভাবে পয়েন্ট যোগ হবে!</div>
     <div class="ad-area" id="adArea">
       <div style="font-size:13px;color:#64748b;">বিজ্ঞাপন লোড হচ্ছে...</div>
     </div>
-    <div class="timer-num" id="timerNum">5</div>
-    <div class="timer-lbl">সেকেন্ড অপেক্ষা করুন</div>
-    <button class="btn-claim" id="claimBtn" onclick="claimPts()">✅ পয়েন্ট নিন!</button>
+    <div class="timer-num" id="timerNum">15</div>
+    <div class="timer-lbl" id="timerLbl">সেকেন্ড বিজ্ঞাপন দেখুন</div>
     <button class="btn-close-ad" id="closeAdBtn" onclick="cancelAd()">❌ বাদ দিন (পয়েন্ট পাবেন না)</button>
   </div>
 </div>
@@ -221,42 +220,79 @@ function openAd(){
   _adWatched=false;
   _adActive=true;
   window._adActive=true;
-  _timerRemaining=15; // ১৫ সেকেন্ড দেখতে হবে
   _adPaused=false;
+  document.getElementById('claimBtn').style.display='none';
+  document.getElementById('adModal').classList.remove('on'); // modal লুকাও — Ad নিজেই দেখাবে
+  _adStartTime=Date.now();
+
+  document.addEventListener('visibilitychange', onVisChange);
+  launchAd();
+}
+
+function launchAd(){
+  if(!_adActive) return;
+
+  if(window.show_10729825){
+    window.show_10729825()
+      .then(function(){
+        var secs=(Date.now()-_adStartTime)/1000;
+        if(secs >= 15){
+          // ১৫ সেকেন্ড+ দেখেছে — অটো পয়েন্ট দাও
+          document.removeEventListener('visibilitychange', onVisChange);
+          _adActive=false; window._adActive=false;
+          _adWatched=true;
+          autoGivePoints();
+        } else {
+          // কম সময় — আবার Ad চালাও
+          showToast('⚠️ পুরো বিজ্ঞাপন দেখুন! আবার শুরু হচ্ছে...', true);
+          setTimeout(function(){ if(_adActive) launchAd(); }, 1500);
+        }
+      })
+      .catch(function(){
+        var secs=(Date.now()-_adStartTime)/1000;
+        if(secs >= 15){
+          document.removeEventListener('visibilitychange', onVisChange);
+          _adActive=false; window._adActive=false;
+          _adWatched=true;
+          autoGivePoints();
+        } else {
+          showToast('⚠️ বিজ্ঞাপন বন্ধ করবেন না! আবার শুরু হচ্ছে...', true);
+          setTimeout(function(){ if(_adActive) launchAd(); }, 1500);
+        }
+      });
+  } else {
+    // SDK নেই — নিজস্ব timer
+    showTimerModal();
+  }
+}
+
+// ১৫ সেকেন্ড পর অটো পয়েন্ট
+function autoGivePoints(){
+  document.getElementById('adModal').classList.remove('on');
+  if(_wonPts<=0){
+    showToast('😅 এবার শূন্য! আবার চেষ্টা করুন');
+    resetSpin(); return;
+  }
+  window._savePts(_wonPts);
+}
+
+// Claim বাটন আর নেই — showClaimModal বাদ
+function showTimerModal(){
+  _timerRemaining=15;
   document.getElementById('claimBtn').style.display='none';
   document.getElementById('timerNum').textContent=_timerRemaining;
   document.getElementById('adModal').classList.add('on');
-  _adStartTime=Date.now();
-
-  // Page visibility — Ad এ ক্লিক করে বাইরে গেলে timer pause
-  document.addEventListener('visibilitychange', onVisChange);
-
-  // Monetag Ad চালাও — কিন্তু promise এ পয়েন্ট দেবো না
-  // শুধু timer শেষ হলেই পয়েন্ট পাবে
-  if(window.show_10729825){
-    window.show_10729825()
-      .then(function(){ /* পয়েন্ট দেবো না এখানে */ })
-      .catch(function(){ /* ignore */ });
-  }
-
-  // Timer — এটাই একমাত্র পয়েন্ট দেওয়ার উপায়
   startTimer();
 }
 
 function onVisChange(){
   if(!_adActive) return;
-  if(document.hidden){
-    // Ad এ click করে বাইরে গেছে — timer pause
-    _adPaused=true;
-    clearInterval(window._adTimer);
-    document.getElementById('adModal').classList.remove('on');
-  } else {
-    // ফিরে এসেছে — Ad modal দেখাও, timer resume
-    document.getElementById('adModal').classList.add('on');
-    if(_adActive){
-      _adPaused=false;
-      startTimer();
-    }
+  if(!document.hidden){
+    // ফিরে এসেছে — Back করেছে বা অন্য কারণে
+    // Ad আবার চালাও
+    setTimeout(function(){
+      if(_adActive) launchAd();
+    }, 500);
   }
 }
 
@@ -264,27 +300,29 @@ function startTimer(){
   clearInterval(window._adTimer);
   document.getElementById('timerNum').textContent=_timerRemaining;
   window._adTimer=setInterval(function(){
-    if(_adPaused) return;
     _timerRemaining--;
     if(_timerRemaining>0){
       document.getElementById('timerNum').textContent=_timerRemaining;
     } else {
       clearInterval(window._adTimer);
-      document.getElementById('timerNum').textContent='✅';
-      document.getElementById('claimBtn').style.display='block';
+      document.removeEventListener('visibilitychange', onVisChange);
+      _adActive=false; window._adActive=false;
       _adWatched=true;
+      // অটো পয়েন্ট দাও
+      document.getElementById('timerNum').textContent='🎉';
+      setTimeout(function(){ autoGivePoints(); }, 500);
     }
   },1000);
 }
 
 function claimPts(){
+  // এখন শুধু cancelAd বা internal call এ ব্যবহার হবে
   clearInterval(window._adTimer);
   document.removeEventListener('visibilitychange', onVisChange);
   _adActive=false; window._adActive=false;
   document.getElementById('adModal').classList.remove('on');
   if(!_adWatched){showToast('⚠️ বিজ্ঞাপন সম্পূর্ণ দেখুন!',true);resetSpin();return;}
-  if(_wonPts<=0){showToast('😅 এবার শূন্য! আবার চেষ্টা করুন');resetSpin();return;}
-  window._savePts(_wonPts);
+  autoGivePoints();
 }
 
 function cancelAd(){
