@@ -9,495 +9,344 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #1a1a2e; --card: #16213e; --card2: #0f3460;
-      --accent: #f59e0b; --accent2: #e8380d;
-      --green: #10b981; --text: #f1f5f9; --muted: #94a3b8;
-      --purple: #7c3aed;
+      --bg:#1a1a2e; --card:#16213e; --accent:#f59e0b;
+      --green:#10b981; --red:#ef4444; --text:#f1f5f9; --muted:#94a3b8;
     }
-    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-    body { font-family:'Noto Sans Bengali','Sora',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:30px; }
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    body{font-family:'Noto Sans Bengali','Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:30px;}
 
-    /* Header */
-    .header { background:var(--card); padding:14px 16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.08); }
-    .back-btn { width:38px; height:38px; background:rgba(255,255,255,0.1); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer; text-decoration:none; color:var(--text); }
-    .header-title { font-family:'Sora',sans-serif; font-size:20px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:8px; }
-    .coins-badge { margin-left:auto; background:linear-gradient(135deg,#f59e0b,#f97316); color:#000; padding:7px 16px; border-radius:20px; font-size:15px; font-weight:800; display:flex; align-items:center; gap:6px; }
+    .header{background:#16213e;padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.08);}
+    .back-btn{width:38px;height:38px;background:rgba(255,255,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;text-decoration:none;color:var(--text);border:none;}
+    .header-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--text);}
+    .coins-badge{margin-left:auto;background:linear-gradient(135deg,#f59e0b,#f97316);color:#000;padding:7px 16px;border-radius:20px;font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px;}
 
-    /* Marquee */
-    .marquee-wrap { background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.25); border-radius:12px; padding:10px 16px; margin:16px 16px 0; overflow:hidden; white-space:nowrap; }
-    .marquee-inner { display:inline-block; animation:marquee 14s linear infinite; font-size:14px; font-weight:600; color:var(--accent); }
-    @keyframes marquee { from{transform:translateX(100vw)} to{transform:translateX(-100%)} }
+    .marquee-wrap{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:10px 16px;margin:14px 16px 0;overflow:hidden;white-space:nowrap;}
+    .marquee-inner{display:inline-block;animation:marquee 14s linear infinite;font-size:13px;font-weight:600;color:var(--accent);}
+    @keyframes marquee{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
 
-    /* Wheel Section */
-    .wheel-section { padding:20px 16px; text-align:center; }
-    .wheel-outer { position:relative; display:inline-block; }
-    .wheel-pointer { position:absolute; top:-16px; left:50%; transform:translateX(-50%); font-size:32px; z-index:20; filter:drop-shadow(0 3px 6px rgba(0,0,0,0.5)); }
-    canvas#wheel { border-radius:50%; box-shadow:0 0 50px rgba(245,158,11,0.25), 0 0 100px rgba(232,56,13,0.1); }
+    /* Wheel */
+    .wheel-section{padding:20px 16px;text-align:center;}
+    .wheel-outer{position:relative;display:inline-block;}
+    .pointer{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:28px;z-index:10;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));}
 
     /* Spin Button */
-    .spin-btn-wrap { margin:24px 16px 0; }
-    .btn-spin {
-      width:100%; padding:16px;
-      background:linear-gradient(135deg,var(--purple),#9333ea);
-      border:none; border-radius:18px;
-      color:#fff; font-size:18px; font-weight:800; font-family:inherit;
-      cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
-      transition:all 0.3s;
-      box-shadow:0 4px 20px rgba(124,58,237,0.4);
-    }
-    .btn-spin:disabled { opacity:0.45; cursor:not-allowed; box-shadow:none; }
-    .btn-spin:not(:disabled):active { transform:scale(0.97); }
-    .spin-warning { text-align:center; margin-top:10px; font-size:13px; color:var(--muted); }
+    .spin-area{padding:0 16px;margin-top:16px;}
+    .btn-spin{width:100%;padding:16px;background:linear-gradient(135deg,#7c3aed,#9333ea);border:none;border-radius:18px;color:#fff;font-size:18px;font-weight:800;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(124,58,237,0.4);transition:transform 0.15s;}
+    .btn-spin:active{transform:scale(0.97);}
+    .btn-spin:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+    .spin-note{text-align:center;margin-top:10px;font-size:13px;color:var(--muted);}
+    .spin-result-text{text-align:center;margin-top:10px;font-size:16px;font-weight:800;color:var(--accent);min-height:24px;}
 
     /* Info Cards */
-    .info-section { padding:0 16px; margin-top:16px; display:flex; flex-direction:column; gap:12px; }
+    .info-wrap{padding:16px;display:flex;flex-direction:column;gap:12px;}
+    .pts-card{background:var(--card);border-radius:18px;padding:18px;display:flex;align-items:center;gap:14px;}
+    .pts-icon{width:52px;height:52px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+    .pts-label{font-size:13px;color:var(--muted);}
+    .pts-val{font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:var(--accent);cursor:pointer;}
+    .online-dot{width:10px;height:10px;background:var(--green);border-radius:50%;margin-left:auto;box-shadow:0 0 8px var(--green);}
 
-    .points-card { background:var(--card); border-radius:18px; padding:18px; display:flex; align-items:center; gap:16px; }
-    .points-icon { width:56px; height:56px; background:linear-gradient(135deg,#f59e0b,#f97316); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0; }
-    .points-info label { font-size:13px; color:var(--muted); }
-    .points-info .pts-value { font-family:'Sora',sans-serif; font-size:26px; font-weight:800; color:var(--accent); cursor:pointer; }
-    .pts-dot { width:10px; height:10px; background:var(--green); border-radius:50%; margin-left:auto; box-shadow:0 0 8px var(--green); }
+    .convert-card{background:var(--card);border-radius:18px;padding:18px;cursor:pointer;}
+    .convert-card:active{transform:scale(0.98);}
+    .conv-title{font-size:16px;font-weight:700;margin-bottom:6px;}
+    .conv-desc{font-size:13px;color:var(--muted);}
+    .conv-rate{display:inline-block;background:rgba(16,185,129,0.15);color:var(--green);border-radius:8px;padding:3px 10px;font-size:13px;font-weight:700;margin-top:8px;}
 
-    .convert-card { background:var(--card); border-radius:18px; padding:18px; cursor:pointer; transition:all 0.2s; }
-    .convert-card:active { transform:scale(0.98); }
-    .convert-title { font-size:16px; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
-    .convert-desc { font-size:13px; color:var(--muted); }
-    .convert-rate { display:inline-block; background:rgba(16,185,129,0.15); color:var(--green); border-radius:8px; padding:3px 10px; font-size:13px; font-weight:700; margin-top:8px; }
-
-    .history-card { background:var(--card); border-radius:18px; padding:18px; }
-    .history-title { font-size:15px; font-weight:700; margin-bottom:14px; }
-    .history-item { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:14px; }
-    .history-item:last-child { border-bottom:none; }
-    .h-pts { font-weight:800; color:var(--accent); }
-    .h-time { font-size:12px; color:var(--muted); }
-    .empty-h { text-align:center; color:var(--muted); font-size:14px; padding:16px 0; }
-
-    /* Loading overlay */
-    .loading-overlay { display:none; } /* সম্পূর্ণ বাদ */
-
-    /* Ad Modal */
-    .ad-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center; }
-    .ad-modal.show { display:flex; }
-    .ad-box { background:#1e293b; border:1px solid rgba(245,158,11,0.2); border-radius:24px; padding:28px 22px; width:88%; max-width:340px; text-align:center; }
-    .ad-box-emoji { font-size:44px; margin-bottom:10px; }
-    .ad-box h3 { font-size:18px; font-weight:800; margin-bottom:6px; color:var(--text); }
-    .ad-box p { font-size:13px; color:var(--muted); margin-bottom:18px; }
-    .ad-placeholder { background:rgba(255,255,255,0.04); border:2px dashed rgba(255,255,255,0.1); border-radius:14px; padding:28px; margin-bottom:18px; font-size:13px; color:var(--muted); }
-    .ad-timer { font-family:'Sora',sans-serif; font-size:52px; font-weight:800; color:var(--accent); line-height:1; margin-bottom:4px; }
-    .ad-timer-label { font-size:12px; color:var(--muted); margin-bottom:18px; }
-    .btn-claim { width:100%; padding:14px; background:linear-gradient(135deg,var(--green),#059669); border:none; border-radius:14px; color:#fff; font-size:16px; font-weight:700; font-family:inherit; cursor:pointer; display:none; }
+    .hist-card{background:var(--card);border-radius:18px;padding:18px;}
+    .hist-title{font-size:15px;font-weight:700;margin-bottom:12px;}
+    .hist-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;}
+    .hist-item:last-child{border-bottom:none;}
+    .hist-pts{font-weight:800;color:var(--accent);}
+    .hist-time{font-size:12px;color:var(--muted);}
+    .hist-empty{text-align:center;color:var(--muted);font-size:13px;padding:14px 0;}
 
     /* Convert Dialog */
-    .dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center; }
-    .dialog.show { display:flex; }
-    .dialog-box { background:#1e293b; border:1px solid rgba(16,185,129,0.25); border-radius:24px; padding:28px 22px; width:88%; max-width:340px; text-align:center; }
-    .dialog-box h3 { font-size:20px; font-weight:800; margin-bottom:8px; color:var(--text); }
-    .dialog-box p { font-size:14px; color:var(--muted); margin-bottom:20px; }
-    .convert-info { background:rgba(16,185,129,0.1); border-radius:14px; padding:16px; margin-bottom:20px; }
-    .convert-info .ci-row { display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px; }
-    .convert-info .ci-row:last-child { margin-bottom:0; font-weight:700; font-size:16px; color:var(--green); }
-    .btn-convert { width:100%; padding:14px; background:linear-gradient(135deg,var(--green),#059669); border:none; border-radius:14px; color:#fff; font-size:16px; font-weight:700; font-family:inherit; cursor:pointer; margin-bottom:10px; }
-    .btn-cancel { width:100%; padding:12px; background:rgba(255,255,255,0.06); border:none; border-radius:14px; color:var(--muted); font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; }
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;}
+    .overlay.show{display:flex;}
+    .dlg{background:#1e293b;border:1px solid rgba(16,185,129,0.2);border-radius:24px;padding:26px 20px;width:88%;max-width:340px;text-align:center;}
+    .dlg h3{font-size:20px;font-weight:800;margin-bottom:8px;}
+    .dlg p{font-size:13px;color:var(--muted);margin-bottom:18px;}
+    .dlg-info{background:rgba(16,185,129,0.08);border-radius:12px;padding:14px;margin-bottom:18px;text-align:left;}
+    .dlg-row{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;}
+    .dlg-row:last-child{margin-bottom:0;font-weight:700;color:var(--green);font-size:16px;}
+    .btn-conv{width:100%;padding:13px;background:linear-gradient(135deg,var(--green),#059669);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;}
+    .btn-cncl{width:100%;padding:11px;background:rgba(255,255,255,0.06);border:none;border-radius:12px;color:var(--muted);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;}
 
-    /* Toast */
-    .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--green); color:#fff; padding:11px 24px; border-radius:14px; font-size:14px; font-weight:700; opacity:0; transition:all 0.3s; z-index:3000; white-space:nowrap; box-shadow:0 4px 20px rgba(0,0,0,0.3); }
-    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);color:#fff;padding:11px 22px;border-radius:12px;font-size:14px;font-weight:700;opacity:0;transition:all 0.3s;z-index:3000;white-space:nowrap;pointer-events:none;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   </style>
 </head>
 <body>
 
-  <!-- Loading Overlay -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-    <div class="loading-text">বিজ্ঞাপন প্রস্তুত হচ্ছে...</div>
-    <div style="font-size:12px;color:#64748b;margin-top:4px;">অনুগ্রহ করে অপেক্ষা করুন (৩ সেকেন্ড)</div>
-  </div>
+<div class="header">
+  <button class="back-btn" onclick="goBack()">←</button>
+  <span class="header-title">🎯 Spin & Win</span>
+  <div class="coins-badge">🪙 <span id="hPts">0</span></div>
+</div>
 
-  <!-- Header -->
-  <div class="header">
-    <a href="home.html" class="back-btn">←</a>
-    <span class="header-title">🎯 Spin & Win</span>
-    <div class="coins-badge">🪙 <span id="headerPoints">0</span></div>
-  </div>
+<div class="marquee-wrap">
+  <span class="marquee-inner">🎉 প্রতিটি স্পিনে বিজ্ঞাপন দেখুন এবং পয়েন্ট আয় করুন! 💰</span>
+</div>
 
-  <!-- Marquee -->
-  <div class="marquee-wrap">
-    <span class="marquee-inner">🎉 স্পিন করুন এবং পয়েন্ট জিতুন! 🎁 প্রতিটি স্পিনে বিজ্ঞাপন দেখুন এবং পয়েন্ট আয় করুন! 💰</span>
+<div class="wheel-section">
+  <div class="wheel-outer">
+    <div class="pointer">▼</div>
+    <canvas id="wCanvas" width="280" height="280"></canvas>
   </div>
+</div>
 
-  <!-- Wheel -->
-  <div class="wheel-section">
-    <div class="wheel-outer">
-      <div class="wheel-pointer">▼</div>
-      <canvas id="wheel" width="300" height="300"></canvas>
+<div class="spin-area">
+  <button class="btn-spin" id="spinBtn" onclick="onSpin()">🎯 স্পিন করুন</button>
+  <div class="spin-note">⚠️ পয়েন্ট পেতে বিজ্ঞাপন দেখা বাধ্যতামূলক</div>
+  <div class="spin-result-text" id="resultTxt"></div>
+</div>
+
+<div class="info-wrap">
+  <div class="pts-card">
+    <div class="pts-icon">🪙</div>
+    <div>
+      <div class="pts-label">আপনার মোট পয়েন্ট</div>
+      <div class="pts-val" id="ptsVal" onclick="openConvert()">0 পয়েন্ট</div>
     </div>
+    <div class="online-dot"></div>
   </div>
 
-  <!-- Spin Button -->
-  <div class="spin-btn-wrap">
-    <button class="btn-spin" id="spinBtn" onclick="startSpin()" style="display:none">
-      🎯 স্পিন করুন
-    </button>
-    <!-- Ad লোড না হলে এই বার্তা দেখাবে -->
-    <div id="adStatusMsg" style="display:none;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:16px;text-align:center;margin:0 16px;">
-      <div style="font-size:28px;margin-bottom:8px;">⚠️</div>
-      <div style="font-size:15px;font-weight:700;color:#fca5a5;margin-bottom:6px;">বিজ্ঞাপন লোড হয়নি!</div>
-      <div style="font-size:13px;color:#94a3b8;margin-bottom:14px;">স্পিন করতে বিজ্ঞাপন লোড হওয়া বাধ্যতামূলক।</div>
-      <button onclick="location.reload()" style="background:linear-gradient(135deg,#e8380d,#ff6b35);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;padding:10px 24px;cursor:pointer;font-family:inherit;">🔄 পুনরায় লোড করুন</button>
-    </div>
-    <div class="spin-warning" id="spinWarning" style="display:none">⚠️ পয়েন্ট পেতে বিজ্ঞাপন দেখা বাধ্যতামূলক</div>
+  <div class="convert-card" onclick="openConvert()">
+    <div class="conv-title">💰 পয়েন্ট → টাকা কনভার্ট</div>
+    <div class="conv-desc">নুনতম ১০০ পয়েন্ট থাকলে কনভার্ট করতে পারবেন</div>
+    <span class="conv-rate" id="rateTag">১০০ পয়েন্ট = ৳১.০০</span>
   </div>
 
-  <!-- Info Cards -->
-  <div class="info-section">
-    <!-- Points Card -->
-    <div class="points-card">
-      <div class="points-icon">🪙</div>
-      <div class="points-info">
-        <label>আপনার মোট পয়েন্ট</label>
-        <div class="pts-value" id="userPoints" onclick="checkConvert()">0 পয়েন্ট</div>
-      </div>
-      <div class="pts-dot"></div>
-    </div>
-
-    <!-- Convert Card -->
-    <div class="convert-card" onclick="checkConvert()">
-      <div class="convert-title">💰 পয়েন্ট → টাকা কনভার্ট</div>
-      <div class="convert-desc">নুনতম ১০০ পয়েন্ট থাকলে কনভার্ট করতে পারবেন</div>
-      <span class="convert-rate" id="rateDisplay">১০০ পয়েন্ট = ৳১.০০</span>
-    </div>
-
-    <!-- History -->
-    <div class="history-card">
-      <div class="history-title">📜 স্পিন ইতিহাস</div>
-      <div id="historyList"><div class="empty-h">এখনো কোনো স্পিন নেই</div></div>
-    </div>
+  <div class="hist-card">
+    <div class="hist-title">📜 স্পিন ইতিহাস</div>
+    <div id="histList"><div class="hist-empty">এখনো কোনো স্পিন নেই</div></div>
   </div>
+</div>
 
-  <!-- Ad Modal (পয়েন্ট দেওয়ার জন্য) -->
-  <div class="ad-modal" id="adModal">
-    <div class="ad-box">
-      <div class="ad-box-emoji">📺</div>
-      <h3>বিজ্ঞাপন দেখুন</h3>
-      <p>সম্পূর্ণ বিজ্ঞাপন দেখলেই পয়েন্ট যোগ হবে!</p>
-      <div class="ad-placeholder">বিজ্ঞাপন লোড হচ্ছে...</div>
-      <div class="ad-timer" id="adTimer">5</div>
-      <div class="ad-timer-label">সেকেন্ড অপেক্ষা করুন</div>
-      <button class="btn-claim" id="claimBtn" onclick="givePoints()">✅ পয়েন্ট নিন!</button>
+<!-- Convert Dialog -->
+<div class="overlay" id="convOverlay">
+  <div class="dlg">
+    <h3>💰 পয়েন্ট কনভার্ট</h3>
+    <p>আপনার পয়েন্ট টাকায় রূপান্তর করুন</p>
+    <div class="dlg-info">
+      <div class="dlg-row"><span>পয়েন্ট:</span><span id="dPts">0</span></div>
+      <div class="dlg-row"><span>রেট:</span><span id="dRate">-</span></div>
+      <div class="dlg-row"><span>পাবেন:</span><span id="dTaka">৳0.00</span></div>
     </div>
+    <button class="btn-conv" onclick="doConvert()">✅ কনভার্ট করুন</button>
+    <button class="btn-cncl" onclick="closeConvert()">বাতিল</button>
   </div>
+</div>
 
-  <!-- Convert Dialog -->
-  <div class="dialog" id="convertDialog">
-    <div class="dialog-box">
-      <h3>💰 পয়েন্ট কনভার্ট</h3>
-      <p>আপনার পয়েন্ট টাকায় রূপান্তর করুন</p>
-      <div class="convert-info">
-        <div class="ci-row"><span>আপনার পয়েন্ট:</span><span id="dlgPoints">0</span></div>
-        <div class="ci-row"><span>রেট:</span><span id="dlgRate">১০০ পয়েন্ট = ৳১.০০</span></div>
-        <div class="ci-row"><span>পাবেন:</span><span id="dlgTaka">৳0.00</span></div>
-      </div>
-      <button class="btn-convert" onclick="doConvert()">✅ কনভার্ট করুন</button>
-      <button class="btn-cancel" onclick="closeConvert()">বাতিল</button>
-    </div>
-  </div>
+<div class="toast" id="toast"></div>
 
-  <div class="toast" id="toast"></div>
+<script type="module">
+import { auth, db } from './firebase-config.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// ── Telegram ──
+const tg = window.Telegram?.WebApp;
+if(tg){ tg.expand(); tg.BackButton.show(); tg.BackButton.onClick(goBack); }
+window.goBack = () => { if(!isSpinning) window.location.href='home.html'; };
 
-    const tg = window.Telegram?.WebApp;
-    if(tg){
-      tg.expand();
-      tg.BackButton.show();
-      tg.BackButton.onClick(()=>{
-        if(spinIsRunning) {
-          showToast('⚠️ বিজ্ঞাপন দেখা শেষ করুন!', true);
-          return;
-        }
-        window.location.href='home.html';
-      });
-    }
+// ── State ──
+let user=null, uData=null, cfg={spinPoints:10,pointsToTaka:0.01,minWithdraw:100};
+let isSpinning=false, wonPts=0, history=[], adStartTime=0;
 
-    // Browser back button block করো Ad চলার সময়
-    history.pushState(null, '', location.href);
-    window.addEventListener('popstate', (e) => {
-      if(spinIsRunning) {
-        // Back ব্লক করো — আবার forward state push করো
-        history.pushState(null, '', location.href);
-        showToast('⚠️ বিজ্ঞাপন দেখা শেষ করুন!', true);
+// ── Wheel ──
+const cv = document.getElementById('wCanvas');
+const cx2 = cv.getContext('2d');
+const SEGS = ['15','1','0','2','1','4','6','8','3','9','10','13'];
+const COLS = ['#e8380d','#7c3aed','#1e40af','#0891b2','#047857','#92400e','#831843','#1e3a5f','#064e3b','#7c2d12','#4338ca','#065f46'];
+let wheelAngle = 0;
+
+function draw(a){
+  const W=cv.width, H=cv.height, cx=W/2, cy=H/2, r=cx-10;
+  cx2.clearRect(0,0,W,H);
+  const arc=(2*Math.PI)/SEGS.length;
+
+  // outer ring
+  cx2.beginPath(); cx2.arc(cx,cy,r+5,0,2*Math.PI);
+  const g=cx2.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,'#f59e0b'); g.addColorStop(0.5,'#e8380d'); g.addColorStop(1,'#f59e0b');
+  cx2.strokeStyle=g; cx2.lineWidth=4; cx2.stroke();
+
+  SEGS.forEach((s,i)=>{
+    const st=a+i*arc;
+    cx2.beginPath(); cx2.moveTo(cx,cy); cx2.arc(cx,cy,r,st,st+arc);
+    cx2.fillStyle=COLS[i]; cx2.fill();
+    cx2.strokeStyle='rgba(255,255,255,0.2)'; cx2.lineWidth=1.5; cx2.stroke();
+    cx2.save(); cx2.translate(cx,cy); cx2.rotate(st+arc/2);
+    cx2.textAlign='right'; cx2.fillStyle='#fff';
+    cx2.font='bold 15px Sora,sans-serif';
+    cx2.shadowColor='rgba(0,0,0,0.5)'; cx2.shadowBlur=3;
+    cx2.fillText(s,r-12,6); cx2.restore();
+  });
+
+  // center
+  cx2.beginPath(); cx2.arc(cx,cy,26,0,2*Math.PI);
+  const cg=cx2.createRadialGradient(cx,cy,0,cx,cy,26);
+  cg.addColorStop(0,'#f97316'); cg.addColorStop(1,'#c2410c');
+  cx2.fillStyle=cg; cx2.fill();
+  cx2.strokeStyle='rgba(255,255,255,0.3)'; cx2.lineWidth=2; cx2.stroke();
+  cx2.fillStyle='#fff'; cx2.font='bold 11px Sora'; cx2.textAlign='center';
+  cx2.shadowBlur=0; cx2.fillText('GO',cx,cy+4);
+}
+draw(wheelAngle);
+
+// ── Spin ──
+window.onSpin = () => {
+  if(isSpinning) return;
+
+  // SDK চেক
+  if(!window.show_10729825){
+    toast('⚠️ বিজ্ঞাপন লোড হয়নি, একটু অপেক্ষা করুন!', true);
+    return;
+  }
+
+  isSpinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('resultTxt').textContent = '';
+
+  const total = (6+Math.random()*6)*2*Math.PI;
+  const dur = 4500, t0 = performance.now(), a0 = wheelAngle;
+
+  function frame(now){
+    const p=Math.min((now-t0)/dur,1), e=1-Math.pow(1-p,4);
+    wheelAngle = a0 + total*e;
+    draw(wheelAngle);
+    if(p<1){ requestAnimationFrame(frame); return; }
+
+    // কোন segment এ থামলো
+    const arc=(2*Math.PI)/SEGS.length;
+    let norm = wheelAngle%(2*Math.PI);
+    if(norm<0) norm+=2*Math.PI;
+    const ptr=(3*Math.PI/2); // pointer উপরে
+    let rel=(ptr-norm+2*Math.PI)%(2*Math.PI);
+    const idx=Math.floor(rel/arc)%SEGS.length;
+    wonPts = parseInt(SEGS[idx])||0;
+
+    // Ad দেখাও
+    showAd();
+  }
+  requestAnimationFrame(frame);
+};
+
+// ── Ad ──
+function showAd(){
+  adStartTime = Date.now();
+
+  window.show_10729825()
+    .then(()=>{
+      const secs=(Date.now()-adStartTime)/1000;
+      if(secs >= 8){
+        givePoints(); // সম্পূর্ণ দেখেছে
       } else {
-        window.location.href = 'home.html';
+        // খুব তাড়াতাড়ি শেষ — পয়েন্ট নেই
+        resetSpin();
+        toast(`⚠️ সম্পূর্ণ বিজ্ঞাপন দেখুন! (${Math.round(secs)}s দেখেছেন)`, true);
+      }
+    })
+    .catch(()=>{
+      const secs=(Date.now()-adStartTime)/1000;
+      if(secs >= 8){
+        givePoints(); // যথেষ্ট দেখেছে
+      } else {
+        resetSpin();
+        toast('⚠️ সম্পূর্ণ বিজ্ঞাপন না দেখলে পয়েন্ট পাবেন না!', true);
       }
     });
+}
 
-    let currentUser=null, userData=null;
-    let adSettings = { spinPoints:10, pointsToTaka:0.01, minWithdraw:100 };
-    let spinIsRunning=false, adInterval=null, spinResult=0;
-    let history=[];
+function resetSpin(){
+  isSpinning=false;
+  wonPts=0;
+  document.getElementById('spinBtn').disabled=false;
+}
 
-    // ── Wheel Setup ──
-    const canvas = document.getElementById('wheel');
-    const ctx = canvas.getContext('2d');
-    const segments = ['15','1','0','2','1','4','6','8','3','9','10','13'];
-    const colors = ['#e8380d','#7c3aed','#1e40af','#0891b2','#047857','#92400e','#831843','#1e3a5f','#064e3b','#7c2d12','#4338ca','#065f46'];
-    let currentAngle = -Math.PI/2;
+async function givePoints(){
+  if(!user || wonPts<=0){
+    resetSpin();
+    if(wonPts===0) toast('😅 এবার শূন্য পয়েন্ট! আবার চেষ্টা করুন');
+    return;
+  }
+  try {
+    await updateDoc(doc(db,'users',user.uid),{points:increment(wonPts),spinCount:increment(1)});
+    uData.points=(uData.points||0)+wonPts;
+    updateUI();
+    addHist(wonPts);
+    document.getElementById('resultTxt').textContent=`🎉 +${wonPts} পয়েন্ট পেলেন!`;
+    toast(`🎉 +${wonPts} পয়েন্ট!`);
+  } catch(e){ toast('সংরক্ষণ ব্যর্থ হয়েছে',true); }
+  resetSpin();
+}
 
-    function drawWheel(a) {
-      const cx=canvas.width/2, cy=canvas.height/2, r=cx-10;
-      ctx.clearRect(0,0,canvas.width,canvas.height);
+// ── Convert ──
+window.openConvert = () => {
+  const pts=uData?.points||0, min=cfg.minWithdraw||100;
+  if(pts<min){ toast(`কমপক্ষে ${min} পয়েন্ট লাগবে! (আপনার: ${pts})`,true); return; }
+  const rate=cfg.pointsToTaka||0.01;
+  document.getElementById('dPts').textContent=pts+' পয়েন্ট';
+  document.getElementById('dRate').textContent=`${min} পয়েন্ট = ৳${(min*rate).toFixed(2)}`;
+  document.getElementById('dTaka').textContent='৳'+(pts*rate).toFixed(2);
+  document.getElementById('convOverlay').classList.add('show');
+};
+window.closeConvert = ()=>document.getElementById('convOverlay').classList.remove('show');
+window.doConvert = async()=>{
+  const pts=uData?.points||0, rate=cfg.pointsToTaka||0.01;
+  const taka=parseFloat((pts*rate).toFixed(2));
+  closeConvert();
+  await updateDoc(doc(db,'users',user.uid),{points:0,balance:increment(taka)});
+  await addDoc(collection(db,'withdrawRequests'),{
+    userId:user.uid,userName:uData.name,points:pts,
+    taka:taka.toFixed(2),status:'pending',createdAt:serverTimestamp()
+  });
+  uData.points=0; updateUI();
+  toast(`✅ ৳${taka} ব্যালেন্সে যোগ হয়েছে!`);
+};
 
-      // Outer glow ring
-      ctx.beginPath(); ctx.arc(cx,cy,r+6,0,2*Math.PI);
-      const grad=ctx.createLinearGradient(0,0,canvas.width,canvas.height);
-      grad.addColorStop(0,'#f59e0b'); grad.addColorStop(0.5,'#e8380d'); grad.addColorStop(1,'#f59e0b');
-      ctx.strokeStyle=grad; ctx.lineWidth=5; ctx.stroke();
+// ── History ──
+function addHist(p){
+  history.unshift({p,t:new Date().toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'})});
+  if(history.length>10) history.pop();
+  renderHist();
+}
+function renderHist(){
+  const el=document.getElementById('histList');
+  if(!history.length){el.innerHTML='<div class="hist-empty">এখনো কোনো স্পিন নেই</div>';return;}
+  el.innerHTML=history.map(h=>`
+    <div class="hist-item">
+      <span>🎡 স্পিন</span>
+      <span class="hist-time">${h.t}</span>
+      <span class="hist-pts">+${h.p}</span>
+    </div>`).join('');
+}
 
-      const arc=(2*Math.PI)/segments.length;
-      segments.forEach((seg,i)=>{
-        const s=a+i*arc;
-        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,s,s+arc);
-        ctx.fillStyle=colors[i]; ctx.fill();
-        ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1.5; ctx.stroke();
-        ctx.save(); ctx.translate(cx,cy); ctx.rotate(s+arc/2);
-        ctx.textAlign='right'; ctx.fillStyle='#fff';
-        ctx.font='bold 16px Sora,sans-serif';
-        ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=4;
-        ctx.fillText(seg, r-14, 6); ctx.restore();
-      });
+// ── UI ──
+function updateUI(){
+  if(!uData) return;
+  const pts=uData.points||0, rate=cfg.pointsToTaka||0.01, min=cfg.minWithdraw||100;
+  document.getElementById('hPts').textContent=pts;
+  document.getElementById('ptsVal').textContent=pts+' পয়েন্ট';
+  document.getElementById('rateTag').textContent=`${min} পয়েন্ট = ৳${(min*rate).toFixed(2)}`;
+}
 
-      // Center circle
-      ctx.beginPath(); ctx.arc(cx,cy,28,0,2*Math.PI);
-      const cGrad=ctx.createRadialGradient(cx,cy,0,cx,cy,28);
-      cGrad.addColorStop(0,'#f97316'); cGrad.addColorStop(1,'#c2410c');
-      ctx.fillStyle=cGrad; ctx.fill();
-      ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2; ctx.stroke();
-      // Center dot
-      ctx.beginPath(); ctx.arc(cx,cy,10,0,2*Math.PI);
-      ctx.fillStyle='#fff'; ctx.fill();
-    }
-    drawWheel(currentAngle);
+function toast(msg, isErr=false){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.style.background=isErr?'#ef4444':'#10b981';
+  el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000);
+}
 
-    let adLoaded = false;
-
-    // ── সরাসরি বাটন দেখাও, Ad চেক স্পিনের সময় হবে ──
-    function loadInitialAd() {
-      document.getElementById('spinBtn').style.display = 'flex';
-      document.getElementById('spinBtn').disabled = false;
-      document.getElementById('spinWarning').style.display = 'block';
-      document.getElementById('adStatusMsg').style.display = 'none';
-      adLoaded = true; // SDK পরে লোড হবে, স্পিনের সময় চেক হবে
-    }
-
-    // ── স্পিন শুরু — শুধু Ad লোড থাকলেই ──
-    window.startSpin = () => {
-      if(spinIsRunning) return;
-
-      // স্পিনের সময় SDK চেক করো
-      if(!window.show_10729825) {
-        showToast('⚠️ বিজ্ঞাপন এখনো লোড হয়নি! একটু অপেক্ষা করুন।', true);
-        return;
-      }
-
-      spinIsRunning = true;
-      document.getElementById('spinBtn').disabled = true;
-      document.getElementById('spinBtn').style.display = 'none'; // স্পিনের সময় বাটন লুকাও
-
-      const totalRot = (6+Math.random()*6)*2*Math.PI;
-      const dur = 4500;
-      const startTime = performance.now();
-      const startAngle = currentAngle;
-
-      function animate(now) {
-        const p = Math.min((now-startTime)/dur, 1);
-        const e = 1 - Math.pow(1-p, 4);
-        currentAngle = startAngle + totalRot * e;
-        drawWheel(currentAngle);
-        if(p < 1) { requestAnimationFrame(animate); return; }
-
-        // ── সঠিক সেগমেন্ট calculation ──
-        const arc = (2*Math.PI) / segments.length;
-        let normalizedAngle = currentAngle % (2*Math.PI);
-        if(normalizedAngle < 0) normalizedAngle += 2*Math.PI;
-        const pointerAngle = (3*Math.PI/2);
-        let relativeAngle = (pointerAngle - normalizedAngle + 2*Math.PI) % (2*Math.PI);
-        const idx = Math.floor(relativeAngle / arc) % segments.length;
-        spinResult = parseInt(segments[idx]) || 0;
-
-        // স্পিন শেষে আবার Ad দেখাও — না দেখলে পয়েন্ট নেই
-        showRewardAd();
-      }
-      requestAnimationFrame(animate);
-    };
-
-    // ── Reward Ad — অবশ্যই সম্পূর্ণ দেখতে হবে ──
-    let adStartTime = 0;
-    const MIN_AD_WATCH_SECONDS = 10; // কমপক্ষে ১০ সেকেন্ড দেখতে হবে
-    let adWatchTimer = null;
-    let adWatchedEnough = false;
-
-    function showRewardAd() {
-      if(!window.show_10729825) {
-        // Ad SDK নেই
-        spinIsRunning = false;
-        spinResult = 0;
-        document.getElementById('spinBtn').style.display = 'none';
-        document.getElementById('adStatusMsg').style.display = 'block';
-        showToast('⚠️ বিজ্ঞাপন লোড হয়নি! পয়েন্ট পাওয়া যাবে না।', true);
-        return;
-      }
-
-      // Ad শুরুর সময় রেকর্ড করো
-      adStartTime = Date.now();
-      adWatchedEnough = false;
-
-      // ১০ সেকেন্ড পর mark করো যে যথেষ্ট দেখা হয়েছে
-      clearTimeout(adWatchTimer);
-      adWatchTimer = setTimeout(() => {
-        adWatchedEnough = true;
-      }, MIN_AD_WATCH_SECONDS * 1000);
-
-      window.show_10729825()
-        .then(() => {
-          clearTimeout(adWatchTimer);
-          const watchedSeconds = (Date.now() - adStartTime) / 1000;
-
-          // সম্পূর্ণ দেখা হয়েছে কিনা যাচাই করো
-          if(adWatchedEnough || watchedSeconds >= MIN_AD_WATCH_SECONDS) {
-            // ✅ পয়েন্ট দাও
-            givePoints();
-          } else {
-            // ❌ খুব তাড়াতাড়ি বন্ধ হয়েছে — পয়েন্ট নেই
-            spinIsRunning = false;
-            spinResult = 0;
-            document.getElementById('spinBtn').style.display = 'flex';
-            document.getElementById('spinBtn').disabled = false;
-            showToast(`⚠️ সম্পূর্ণ বিজ্ঞাপন দেখুন! (${Math.round(watchedSeconds)}/${MIN_AD_WATCH_SECONDS} সেকেন্ড)`, true);
-          }
-        })
-        .catch(() => {
-          clearTimeout(adWatchTimer);
-          const watchedSeconds = (Date.now() - adStartTime) / 1000;
-
-          // Back button বা বন্ধ — সময় যাচাই করো
-          if(adWatchedEnough || watchedSeconds >= MIN_AD_WATCH_SECONDS) {
-            // যথেষ্ট সময় দেখেছে — পয়েন্ট দাও
-            givePoints();
-          } else {
-            // কম সময় দেখেছে — পয়েন্ট নেই
-            spinIsRunning = false;
-            spinResult = 0;
-            document.getElementById('spinBtn').style.display = 'flex';
-            document.getElementById('spinBtn').disabled = false;
-            showToast('⚠️ সম্পূর্ণ বিজ্ঞাপন না দেখলে পয়েন্ট পাবেন না!', true);
-          }
-        });
-    }
-
-    window.givePoints = async () => {
-      document.getElementById('adModal').classList.remove('show');
-      if(!currentUser || spinResult <= 0) {
-        spinIsRunning = false;
-        document.getElementById('spinBtn').style.display = 'flex';
-        document.getElementById('spinBtn').disabled = false;
-        if(spinResult === 0) showToast('😅 এবার পয়েন্ট হয়নি! আবার চেষ্টা করুন');
-        return;
-      }
-      const pts = spinResult;
-      await updateDoc(doc(db,'users',currentUser.uid), { points:increment(pts), spinCount:increment(1) });
-      userData.points = (userData.points||0) + pts;
-      document.getElementById('headerPoints').textContent = userData.points;
-      addHistory(pts);
-      spinIsRunning = false;
-      // পয়েন্ট দেওয়ার পর আবার বাটন দেখাও — নতুন Ad লোড হবে
-      document.getElementById('spinBtn').style.display = 'flex';
-      document.getElementById('spinBtn').disabled = false;
-      showToast(`🎉 +${pts} পয়েন্ট পেলেন!`);
-    };
-
-    // ── পয়েন্ট কনভার্ট ──
-    window.checkConvert = () => {
-      const pts = userData?.points || 0;
-      const min = adSettings.minWithdraw || 100;
-      if(pts < min) {
-        showToast(`কমপক্ষে ${min} পয়েন্ট লাগবে! (আপনার: ${pts})`, true); return;
-      }
-      const rate = adSettings.pointsToTaka || 0.01;
-      const taka = (pts * rate).toFixed(2);
-      document.getElementById('dlgPoints').textContent = pts + ' পয়েন্ট';
-      document.getElementById('dlgRate').textContent = `${min} পয়েন্ট = ৳${(min*rate).toFixed(2)}`;
-      document.getElementById('dlgTaka').textContent = '৳' + taka;
-      document.getElementById('convertDialog').classList.add('show');
-    };
-
-    window.closeConvert = () => document.getElementById('convertDialog').classList.remove('show');
-
-    window.doConvert = async () => {
-      const pts = userData?.points || 0;
-      const rate = adSettings.pointsToTaka || 0.01;
-      const taka = parseFloat((pts * rate).toFixed(2));
-      document.getElementById('convertDialog').classList.remove('show');
-      await updateDoc(doc(db,'users',currentUser.uid), {
-        points: 0,
-        balance: increment(taka)
-      });
-      await addDoc(collection(db,'withdrawRequests'), {
-        userId:currentUser.uid, userName:userData.name,
-        points:pts, taka:taka.toFixed(2),
-        status:'pending', createdAt:serverTimestamp()
-      });
-      userData.points = 0;
-      updateUI();
-      showToast(`✅ ৳${taka} ব্যালেন্সে যোগ হয়েছে!`);
-    };
-
-    function addHistory(pts) {
-      const now = new Date();
-      history.unshift({ pts, time: now.toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'}) });
-      if(history.length > 10) history.pop();
-      renderHistory();
-    }
-
-    function renderHistory() {
-      const el = document.getElementById('historyList');
-      if(!history.length) { el.innerHTML='<div class="empty-h">এখনো কোনো স্পিন নেই</div>'; return; }
-      el.innerHTML = history.map(h => `
-        <div class="history-item">
-          <span>🎡 স্পিন করেছেন</span>
-          <span class="h-time">${h.time}</span>
-          <span class="h-pts">+${h.pts}</span>
-        </div>`).join('');
-    }
-
-    function updateUI() {
-      if(!userData) return;
-      const pts = userData.points || 0;
-      const rate = adSettings.pointsToTaka || 0.01;
-      const min = adSettings.minWithdraw || 100;
-      document.getElementById('headerPoints').textContent = pts;
-      document.getElementById('userPoints').textContent = pts + ' পয়েন্ট';
-      document.getElementById('rateDisplay').textContent = `${min} পয়েন্ট = ৳${(min*rate).toFixed(2)}`;
-    }
-
-    function showToast(msg, isError=false) {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.style.background = isError ? '#ef4444' : '#10b981';
-      t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 3000);
-    }
-
-    onAuthStateChanged(auth, async(user) => {
-      if(!user) { window.location.href='index.html'; return; }
-      currentUser = user;
-      const snap = await getDoc(doc(db,'users',user.uid));
-      if(snap.exists()) userData = snap.data();
-      const settSnap = await getDoc(doc(db,'settings','adConfig'));
-      if(settSnap.exists()) adSettings = {...adSettings,...settSnap.data()};
-      updateUI();
-      await loadInitialAd();
-    });
-  </script>
+// ── Auth ──
+onAuthStateChanged(auth, async(u)=>{
+  if(!u){window.location.href='index.html';return;}
+  user=u;
+  const snap=await getDoc(doc(db,'users',u.uid));
+  if(snap.exists()) uData=snap.data();
+  const cs=await getDoc(doc(db,'settings','adConfig'));
+  if(cs.exists()) cfg={...cfg,...cs.data()};
+  updateUI();
+});
+</script>
 </body>
 </html>
