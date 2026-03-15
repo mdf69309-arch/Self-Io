@@ -111,13 +111,21 @@ canvas{display:block;border-radius:50%;}
 <!-- Ad Modal -->
 <div class="modal" id="adModal">
   <div class="mbox">
-    <div class="mbox-title">📺 বিজ্ঞাপন দেখুন</div>
-    <div class="mbox-sub">সম্পূর্ণ দেখলেই স্বয়ংক্রিয়ভাবে পয়েন্ট যোগ হবে!</div>
-    <div class="ad-area" id="adArea">
-      <div style="font-size:13px;color:#64748b;">বিজ্ঞাপন লোড হচ্ছে...</div>
+    <div class="mbox-title">🎁 পয়েন্ট আয় করুন!</div>
+    <div class="mbox-sub">নিচের বাটনে ক্লিক করে পেজ ভিজিট করুন</div>
+    <div class="ad-area" id="adArea" style="flex-direction:column;gap:10px;">
+      <div style="font-size:13px;color:#64748b;margin-bottom:6px;">স্পনসর পেজ ভিজিট করলেই পয়েন্ট পাবেন</div>
+      <!-- Rewarded Popup বাটন -->
+      <button id="visitBtn" onclick="triggerPopup()" style="width:100%;padding:13px;background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:12px;color:#000;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+        🌐 স্পনসর পেজ ভিজিট করুন
+      </button>
+      <div style="font-size:11px;color:#64748b;">ভিজিট করলে timer শুরু হবে</div>
     </div>
-    <div class="timer-num" id="timerNum">15</div>
-    <div class="timer-lbl" id="timerLbl">সেকেন্ড বিজ্ঞাপন দেখুন</div>
+    <!-- Timer — ভিজিটের পর দেখাবে -->
+    <div id="timerWrap" style="display:none;text-align:center;margin:8px 0;">
+      <div class="timer-num" id="timerNum">15</div>
+      <div class="timer-lbl">সেকেন্ড পর পয়েন্ট স্বয়ংক্রিয়ভাবে যোগ হবে</div>
+    </div>
     <button class="btn-close-ad" id="closeAdBtn" onclick="cancelAd()">❌ বাদ দিন (পয়েন্ট পাবেন না)</button>
   </div>
 </div>
@@ -229,41 +237,46 @@ function openAd(){
   launchAd();
 }
 
-function launchAd(){
-  if(!_adActive) return;
+function openAd(){
+  _adWatched=false;
+  _adActive=true;
+  window._adActive=true;
+  _adPaused=false;
+  _timerRemaining=15;
+  _adStartTime=Date.now();
 
-  if(window.show_10729825){
-    window.show_10729825()
-      .then(function(){
-        var secs=(Date.now()-_adStartTime)/1000;
-        if(secs >= 15){
-          // ১৫ সেকেন্ড+ দেখেছে — অটো পয়েন্ট দাও
-          document.removeEventListener('visibilitychange', onVisChange);
-          _adActive=false; window._adActive=false;
-          _adWatched=true;
-          autoGivePoints();
-        } else {
-          // কম সময় — আবার Ad চালাও
-          showToast('⚠️ পুরো বিজ্ঞাপন দেখুন! আবার শুরু হচ্ছে...', true);
-          setTimeout(function(){ if(_adActive) launchAd(); }, 1500);
-        }
-      })
-      .catch(function(){
-        var secs=(Date.now()-_adStartTime)/1000;
-        if(secs >= 15){
-          document.removeEventListener('visibilitychange', onVisChange);
-          _adActive=false; window._adActive=false;
-          _adWatched=true;
-          autoGivePoints();
-        } else {
-          showToast('⚠️ বিজ্ঞাপন বন্ধ করবেন না! আবার শুরু হচ্ছে...', true);
-          setTimeout(function(){ if(_adActive) launchAd(); }, 1500);
-        }
-      });
-  } else {
-    // SDK নেই — নিজস্ব timer
-    showTimerModal();
-  }
+  // Visit বাটন দেখাও, timer লুকাও
+  document.getElementById('visitBtn').disabled=false;
+  document.getElementById('visitBtn').textContent='🌐 স্পনসর পেজ ভিজিট করুন';
+  document.getElementById('timerWrap').style.display='none';
+  document.getElementById('adModal').classList.add('on');
+
+  document.addEventListener('visibilitychange', onVisChange);
+}
+
+// ইউজার Visit বাটনে ক্লিক করলে
+window.triggerPopup = function(){
+  if(!window.show_10729825){ showTimerModal(); return; }
+
+  // Visit বাটন disable করো
+  document.getElementById('visitBtn').disabled=true;
+  document.getElementById('visitBtn').textContent='✅ ভিজিট করা হয়েছে!';
+
+  // Rewarded Popup চালাও
+  window.show_10729825({type:'pop'})
+    .then(function(){
+      // Popup খোলা হয়েছে — timer শুরু করো
+      showTimerModal();
+    })
+    .catch(function(){
+      // Popup ব্লক হয়েছে — তবুও timer শুরু করো
+      showTimerModal();
+    });
+};
+
+function launchAd(){
+  // এখন শুধু fallback হিসেবে রাখা
+  openAd();
 }
 
 // ১৫ সেকেন্ড পর অটো পয়েন্ট
@@ -276,23 +289,19 @@ function autoGivePoints(){
   window._savePts(_wonPts);
 }
 
-// Claim বাটন আর নেই — showClaimModal বাদ
+// Visit বাটনের পর timer দেখাও
 function showTimerModal(){
   _timerRemaining=15;
-  document.getElementById('claimBtn').style.display='none';
+  document.getElementById('timerWrap').style.display='block';
   document.getElementById('timerNum').textContent=_timerRemaining;
-  document.getElementById('adModal').classList.add('on');
   startTimer();
 }
 
 function onVisChange(){
   if(!_adActive) return;
   if(!document.hidden){
-    // ফিরে এসেছে — Back করেছে বা অন্য কারণে
-    // Ad আবার চালাও
-    setTimeout(function(){
-      if(_adActive) launchAd();
-    }, 500);
+    // ফিরে এসেছে — Ad modal দেখাও
+    document.getElementById('adModal').classList.add('on');
   }
 }
 
