@@ -21,6 +21,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Noto Sans Bengali','Sora',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 20px; }
 
+    /* ── Header ── */
     .header { background: linear-gradient(135deg,var(--primary),var(--primary2)); padding: 14px 16px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
     .header-left { display: flex; align-items: center; gap: 10px; }
     .header-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; }
@@ -30,11 +31,11 @@
     .notif-dot { position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; background: #ff4444; border-radius: 50%; border: 1.5px solid white; }
     .avatar-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
 
+    /* ── Balance ── */
     .balance-wrap { background: linear-gradient(135deg,var(--primary),var(--primary2)); padding: 0 16px 20px; }
     .balance-card { background: #fff; border-radius: 16px; padding: 18px 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     .balance-label { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
     .balance-amount { font-family: 'Sora',sans-serif; font-size: 32px; font-weight: 800; color: var(--text); }
-    .balance-pts { font-size: 13px; color: var(--muted); margin-top: 4px; }
     .balance-marquee { font-size: 12px; color: var(--muted); margin-top: 8px; overflow: hidden; white-space: nowrap; }
     .marquee-text { display: inline-block; animation: marquee 15s linear infinite; }
     @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
@@ -49,32 +50,50 @@
     .card-img { width: 56px; height: 56px; border-radius: 12px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
     .card-label { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.3; }
 
-    .bg-red { background: linear-gradient(135deg,#ff4444,#ff6b6b); }
+    .bg-red    { background: linear-gradient(135deg,#ff4444,#ff6b6b); }
     .bg-orange { background: linear-gradient(135deg,#ff8c00,#ffa500); }
-    .bg-blue { background: linear-gradient(135deg,#3b82f6,#60a5fa); }
+    .bg-blue   { background: linear-gradient(135deg,#3b82f6,#60a5fa); }
     .bg-purple { background: linear-gradient(135deg,#8b5cf6,#a78bfa); }
-    .bg-green { background: linear-gradient(135deg,#10b981,#34d399); }
-    .bg-teal { background: linear-gradient(135deg,#14b8a6,#2dd4bf); }
+    .bg-green  { background: linear-gradient(135deg,#10b981,#34d399); }
+    .bg-teal   { background: linear-gradient(135deg,#14b8a6,#2dd4bf); }
     .bg-indigo { background: linear-gradient(135deg,#6366f1,#818cf8); }
-    .bg-rose { background: linear-gradient(135deg,#f43f5e,#fb7185); }
-    .bg-cyan { background: linear-gradient(135deg,#06b6d4,#22d3ee); }
+    .bg-rose   { background: linear-gradient(135deg,#f43f5e,#fb7185); }
+    .bg-cyan   { background: linear-gradient(135deg,#06b6d4,#22d3ee); }
 
-    /* Ad Modal */
-    .ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; }
-    .ad-modal.show { display: flex; }
-    .ad-box { background: #fff; border-radius: 24px; padding: 28px 22px; width: 88%; max-width: 340px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-    .ad-box-icon { font-size: 44px; margin-bottom: 10px; }
-    .ad-box h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; color: var(--text); }
-    .ad-box p { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
-    .ad-placeholder { background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 14px; padding: 28px; margin-bottom: 18px; font-size: 13px; color: var(--muted); }
-    .ad-timer-wrap { margin-bottom: 16px; }
-    .ad-timer { font-family: 'Sora',sans-serif; font-size: 48px; font-weight: 800; color: var(--primary); line-height: 1; }
-    .ad-timer-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
-    .btn-claim { width: 100%; padding: 14px; background: linear-gradient(135deg,var(--green),#059669); border: none; border-radius: 14px; color: #fff; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; display: none; transition: transform 0.2s; }
-    .btn-claim:active { transform: scale(0.97); }
+    /* ── Ad Modal (শুধু দেখায়, পয়েন্ট নেই) ── */
+    .ad-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.92); z-index: 1000;
+      flex-direction: column; align-items: center; justify-content: flex-end;
+      padding-bottom: 36px;
+    }
+    .ad-overlay.on { display: flex; }
+    .ad-box {
+      background: #1e293b; border: 1px solid rgba(232,56,13,0.35);
+      border-radius: 24px; padding: 22px 26px 26px;
+      width: 92%; max-width: 360px; text-align: center;
+      box-shadow: 0 -4px 40px rgba(0,0,0,0.6);
+    }
+    .ad-title { font-size: 16px; font-weight: 800; color: #f1f5f9; margin-bottom: 4px; }
+    .ad-sub   { font-size: 12px; color: #64748b; margin-bottom: 16px; }
+    /* Progress ring */
+    .ring-wrap { position: relative; width: 80px; height: 80px; margin: 0 auto 10px; }
+    .ring-wrap svg { transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: rgba(232,56,13,0.2); stroke-width: 6; }
+    .ring-fg { fill: none; stroke: #e8380d; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 226; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear; }
+    .ring-num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: #e8380d; }
+    .ad-hint  { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+    /* Proceed button — দেখা শেষে আসে */
+    .btn-proceed {
+      display: none; width: 100%; padding: 13px; margin-top: 16px;
+      background: linear-gradient(135deg,#e8380d,#ff6b35);
+      border: none; border-radius: 14px; color: #fff;
+      font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer;
+    }
+    .btn-proceed:active { opacity: 0.85; }
 
-    /* Toast */
-    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: #fff; padding: 10px 22px; border-radius: 12px; font-size: 13px; font-weight: 700; opacity: 0; transition: all 0.3s; z-index: 2000; white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green); color: #fff; padding: 10px 22px; border-radius: 12px; font-size: 13px; font-weight: 700; opacity: 0; transition: all 0.3s; z-index: 2000; white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,0.2); pointer-events: none; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
@@ -125,15 +144,15 @@
     <div class="section">
       <div class="section-title">Work System</div>
       <div class="grid-3">
-        <div class="menu-card" onclick="showAd('How to Work')">
+        <div class="menu-card" onclick="openWithAd('howtwork.html')">
           <div class="card-img bg-red">▶️</div>
           <div class="card-label">How to Work</div>
         </div>
-        <div class="menu-card" onclick="showAd('Connect First')">
+        <div class="menu-card" onclick="openWithAd('connect.html')">
           <div class="card-img bg-orange">📱</div>
           <div class="card-label">Connect First</div>
         </div>
-        <div class="menu-card" onclick="showAd('Leaderboard')">
+        <div class="menu-card" onclick="openWithAd('leaderboard.html')">
           <div class="card-img bg-blue">📊</div>
           <div class="card-label">Leaderboard</div>
         </div>
@@ -144,15 +163,16 @@
     <div class="section">
       <div class="section-title">Task Work</div>
       <div class="grid-3">
+        <!-- Spin: সরাসরি যাবে — spin পেজ নিজেই Ad দেখায় -->
         <div class="menu-card" onclick="location.href='spin.html'">
           <div class="card-img bg-red">🎡</div>
           <div class="card-label">Spin Wheel</div>
         </div>
-        <div class="menu-card" onclick="showAd('Solve Math')">
+        <div class="menu-card" onclick="openWithAd('math.html')">
           <div class="card-img bg-purple">🔢</div>
           <div class="card-label">Solve Math</div>
         </div>
-        <div class="menu-card" onclick="showAd('Image Quiz')">
+        <div class="menu-card" onclick="openWithAd('imagequiz.html')">
           <div class="card-img bg-indigo">🖼️</div>
           <div class="card-label">Image Quiz</div>
         </div>
@@ -163,15 +183,15 @@
     <div class="section">
       <div class="section-title">Quiz work</div>
       <div class="grid-3">
-        <div class="menu-card" onclick="showAd('Quiz')">
+        <div class="menu-card" onclick="openWithAd('quiz.html')">
           <div class="card-img bg-rose">🧠</div>
           <div class="card-label">Quiz</div>
         </div>
-        <div class="menu-card" onclick="showAd('Bangla Quiz')">
+        <div class="menu-card" onclick="openWithAd('bangla-quiz.html')">
           <div class="card-img bg-purple">❓</div>
           <div class="card-label">Bangla Quiz</div>
         </div>
-        <div class="menu-card" onclick="showAd('ScratchCard')">
+        <div class="menu-card" onclick="openWithAd('scratch.html')">
           <div class="card-img bg-cyan">🃏</div>
           <div class="card-label">ScratchCard</div>
         </div>
@@ -190,18 +210,18 @@
           <div class="card-img bg-green">👥</div>
           <div class="card-label">Invite Friends</div>
         </div>
-        <div class="menu-card" onclick="showAd('Join Telegram')">
+        <div class="menu-card" onclick="openWithAd('telegram.html')">
           <div class="card-img bg-blue">✈️</div>
           <div class="card-label">Join Telegram</div>
         </div>
       </div>
     </div>
 
-    <!-- Admin Card — শুধু Admin দেখবে -->
+    <!-- Admin — শুধু Admin দেখবে -->
     <div class="section" id="adminSection" style="display:none">
       <div class="section-title">Admin</div>
       <div class="grid-3">
-        <div class="menu-card" id="adminNavLink" onclick="location.href='admin.html'" style="display:none">
+        <div class="menu-card" onclick="location.href='admin.html'">
           <div class="card-img" style="background:linear-gradient(135deg,#f59e0b,#f97316)">⚙️</div>
           <div class="card-label">Admin Panel</div>
         </div>
@@ -210,149 +230,217 @@
 
   </div>
 
-  <!-- Ad Modal -->
-  <div class="ad-modal" id="adModal">
+  <!-- ══ Ad Overlay (ট্যাব ক্লিকে, পয়েন্ট নেই) ══ -->
+  <div class="ad-overlay" id="adOverlay">
     <div class="ad-box">
-      <div class="ad-box-icon" id="adIcon">📺</div>
-      <h3 id="adTitle">বিজ্ঞাপন দেখুন</h3>
-      <p>বিজ্ঞাপন দেখলেই পয়েন্ট পাবেন!</p>
-      <div class="ad-placeholder">📢 বিজ্ঞাপন লোড হচ্ছে...</div>
-      <div class="ad-timer-wrap">
-        <div class="ad-timer" id="adTimer">5</div>
-        <div class="ad-timer-label">সেকেন্ড অপেক্ষা করুন</div>
+      <div class="ad-title">📺 বিজ্ঞাপন দেখুন</div>
+      <div class="ad-sub">বিজ্ঞাপন শেষ হলে পেজে যাবেন</div>
+      <div class="ring-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle class="ring-bg" cx="40" cy="40" r="36"/>
+          <circle class="ring-fg" id="adRingFg" cx="40" cy="40" r="36"/>
+        </svg>
+        <div class="ring-num" id="adTimerNum">5</div>
       </div>
-      <button class="btn-claim" id="claimBtn" onclick="claimPoints()">✅ পয়েন্ট নিন!</button>
+      <div class="ad-hint" id="adHint">বিজ্ঞাপন চলছে...</div>
+      <button class="btn-proceed" id="btnProceed" onclick="proceedToPage()">
+        ➡️ পেজে যান
+      </button>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
+  <script>
+    /* ══════════════════════════════════════════
+       AD OVERLAY LOGIC
+       ট্যাব ক্লিক → Ad দেখায় → পেজে navigate
+       পয়েন্ট দেওয়া হয় না
+    ══════════════════════════════════════════ */
+    'use strict';
+
+    const CIRC_AD = 2 * Math.PI * 36; // ≈ 226
+    let _adTimerId = null;
+    let _timerSecs = 5;
+    let _targetPage = '';
+    let _adActive   = false;
+    let _adWatched  = false; // AdsGram .then() confirm
+    let _timerDone  = false; // visual timer done
+
+    window.AdController = null;
+    window.addEventListener('load', function () {
+      if (window.Adsgram) {
+        window.AdController = window.Adsgram.init({ blockId: '25155' });
+      }
+    });
+
+    function setAdRing(fraction) {
+      const el = document.getElementById('adRingFg');
+      if (el) el.style.strokeDashoffset = CIRC_AD * (1 - Math.max(0, Math.min(1, fraction)));
+    }
+
+    /* ── কার্ডে ক্লিক করলে এই function ── */
+    window.openWithAd = function (page) {
+      if (_adActive) return;
+      _targetPage  = page;
+      _adWatched   = false;
+      _timerDone   = false;
+      _adActive    = true;
+      _timerSecs   = 5;
+
+      document.getElementById('adTimerNum').textContent = _timerSecs;
+      document.getElementById('adHint').textContent = 'বিজ্ঞাপন চলছে...';
+      document.getElementById('btnProceed').style.display = 'none';
+      setAdRing(1);
+      document.getElementById('adOverlay').classList.add('on');
+
+      /* AdsGram Ad চালাও */
+      if (window.AdController) {
+        window.AdController.show()
+          .then(function () {
+            _adWatched = true;
+            document.getElementById('adHint').textContent = '✅ বিজ্ঞাপন সম্পূর্ণ!';
+            tryNavigate();
+          })
+          .catch(function () {
+            /* Ad বন্ধ হয়ে গেলেও navigate করতে দাও — শুধু Ad দেখানোই উদ্দেশ্য */
+            clearInterval(_adTimerId);
+            endAdAndGo();
+          });
+      } else {
+        /* AdsGram না থাকলে শুধু timer */
+        document.getElementById('adHint').textContent = 'অপেক্ষা করুন...';
+      }
+
+      /* Visual countdown */
+      clearInterval(_adTimerId);
+      _adTimerId = setInterval(function () {
+        _timerSecs--;
+        document.getElementById('adTimerNum').textContent = _timerSecs;
+        setAdRing(_timerSecs / 5);
+        if (_timerSecs <= 0) {
+          clearInterval(_adTimerId);
+          _timerDone = true;
+          document.getElementById('adTimerNum').textContent = '✅';
+          tryNavigate();
+        }
+      }, 1000);
+    };
+
+    /* Timer শেষ + AdsGram done → navigate */
+    function tryNavigate() {
+      if (_timerDone) {
+        if (_adWatched) {
+          /* দুটোই শেষ — সরাসরি যাও */
+          endAdAndGo();
+        } else {
+          /* Timer শেষ কিন্তু AdsGram এখনো চলছে — বাটন দেখাও */
+          document.getElementById('btnProceed').style.display = 'block';
+          document.getElementById('adHint').textContent = 'নিচের বাটনে চাপুন';
+        }
+      }
+      /* Timer না শেষ হলে AdsGram .then() এ আবার call হবে */
+    }
+
+    function endAdAndGo() {
+      _adActive = false;
+      clearInterval(_adTimerId);
+      document.getElementById('adOverlay').classList.remove('on');
+      if (_targetPage) location.href = _targetPage;
+    }
+
+    window.proceedToPage = function () {
+      endAdAndGo();
+    };
+
+    function showToast(msg, isError) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.background = isError ? '#ef4444' : '#10b981';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    window.showToast = showToast;
+  </script>
+
+  <!-- ══ Firebase Module ══ -->
   <script type="module">
     import { auth, db } from './firebase-config.js';
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp }
+      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.expand(); tg.BackButton.hide(); }
 
-    // Adsgram Init
-    let AdController = null;
-    window.addEventListener('load', () => {
-      if(window.Adsgram){
-        AdController = window.Adsgram.init({ blockId: '25155' });
-      }
-    });
-
     let currentUser = null, userData = null;
-    let adSettings = { spinPoints: 10, pointsToTaka: 0.01, minWithdraw: 100 };
-    let adTimerInterval = null;
-    let currentCardName = '';
+    let adSettings = { pointsToTaka: 0.01, minWithdraw: 100 };
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = 'index.html'; return; }
       currentUser = user;
-      const snap = await getDoc(doc(db, 'users', user.uid));
-      if (snap.exists()) userData = snap.data();
 
-      // ── ডিভাইস চেক — অন্য ডিভাইস হলে লগআউট ──
-      const savedDevice = userData?.deviceId;
+      const [uSnap, sSnap] = await Promise.all([
+        getDoc(doc(db, 'users', user.uid)),
+        getDoc(doc(db, 'settings', 'adConfig'))
+      ]);
+
+      if (uSnap.exists()) userData = uSnap.data();
+      if (sSnap.exists()) adSettings = { ...adSettings, ...sSnap.data() };
+
+      /* ── ডিভাইস চেক ── */
+      const savedDevice   = userData?.deviceId;
       const currentDevice = localStorage.getItem('_did');
       if (savedDevice && currentDevice && savedDevice !== currentDevice) {
         await signOut(auth);
         localStorage.removeItem('_did');
-        alert('🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত! লগইন করতে পারবেন না।');
+        alert('🚫 এই অ্যাকাউন্ট অন্য ডিভাইসে নিবন্ধিত!');
         window.location.href = 'index.html'; return;
       }
 
-      const settSnap = await getDoc(doc(db, 'settings', 'adConfig'));
-      if (settSnap.exists()) adSettings = { ...adSettings, ...settSnap.data() };
       updateUI();
       loadMarquee();
     });
 
-    // সব কার্ডে ক্লিক → Ad দেখাও
-    window.showAd = (cardName) => {
-      currentCardName = cardName;
-      if(AdController){
-        AdController.show()
-          .then(() => { givePoints(); })
-          .catch(() => { showManualAd(cardName); });
-      } else {
-        showManualAd(cardName);
-      }
-    };
-
-    function showManualAd(cardName) {
-      document.getElementById('adTitle').textContent = cardName + ' — বিজ্ঞাপন দেখুন';
-      document.getElementById('claimBtn').style.display = 'none';
-      document.getElementById('adModal').classList.add('show');
-      let t = 5;
-      document.getElementById('adTimer').textContent = t;
-      clearInterval(adTimerInterval);
-      adTimerInterval = setInterval(() => {
-        t--;
-        document.getElementById('adTimer').textContent = t;
-        if (t <= 0) {
-          clearInterval(adTimerInterval);
-          document.getElementById('adTimer').textContent = '✅';
-          document.getElementById('claimBtn').style.display = 'block';
-        }
-      }, 1000);
-    }
-
-    window.claimPoints = () => {
-      document.getElementById('adModal').classList.remove('show');
-      givePoints();
-    };
-
-    async function givePoints() {
-      const pts = adSettings.spinPoints || 10;
-      if (!currentUser) return;
-      await updateDoc(doc(db, 'users', currentUser.uid), {
-        points: increment(pts),
-        adCount: increment(1)
-      });
-      userData.points = (userData.points || 0) + pts;
-      updateUI();
-      showToast(`+${pts} পয়েন্ট পেলেন! 🎉`);
-    }
-
+    /* ── Withdraw ── */
     window.requestWithdraw = async () => {
       const min = adSettings.minWithdraw || 100;
       if (!userData || (userData.points || 0) < min) {
-        showToast(`কমপক্ষে ${min} পয়েন্ট লাগবে!`, true); return;
+        window.showToast('কমপক্ষে ' + min + ' পয়েন্ট লাগবে!', true); return;
       }
-      await addDoc(collection(db, 'withdrawRequests'), {
-        userId: currentUser.uid, userName: userData.name,
-        points: userData.points,
-        taka: ((userData.points || 0) * (adSettings.pointsToTaka || 0.01)).toFixed(2),
-        status: 'pending', createdAt: serverTimestamp()
-      });
-      showToast('✅ উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!');
+      try {
+        const taka = ((userData.points || 0) * (adSettings.pointsToTaka || 0.01)).toFixed(2);
+        await addDoc(collection(db, 'withdrawRequests'), {
+          userId: currentUser.uid, userName: userData.name,
+          points: userData.points, taka,
+          status: 'pending', createdAt: serverTimestamp()
+        });
+        window.showToast('✅ উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!');
+      } catch (e) {
+        window.showToast('ব্যর্থ হয়েছে! আবার চেষ্টা করুন', true);
+      }
     };
 
+    /* ── Invite ── */
     window.inviteFriends = () => {
-      if (tg) tg.openTelegramLink('https://t.me/share/url?url=t.me/selfiotop_bot/selfio&text=EarnZone-এ যোগ দিন! পয়েন্ট আয় করুন!');
-      else showToast('লিংক শেয়ার করুন: t.me/selfiotop_bot/selfio');
+      const tg = window.Telegram?.WebApp;
+      if (tg) tg.openTelegramLink('https://t.me/share/url?url=t.me/selfiotop_bot/selfio&text=EarnZone-এ যোগ দিন!');
+      else window.showToast('লিংক শেয়ার করুন: t.me/selfiotop_bot/selfio');
     };
 
+    /* ── Admin ── */
     window.goAdmin = () => {
       if (userData?.isAdmin) window.location.href = 'admin.html';
     };
 
     function updateUI() {
       if (!userData) return;
-      const pts = userData.points || 0;
-      const balance = userData.balance || 0;
-      const adCount = userData.adCount || 0;
-
-      document.getElementById('userName').textContent = userData.name || 'ইউজার';
-      document.getElementById('balanceAmount').textContent = balance.toFixed(2);
-      document.getElementById('userPoints').textContent = pts;
-      document.getElementById('userBalance').textContent = balance.toFixed(2);
-      document.getElementById('userAdCount').textContent = adCount;
+      document.getElementById('userName').textContent     = userData.name || 'ইউজার';
+      document.getElementById('balanceAmount').textContent = (userData.balance || 0).toFixed(2);
+      document.getElementById('userPoints').textContent   = userData.points || 0;
+      document.getElementById('userBalance').textContent  = (userData.balance || 0).toFixed(2);
+      document.getElementById('userAdCount').textContent  = userData.adCount || 0;
       if (userData.isAdmin) {
-        document.getElementById('adminNavLink').style.display = 'flex';
         document.getElementById('adminSection').style.display = 'block';
       }
     }
@@ -363,15 +451,7 @@
         if (snap.exists() && snap.data().text) {
           document.getElementById('marqueeText').textContent = snap.data().text;
         }
-      } catch(e) {}
-    }
-
-    function showToast(msg, isError = false) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.style.background = isError ? '#ef4444' : '#10b981';
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3000);
+      } catch (e) {}
     }
   </script>
 </body>
