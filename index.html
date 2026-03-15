@@ -229,10 +229,15 @@ function getDeviceId(){
 }
 const DEVICE_ID=getDeviceId();
 
-/* ── Splash → auth check ── */
-let _checked=false;
+/* ── Splash → auth check ──
+   শুধু পেজ লোডের সময় চলে।
+   লগইন/সাইনআপের পরে redirect
+   doLogin/doSignup নিজেই করে।
+── */
+let _splashDone=false;
 onAuthStateChanged(auth,async(user)=>{
-  if(_checked) return; _checked=true;
+  if(_splashDone) return; // শুধু প্রথমবার চলবে
+  _splashDone=true;
   if(user){
     try{
       const snap=await getDoc(doc(db,'users',user.uid));
@@ -243,9 +248,15 @@ onAuthStateChanged(auth,async(user)=>{
     }catch{ showForm(); }
   } else { showForm(); }
 });
+
 function showForm(){
   document.getElementById('splashScreen').style.display='none';
   document.getElementById('mainCard').style.display='block';
+}
+
+/* লগইন/সাইনআপ সফলের পর redirect */
+function goHome(){
+  window.location.href='home.html';
 }
 
 /* ════════════════════════════════
@@ -287,11 +298,11 @@ window.doLogin=async()=>{
       btn.innerHTML='লগইন করুন'; btn.disabled=false; return;
     }
 
-    /* ── Device সেভ/আপডেট ── */
+    /* ── Device সেভ/আপডেট → সরাসরি home.html এ যাও ── */
     await updateDoc(doc(db,'users',cred.user.uid),{
       deviceId:DEVICE_ID, lastLogin:serverTimestamp()
     });
-    /* onAuthStateChanged → home.html */
+    goHome();
 
   }catch(e){
     const msg=
@@ -360,6 +371,7 @@ window.doSignup=async()=>{
     });
     const s=document.getElementById('signupSuc');
     s.textContent='✅ অ্যাকাউন্ট তৈরি হয়েছে! হোমে যাচ্ছি...'; s.style.display='block';
+    setTimeout(()=>goHome(), 1200);
   }catch(e){
     showMsg('signupErr',e.code==='auth/email-already-in-use'?'এই ইমেইল আগেই ব্যবহৃত!':'সাইনআপ ব্যর্থ হয়েছে');
     btn.innerHTML='অ্যাকাউন্ট খুলুন'; btn.disabled=false;
