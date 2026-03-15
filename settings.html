@@ -264,12 +264,43 @@ loadHelpline();
 window.openHelplink=(type,e)=>{
   e.preventDefault();
   const links=window._hlLinks||{};
-  const url=type==='tg'?links.tg:type==='wa'?links.wa:links.call;
-  if(!url){showToast('লিংক এখনো সেট হয়নি!',true);return;}
-  const tgApp=window.Telegram?.WebApp;
-  if(type==='call'){window.open('tel:'+url.replace(/\D/g,''));return;}
-  if(tgApp) tgApp.openLink(url);
-  else window.open(url,'_blank');
+  let url=(type==='tg'?links.tg:type==='wa'?links.wa:links.call)||'';
+  if(!url){
+    typeof showToast==='function'?showToast('লিংক এখনো সেট হয়নি!',true):alert('লিংক এখনো সেট হয়নি!');
+    return;
+  }
+  /* ── Call ── */
+  if(type==='call'){
+    window.location.href='tel:'+url.replace(/[^0-9+]/g,'');
+    return;
+  }
+  /* ── Telegram: যেকোনো format কে https://t.me/ এ convert ── */
+  if(type==='tg'){
+    // tg:resolve?domain=xxx  বা  @username  বা  t.me/xxx  সব handle করো
+    if(url.startsWith('tg:')||url.startsWith('@')){
+      const username=url.replace(/^tg:resolve\?domain=/,'').replace(/^@/,'').trim();
+      url='https://t.me/'+username;
+    } else if(url.startsWith('t.me/')){
+      url='https://'+url;
+    } else if(!url.startsWith('http')){
+      url='https://t.me/'+url;
+    }
+  }
+  /* ── WhatsApp: wa.me format নিশ্চিত করো ── */
+  if(type==='wa'){
+    if(url.startsWith('whatsapp://')||url.startsWith('+88')||(/^\d/.test(url))){
+      url='https://wa.me/'+url.replace(/[^0-9]/g,'');
+    } else if(!url.startsWith('http')){
+      url='https://wa.me/'+url.replace(/[^0-9]/g,'');
+    }
+  }
+  /* ── Telegram WebApp openLink ব্যবহার করো ── */
+  const tgApp=window.Telegram&&window.Telegram.WebApp;
+  if(tgApp && typeof tgApp.openLink==='function'){
+    tgApp.openLink(url);
+  } else {
+    window.open(url,'_blank');
+  }
 };
 
 onAuthStateChanged(auth, async(user)=>{
