@@ -236,7 +236,7 @@ function showToast(msg,err){
 }
 </script>
 
-<!-- Helpline opener — সরল non-module script -->
+<!-- Helpline opener -->
 <script>
 function hlOpen(type){
   var tgApp = window.Telegram && window.Telegram.WebApp;
@@ -245,44 +245,47 @@ function hlOpen(type){
 
   if(!url){ alert('হেল্পলাইন লিংক এখনো সেট হয়নি!'); return; }
 
-  /* Call */
+  /* ── URL normalize ── */
   if(type==='call'){
-    window.location.href = 'tel:'+url.replace(/[^0-9+]/g,'');
+    var num = url.replace(/[^0-9+]/g,'');
+    window.location.href = 'tel:'+num;
     return;
   }
 
-  /* Telegram — যেকোনো format → https://t.me/ */
   if(type==='tg'){
     if(url.indexOf('tg:')===0){
       var m=url.match(/domain=([^&]+)/);
       url = m ? 'https://t.me/'+m[1] : 'https://t.me/';
-    } else if(url.indexOf('@')===0){
+    } else if(url.charAt(0)==='@'){
       url = 'https://t.me/'+url.slice(1);
     } else if(url.indexOf('t.me/')===0){
       url = 'https://'+url;
     } else if(url.indexOf('http')!==0){
       url = 'https://t.me/'+url;
     }
-    if(tgApp && tgApp.openTelegramLink){
-      tgApp.openTelegramLink(url);
-    } else {
-      window.open(url,'_blank');
-    }
-    return;
   }
 
-  /* WhatsApp */
   if(type==='wa'){
     if(url.indexOf('http')!==0){
       url = 'https://wa.me/'+url.replace(/[^0-9]/g,'');
     }
-    if(tgApp && tgApp.openLink){
-      tgApp.openLink(url);
-    } else {
-      window.open(url,'_blank');
-    }
-    return;
   }
+
+  /* ── Open ──
+     Telegram Mini App  → openTelegramLink / openLink
+     Android WebView    → window.location.href (intent হ্যান্ডেল করবে)
+     Browser            → window.open
+  ── */
+  if(tgApp){
+    if(type==='tg' && tgApp.openTelegramLink){
+      tgApp.openTelegramLink(url); return;
+    }
+    if(tgApp.openLink){
+      tgApp.openLink(url); return;
+    }
+  }
+  /* Android WebView বা Browser */
+  window.location.href = url;
 }
 </script>
 </body>
