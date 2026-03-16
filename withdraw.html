@@ -263,7 +263,7 @@ async function notifyBot(taka, phone, method) {
     const methodName = method==='bkash'?'bKash':method==='nagad'?'Nagad':'Rocket';
     const msg = `💸 নতুন Withdraw রিকোয়েস্ট!\n\n👤 নাম: ${userData.name}\n💳 মেথড: ${methodName}\n📱 নাম্বার: ${phone}\n💰 পরিমাণ: ৳${taka}\n\n⏳ অনুমোদনের অপেক্ষায়...`;
 
-    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    await fetch(`https://api.telegram.org/bot8593684106:AAE0twUXgaemszAopWt1XtV1BIeU92mQ2ps/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chat_id: adminChatId, text: msg })
