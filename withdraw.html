@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Withdraw — EarnZone</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f0f2f5;--card:#fff;--primary:#e8380d;--primary2:#ff6b35;--green:#10b981;--text:#1a1a2e;--muted:#6b7280;--border:#e5e7eb;--red:#ef4444;}
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    body{font-family:'Noto Sans Bengali','Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px;}
+
+    .header{background:linear-gradient(135deg,var(--primary),var(--primary2));padding:14px 16px;display:flex;align-items:center;gap:12px;}
+    .back-btn{width:38px;height:38px;background:rgba(255,255,255,0.2);border-radius:10px;border:none;color:#fff;font-size:20px;cursor:pointer;}
+    .header-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:#fff;}
+
+    /* Balance Card */
+    .balance-section{background:linear-gradient(135deg,var(--primary),var(--primary2));padding:0 16px 20px;}
+    .balance-card{background:#fff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+    .bal-label{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:4px;}
+    .bal-amount{font-family:'Sora',sans-serif;font-size:36px;font-weight:800;color:var(--text);}
+    .bal-pts{font-size:13px;color:var(--muted);margin-top:6px;}
+    .bal-pts span{color:var(--primary);font-weight:700;}
+
+    .container{padding:16px;}
+
+    /* Method Select */
+    .sec-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;}
+    .method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+    .method-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;transition:all .2s;}
+    .method-card.active{border-color:var(--primary);background:rgba(232,56,13,0.04);}
+    .method-card:active{transform:scale(0.95);}
+    .method-logo{font-size:28px;margin-bottom:6px;}
+    .method-name{font-size:11px;font-weight:700;color:var(--text);}
+    .method-check{display:none;color:var(--primary);font-size:14px;font-weight:800;}
+    .method-card.active .method-check{display:block;}
+
+    /* Form */
+    .form-card{background:var(--card);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+    .field{margin-bottom:14px;}
+    .field label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px;}
+    .field input{width:100%;background:#f8f9fa;border:1.5px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-size:15px;font-family:inherit;outline:none;transition:border-color .2s;}
+    .field input:focus{border-color:var(--primary);}
+    .min-note{font-size:12px;color:var(--primary);font-weight:700;margin-top:-8px;margin-bottom:14px;}
+
+    /* History */
+    .hist-item{background:#f8f9fa;border-radius:12px;padding:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+    .hi-left{}
+    .hi-method{font-size:13px;font-weight:700;color:var(--text);}
+    .hi-num{font-size:11px;color:var(--muted);margin-top:2px;}
+    .hi-date{font-size:10px;color:var(--muted);margin-top:2px;}
+    .hi-right{text-align:right;}
+    .hi-amount{font-family:'Sora',sans-serif;font-size:15px;font-weight:800;color:var(--text);}
+    .hi-status{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;margin-top:3px;display:inline-block;}
+    .s-pending{background:rgba(245,158,11,0.15);color:#f59e0b;}
+    .s-approved{background:rgba(16,185,129,0.15);color:var(--green);}
+    .s-rejected{background:rgba(239,68,68,0.15);color:var(--red);}
+
+    .btn-withdraw{width:100%;padding:15px;background:linear-gradient(135deg,var(--primary),var(--primary2));border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(232,56,13,0.3);transition:transform .15s;}
+    .btn-withdraw:active{transform:scale(0.98);}
+    .btn-withdraw:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+    .empty{text-align:center;padding:24px;color:var(--muted);font-size:13px;}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--green);color:#fff;padding:10px 20px;border-radius:11px;font-size:13px;font-weight:700;opacity:0;transition:all .3s;z-index:3000;white-space:nowrap;pointer-events:none;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* Success overlay */
+    .success-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;align-items:center;justify-content:center;padding:20px;}
+    .success-overlay.show{display:flex;}
+    .success-box{background:#fff;border-radius:24px;padding:32px 24px;text-align:center;width:100%;max-width:320px;}
+    .success-icon{font-size:56px;margin-bottom:12px;}
+    .success-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px;}
+    .success-msg{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
+    .success-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),var(--primary2));border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="location.href='home.html'">←</button>
+  <span class="header-title">💸 Withdraw</span>
+</div>
+
+<div class="balance-section">
+  <div class="balance-card">
+    <div class="bal-label">উইথড্র করার যোগ্য ব্যালেন্স</div>
+    <div class="bal-amount">৳<span id="balShow">0.00</span></div>
+    <div class="bal-pts">⭐ <span id="ptsShow">0</span> পয়েন্ট আছে</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Payment Method -->
+  <div class="sec-title">💳 পেমেন্ট মেথড বেছে নিন</div>
+  <div class="method-grid">
+    <div class="method-card active" id="m-bkash" onclick="selectMethod('bkash')">
+      <div class="method-logo">💗</div>
+      <div class="method-name">bKash</div>
+      <div class="method-check">✓ Selected</div>
+    </div>
+    <div class="method-card" id="m-nagad" onclick="selectMethod('nagad')">
+      <div class="method-logo">🟠</div>
+      <div class="method-name">Nagad</div>
+      <div class="method-check">✓ Selected</div>
+    </div>
+    <div class="method-card" id="m-rocket" onclick="selectMethod('rocket')">
+      <div class="method-logo">🚀</div>
+      <div class="method-name">Rocket</div>
+      <div class="method-check">✓ Selected</div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+    <div class="field">
+      <label id="numLabel">📱 bKash নাম্বার</label>
+      <input type="tel" id="phoneNum" placeholder="01XXXXXXXXX">
+    </div>
+    <div class="field">
+      <label>💰 টাকার পরিমাণ (৳)</label>
+      <input type="number" id="takaAmount" placeholder="সর্বনিম্ন ৳10">
+    </div>
+    <div class="min-note" id="minNote">সর্বনিম্ন উইথড্র: ৳<span id="minShow">10</span></div>
+    <button class="btn-withdraw" id="wdBtn" onclick="doWithdraw()">💸 Withdraw করুন</button>
+  </div>
+
+  <!-- History -->
+  <div class="sec-title">📋 রিকোয়েস্ট ইতিহাস</div>
+  <div id="histList"><div class="empty">লোড হচ্ছে...</div></div>
+
+</div>
+
+<!-- Success Overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-icon">✅</div>
+    <div class="success-title">রিকোয়েস্ট পাঠানো হয়েছে!</div>
+    <div class="success-msg">আপনার উইথড্র রিকোয়েস্ট Admin এর কাছে পাঠানো হয়েছে।<br>অনুমোদন হলে আপনার <strong id="sucMethod">bKash</strong> নাম্বারে টাকা পাঠানো হবে।</div>
+    <button class="success-btn" onclick="closeSuccess()">✓ ঠিক আছে</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { auth, db } from './firebase-config.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+  doc, getDoc, updateDoc, addDoc, collection,
+  query, where, orderBy, getDocs, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.expand(); tg.BackButton.show(); tg.BackButton.onClick(()=>location.href='home.html'); }
+
+let currentUser = null, userData = null;
+let adSettings  = { pointsToTaka: 0.01, minWithdraw: 100, minTaka: 10 };
+let selMethod   = 'bkash';
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { location.href = 'index.html'; return; }
+  currentUser = user;
+
+  const [uSnap, sSnap] = await Promise.all([
+    getDoc(doc(db, 'users', user.uid)),
+    getDoc(doc(db, 'settings', 'adConfig'))
+  ]);
+
+  if (uSnap.exists()) userData = uSnap.data();
+  if (sSnap.exists()) adSettings = { ...adSettings, ...sSnap.data() };
+
+  updateUI();
+  loadHistory();
+});
+
+function updateUI() {
+  if (!userData) return;
+  document.getElementById('balShow').textContent  = (userData.balance || 0).toFixed(2);
+  document.getElementById('ptsShow').textContent  = userData.points  || 0;
+  document.getElementById('minShow').textContent  = adSettings.minTaka || 10;
+  document.getElementById('minNote').querySelector('span').textContent = adSettings.minTaka || 10;
+}
+
+/* ── Method Select ── */
+window.selectMethod = (m) => {
+  selMethod = m;
+  ['bkash','nagad','rocket'].forEach(x => {
+    document.getElementById('m-'+x).classList.toggle('active', x===m);
+  });
+  const labels = { bkash:'💗 bKash নাম্বার', nagad:'🟠 Nagad নাম্বার', rocket:'🚀 Rocket নাম্বার' };
+  document.getElementById('numLabel').textContent = labels[m];
+  document.getElementById('phoneNum').placeholder = '01XXXXXXXXX';
+};
+
+/* ── Withdraw ── */
+window.doWithdraw = async () => {
+  const phone = document.getElementById('phoneNum').value.trim();
+  const taka  = parseFloat(document.getElementById('takaAmount').value);
+  const minT  = parseFloat(adSettings.minTaka) || 10;
+  const bal   = userData?.balance || 0;
+
+  if (!phone || phone.length < 11) { showToast('সঠিক নাম্বার দিন!', true); return; }
+  if (!taka || taka < minT)        { showToast(`সর্বনিম্ন ৳${minT} লাগবে!`, true); return; }
+  if (taka > bal)                  { showToast('পর্যাপ্ত ব্যালেন্স নেই!', true); return; }
+
+  const btn = document.getElementById('wdBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ পাঠানো হচ্ছে...';
+
+  try {
+    // ১. Balance কাটো
+    await updateDoc(doc(db, 'users', currentUser.uid), {
+      balance: bal - taka
+    });
+
+    // ২. Request save করো
+    await addDoc(collection(db, 'withdrawRequests'), {
+      userId:    currentUser.uid,
+      userName:  userData.name,
+      method:    selMethod,
+      phone:     phone,
+      taka:      taka,
+      status:    'pending',
+      createdAt: serverTimestamp()
+    });
+
+    // ৩. Bot কে notify করো (Telegram message)
+    await notifyBot(taka, phone, selMethod);
+
+    // ৪. UI আপডেট
+    userData.balance = bal - taka;
+    document.getElementById('balShow').textContent = userData.balance.toFixed(2);
+
+    document.getElementById('sucMethod').textContent =
+      selMethod==='bkash'?'bKash':selMethod==='nagad'?'Nagad':'Rocket';
+    document.getElementById('successOverlay').classList.add('show');
+
+    document.getElementById('phoneNum').value   = '';
+    document.getElementById('takaAmount').value = '';
+    loadHistory();
+
+  } catch (e) {
+    showToast('ব্যর্থ হয়েছে! আবার চেষ্টা করুন', true);
+    console.error(e);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '💸 Withdraw করুন';
+};
+
+/* ── Telegram Bot Notify ── */
+async function notifyBot(taka, phone, method) {
+  try {
+    // Firebase থেকে bot token পড়ো
+    const snap = await getDoc(doc(db, 'settings', 'botConfig'));
+    if (!snap.exists()) return;
+    const botToken = snap.data().botToken || '';
+    const adminChatId = snap.data().adminChatId || '';
+    if (!botToken || !adminChatId) return;
+
+    const methodName = method==='bkash'?'bKash':method==='nagad'?'Nagad':'Rocket';
+    const msg = `💸 নতুন Withdraw রিকোয়েস্ট!\n\n👤 নাম: ${userData.name}\n💳 মেথড: ${methodName}\n📱 নাম্বার: ${phone}\n💰 পরিমাণ: ৳${taka}\n\n⏳ অনুমোদনের অপেক্ষায়...`;
+
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: adminChatId, text: msg })
+    });
+  } catch(e) {
+    console.log('Bot notify failed:', e);
+  }
+}
+
+/* ── History ── */
+async function loadHistory() {
+  const c = document.getElementById('histList');
+  try {
+    const q    = query(
+      collection(db, 'withdrawRequests'),
+      where('userId', '==', currentUser.uid),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    if (snap.empty) { c.innerHTML = '<div class="empty">কোনো রিকোয়েস্ট নেই</div>'; return; }
+
+    const methods = { bkash:'💗 bKash', nagad:'🟠 Nagad', rocket:'🚀 Rocket' };
+    const statusLabel = { pending:'⏳ পেন্ডিং', approved:'✅ অনুমোদিত', rejected:'❌ বাতিল' };
+    const statusClass = { pending:'s-pending', approved:'s-approved', rejected:'s-rejected' };
+
+    c.innerHTML = snap.docs.map(d => {
+      const w = d.data();
+      const date = w.createdAt?.toDate?.().toLocaleDateString('bn-BD') || '—';
+      return `
+        <div class="hist-item">
+          <div class="hi-left">
+            <div class="hi-method">${methods[w.method] || w.method || 'N/A'}</div>
+            <div class="hi-num">📱 ${w.phone || '—'}</div>
+            <div class="hi-date">📅 ${date}</div>
+          </div>
+          <div class="hi-right">
+            <div class="hi-amount">৳${w.taka}</div>
+            <span class="hi-status ${statusClass[w.status] || 's-pending'}">
+              ${statusLabel[w.status] || w.status}
+            </span>
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    c.innerHTML = '<div class="empty">লোড ব্যর্থ হয়েছে</div>';
+  }
+}
+
+window.closeSuccess = () => {
+  document.getElementById('successOverlay').classList.remove('show');
+};
+
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = err ? '#ef4444' : '#10b981';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
