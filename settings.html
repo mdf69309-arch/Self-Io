@@ -131,13 +131,13 @@
 <div class="section" style="margin-top:16px;">
   <div class="section-label">হেল্পলাইন</div>
   <div class="helpline-grid">
-    <div class="hl-btn hl-tg"   data-hl="tg">
+    <div class="hl-btn hl-tg"   onclick="hlOpen('tg')">
       <div class="hl-icon">✈️</div><span class="hl-label">Telegram</span>
     </div>
-    <div class="hl-btn hl-wa"   data-hl="wa">
+    <div class="hl-btn hl-wa"   onclick="hlOpen('wa')">
       <div class="hl-icon">💬</div><span class="hl-label">WhatsApp</span>
     </div>
-    <div class="hl-btn hl-call" data-hl="call">
+    <div class="hl-btn hl-call" onclick="hlOpen('call')">
       <div class="hl-icon">📞</div><span class="hl-label">Call</span>
     </div>
   </div>
@@ -161,52 +161,24 @@ import { onAuthStateChanged, signOut }
 import { doc, getDoc }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
+/* ── Helpline: পেজ লোডে লিংক cache করো ── */
+window._hl = {tg:'', wa:'', call:''};
+getDoc(doc(db,'settings','helpline')).then(snap=>{
+  if(snap.exists()){
+    const d=snap.data();
+    window._hl.tg   = d.telegram||'';
+    window._hl.wa   = d.whatsapp||'';
+    window._hl.call = d.call||'';
+  }
+}).catch(()=>{});
+
+
 const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.expand();
   tg.BackButton.show();
   tg.BackButton.onClick(()=> location.href='home.html');
 }
-
-/* ── Helpline: data-hl attribute দিয়ে click handle ── */
-document.querySelectorAll('[data-hl]').forEach(btn=>{
-  btn.addEventListener('click', async()=>{
-    const type = btn.getAttribute('data-hl');
-    const tgApp = window.Telegram && window.Telegram.WebApp;
-    let url = '';
-    try{
-      const snap = await getDoc(doc(db,'settings','helpline'));
-      if(snap.exists()){
-        const d=snap.data();
-        if(type==='tg')   url=d.telegram||'';
-        if(type==='wa')   url=d.whatsapp||'';
-        if(type==='call') url=d.call||'';
-      }
-    }catch(e){ console.warn(e); }
-
-    if(!url){ showToast('লিংক এখনো সেট হয়নি!',true); return; }
-
-    if(type==='call'){
-      window.location.href='tel:'+url.replace(/[^0-9+]/g,'');
-      return;
-    }
-    if(type==='tg'){
-      if(url.startsWith('tg:')){const m=url.match(/domain=([^&]+)/);url=m?'https://t.me/'+m[1]:'https://t.me/';}
-      else if(url.startsWith('@'))       url='https://t.me/'+url.slice(1);
-      else if(url.startsWith('t.me/'))   url='https://'+url;
-      else if(!url.startsWith('http'))   url='https://t.me/'+url;
-      if(tgApp && tgApp.openTelegramLink) tgApp.openTelegramLink(url);
-      else window.open(url,'_blank');
-      return;
-    }
-    if(type==='wa'){
-      if(!url.startsWith('http')) url='https://wa.me/'+url.replace(/[^0-9]/g,'');
-      if(tgApp && tgApp.openLink) tgApp.openLink(url);
-      else window.open(url,'_blank');
-      return;
-    }
-  });
-});
 
 /* Avatar helpers */
 const AV=['#e8380d','#7c3aed','#0891b2','#047857','#b45309','#be123c','#1d4ed8'];
@@ -261,6 +233,56 @@ function showToast(msg,err){
   const el=document.getElementById('toast');
   el.textContent=msg; el.style.background=err?'#ef4444':'#10b981';
   el.classList.add('on'); setTimeout(()=>el.classList.remove('on'),3000);
+}
+</script>
+
+<!-- Helpline opener — সরল non-module script -->
+<script>
+function hlOpen(type){
+  var tgApp = window.Telegram && window.Telegram.WebApp;
+  var hl    = window._hl || {tg:'',wa:'',call:''};
+  var url   = type==='tg' ? hl.tg : type==='wa' ? hl.wa : hl.call;
+
+  if(!url){ alert('হেল্পলাইন লিংক এখনো সেট হয়নি!'); return; }
+
+  /* Call */
+  if(type==='call'){
+    window.location.href = 'tel:'+url.replace(/[^0-9+]/g,'');
+    return;
+  }
+
+  /* Telegram — যেকোনো format → https://t.me/ */
+  if(type==='tg'){
+    if(url.indexOf('tg:')===0){
+      var m=url.match(/domain=([^&]+)/);
+      url = m ? 'https://t.me/'+m[1] : 'https://t.me/';
+    } else if(url.indexOf('@')===0){
+      url = 'https://t.me/'+url.slice(1);
+    } else if(url.indexOf('t.me/')===0){
+      url = 'https://'+url;
+    } else if(url.indexOf('http')!==0){
+      url = 'https://t.me/'+url;
+    }
+    if(tgApp && tgApp.openTelegramLink){
+      tgApp.openTelegramLink(url);
+    } else {
+      window.open(url,'_blank');
+    }
+    return;
+  }
+
+  /* WhatsApp */
+  if(type==='wa'){
+    if(url.indexOf('http')!==0){
+      url = 'https://wa.me/'+url.replace(/[^0-9]/g,'');
+    }
+    if(tgApp && tgApp.openLink){
+      tgApp.openLink(url);
+    } else {
+      window.open(url,'_blank');
+    }
+    return;
+  }
 }
 </script>
 </body>
