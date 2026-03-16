@@ -277,10 +277,10 @@ async function notifyBot(taka, phone, method) {
 async function loadHistory() {
   const c = document.getElementById('histList');
   try {
+    /* orderBy ছাড়া query — Composite Index লাগবে না */
     const q    = query(
       collection(db, 'withdrawRequests'),
-      where('userId', '==', currentUser.uid),
-      orderBy('createdAt', 'desc')
+      where('userId', '==', currentUser.uid)
     );
     const snap = await getDocs(q);
     if (snap.empty) { c.innerHTML = '<div class="empty">কোনো রিকোয়েস্ট নেই</div>'; return; }
@@ -289,7 +289,14 @@ async function loadHistory() {
     const statusLabel = { pending:'⏳ পেন্ডিং', approved:'✅ অনুমোদিত', rejected:'❌ বাতিল' };
     const statusClass = { pending:'s-pending', approved:'s-approved', rejected:'s-rejected' };
 
-    c.innerHTML = snap.docs.map(d => {
+    /* Client side এ sort করো */
+    const docs = snap.docs.sort((a,b) => {
+      const ta = a.data().createdAt?.seconds || 0;
+      const tb = b.data().createdAt?.seconds || 0;
+      return tb - ta;
+    });
+
+    c.innerHTML = docs.map(d => {
       const w = d.data();
       const date = w.createdAt?.toDate?.().toLocaleDateString('bn-BD') || '—';
       return `
@@ -308,6 +315,7 @@ async function loadHistory() {
         </div>`;
     }).join('');
   } catch(e) {
+    console.error('History error:', e);
     c.innerHTML = '<div class="empty">লোড ব্যর্থ হয়েছে</div>';
   }
 }
