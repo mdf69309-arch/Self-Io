@@ -630,36 +630,6 @@ window.saveHelpline=async()=>{
 };
 window.makeAdmin=async()=>{const uid=document.getElementById('adminUid').value.trim();if(!uid){showToast('UID দিন!',true);return;}await updateDoc(doc(db,'users',uid),{isAdmin:true});showToast('✅ Admin করা হয়েছে!');};
 window.removeAdmin=async()=>{const uid=document.getElementById('adminUid').value.trim();if(!uid){showToast('UID দিন!',true);return;}await updateDoc(doc(db,'users',uid),{isAdmin:false});showToast('✅ Admin সরানো হয়েছে!');};
-window.saveBotConfig=async()=>{
-  const data={
-    channel:    document.getElementById('bcChannel').value.trim(),
-    miniAppUrl: document.getElementById('bcMiniApp').value.trim(),
-    youtubeUrl: document.getElementById('bcYoutube').value.trim(),
-    bannerImage:document.getElementById('bcBanner').value.trim(),
-    bannerImage2:document.getElementById('bcBanner2').value.trim(),
-    welcomeText:document.getElementById('bcWelcome').value.trim(),
-    howtoText:  document.getElementById('bcHowto').value.trim(),
-    updatedAt:  serverTimestamp()
-  };
-  await setDoc(doc(db,'settings','botConfig'),data,{merge:true});
-  showToast('✅ Bot Config সেভ হয়েছে!');
-};
-
-/* Bot config লোড */
-async function loadBotConfig(){
-  const snap=await getDoc(doc(db,'settings','botConfig'));
-  if(snap.exists()){
-    const d=snap.data();
-    document.getElementById('bcChannel').value    = d.channel    ||'';
-    document.getElementById('bcMiniApp').value    = d.miniAppUrl ||'';
-    document.getElementById('bcYoutube').value    = d.youtubeUrl ||'';
-    document.getElementById('bcBanner').value     = d.bannerImage||'';
-    document.getElementById('bcBanner2').value    = d.bannerImage2||'';
-    document.getElementById('bcWelcome').value    = d.welcomeText||'';
-    document.getElementById('bcHowto').value      = d.howtoText  ||'';
-  }
-}
-
 /* ════════ BOT CONFIG ════════ */
 async function loadBotConfig(){
   try{
