@@ -305,23 +305,32 @@ function spinWheel(onDone){
 /* ── AdsGram Ad Show ── */
 function showAd(onSuccess, onCancel){
   if(!window.AdController){
-    /* এড লোড হয়নি — পয়েন্ট দেওয়া যাবে না */
     window.showToast('⚠️ বিজ্ঞাপন লোড হয়নি! পেজ রিলোড করুন।', true);
     onCancel();
     return;
   }
 
-  let _adDone    = false; // এড .then() বা .catch() হয়েছে
-  let _wasHidden = false; // ক্লিক করে অন্য পেজে গিয়েছিল
+  let _adDone    = false;
+  let _wasHidden = false;
+  let _visTimer  = null;
 
   function onVisChange(){
     if(document.hidden){
+      /* ইউজার এড এ ক্লিক করে অন্য পেজে গেছে */
       _wasHidden = true;
     } else {
       /* ফিরে এসেছে */
       if(_wasHidden && !_adDone){
-        /* ক্লিক করে ফিরেছে কিন্তু এড শেষ হয়নি — বোনাস দাও */
-        if(window._saveAdClick) window._saveAdClick();
+        /* ক্লিক করে ফিরলে — এড সম্পূর্ণ গণ্য + বোনাস */
+        clearTimeout(_visTimer);
+        _visTimer = setTimeout(function(){
+          if(!_adDone){
+            _adDone = true;
+            document.removeEventListener('visibilitychange', onVisChange);
+            if(window._saveAdClick) window._saveAdClick();
+            onSuccess();
+          }
+        }, 500);
       }
     }
   }
@@ -329,16 +338,28 @@ function showAd(onSuccess, onCancel){
 
   window.AdController.show()
     .then(function(){
+      /* এড নিজে থেকে সম্পূর্ণ হয়েছে */
+      if(_adDone) return;
       _adDone = true;
+      clearTimeout(_visTimer);
       document.removeEventListener('visibilitychange', onVisChange);
-      /* এড সম্পূর্ণ দেখলেও ক্লিক করে থাকলে বোনাস দাও */
       if(_wasHidden && window._saveAdClick) window._saveAdClick();
       onSuccess();
     })
     .catch(function(){
+      /* X বাটন চাপলে বা skip — কিন্তু ক্লিক করে ফিরলে নয় */
+      if(_adDone) return; // ইতিমধ্যে visibilitychange এ handle হয়েছে
       _adDone = true;
+      clearTimeout(_visTimer);
       document.removeEventListener('visibilitychange', onVisChange);
-      onCancel();
+      if(_wasHidden){
+        /* ক্লিক করে ফিরেছিল তারপর X চেপেছে — success */
+        if(window._saveAdClick) window._saveAdClick();
+        onSuccess();
+      } else {
+        /* শুধু X চেপে বন্ধ করেছে — পয়েন্ট নেই */
+        onCancel();
+      }
     });
 }
 
