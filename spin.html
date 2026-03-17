@@ -431,7 +431,7 @@ window.addEventListener('load',initAd);
 import { auth, db } from './firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import {
-  doc, getDoc, setDoc, updateDoc, increment,
+  doc, getDoc, updateDoc, increment,
   collection, addDoc, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
@@ -445,7 +445,7 @@ let user=null,uData=null,spinHist=[];
 let cfg={pointsToTaka:0.01,minWithdraw:100};
 
 /* ════════════════════
-   Today's Date Key
+   Today's Date Key — "YYYY_MM_DD" format
 ════════════════════ */
 function getTodayKey(){
   const d=new Date();
@@ -454,28 +454,42 @@ function getTodayKey(){
 
 /* ════════════════════
    Firebase থেকে আজকের স্পিন সংখ্যা আনো
-   Collection: spinLogs / doc: {uid}_{date}
+   users/{uid} document এ todaySpinDate ও todaySpinCount ফিল্ড দেখো।
+   যদি todaySpinDate আজকের না হয়, তাহলে count = 0।
 ════════════════════ */
-async function fetchTodaySpins(uid){
-  try{
-    const snap=await getDoc(doc(db,'spinLogs',uid+'_'+getTodayKey()));
-    return snap.exists()?(snap.data().count||0):0;
-  }catch(e){return 0;}
+function fetchTodaySpinsFromUserDoc(userData){
+  const savedDate = userData?.todaySpinDate || '';
+  const savedCount = userData?.todaySpinCount || 0;
+  if(savedDate === getTodayKey()){
+    return savedCount;
+  }
+  return 0; /* নতুন দিন — রিসেট */
 }
 
 /* ════════════════════
    Firebase এ আজকের স্পিন +1 করো
+   users/{uid} এ todaySpinDate ও todaySpinCount আপডেট করো
 ════════════════════ */
 async function incTodaySpins(uid){
-  const ref=doc(db,'spinLogs',uid+'_'+getTodayKey());
   try{
-    await updateDoc(ref,{count:increment(1)});
-  }catch(e){
-    /* document নেই — তৈরি করো */
-    try{
-      await setDoc(ref,{count:1,date:getTodayKey(),uid},{merge:true});
-    }catch(e2){}
-  }
+    const today = getTodayKey();
+    const snap  = await getDoc(doc(db,'users',uid));
+    const data  = snap.exists() ? snap.data() : {};
+
+    if(data.todaySpinDate === today){
+      /* একই দিন — increment */
+      await updateDoc(doc(db,'users',uid),{
+        todaySpinCount: increment(1),
+        todaySpinDate:  today
+      });
+    } else {
+      /* নতুন দিন — reset করে 1 সেট করো */
+      await updateDoc(doc(db,'users',uid),{
+        todaySpinCount: 1,
+        todaySpinDate:  today
+      });
+    }
+  }catch(e){}
 }
 
 /* ════════════════════
@@ -486,14 +500,16 @@ onAuthStateChanged(auth,async(u)=>{
   user=u;
   window._uid=u.uid;
 
-  const [uSnap,cSnap,todaySpins]=await Promise.all([
+  const [uSnap,cSnap]=await Promise.all([
     getDoc(doc(db,'users',u.uid)),
-    getDoc(doc(db,'settings','adConfig')),
-    fetchTodaySpins(u.uid)
+    getDoc(doc(db,'settings','adConfig'))
   ]);
 
   if(uSnap.exists()) uData=uSnap.data();
   if(cSnap.exists()) cfg={...cfg,...cSnap.data()};
+
+  /* users document থেকেই আজকের স্পিন বের করো */
+  const todaySpins=fetchTodaySpinsFromUserDoc(uData);
 
   window._pts  =uData?.points    ||0;
   window._min  =cfg.minWithdraw  ||100;
