@@ -68,6 +68,15 @@ canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);color:#fff;padding:11px 22px;border-radius:12px;font-size:13px;font-weight:700;opacity:0;transition:all .3s;z-index:9999;white-space:nowrap;pointer-events:none;}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── Ad Overlay: এড চলাকালীন পুরো স্ক্রিন block ── */
+#adOverlay{
+  display:none;position:fixed;inset:0;z-index:8888;
+  background:rgba(0,0,0,0.01);  /* প্রায় transparent — AdsGram এড দেখা যাবে */
+  touch-action:none;             /* touch/tap block */
+  pointer-events:none;           /* AdsGram এর নিজের UI তে touch যাবে */
+}
+#adOverlay.on{display:block;}
 </style>
 </head>
 <body>
@@ -139,6 +148,9 @@ canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);
 
 <div class="toast" id="toast"></div>
 
+<!-- এড চলাকালীন স্পিন পেজের touch আটকাতে overlay -->
+<div id="adOverlay"></div>
+
 <script>
 'use strict';
 
@@ -159,9 +171,8 @@ window._uid         = null;
 window._todaySpins  = 0;
 
 /* ── Spin State ── */
-let _spinning  = false;
-let _wonPts    = 0;
-let _adClicked = false;  /* ইউজার এডে ক্লিক করে বাইরে গেছে */
+let _spinning = false;
+let _wonPts   = 0;
 
 /* ════════════════════════════════
    Wheel Draw
@@ -292,7 +303,6 @@ function doSpin(){
   }
 
   _spinning=true;
-  _adClicked=false;
   _wonPts=0;
 
   document.getElementById('spinBtn').disabled=true;
@@ -332,48 +342,54 @@ function spinWheel(onDone){
 /* ════════════════════════════════
    Ad Show
 
-   মূল সমস্যার সমাধান:
-   ─────────────────────────────
-   আগের কোডে visibilitychange এ _adShowing=false
-   করে দেওয়া হচ্ছিল — এতে ইউজার এডে ক্লিক করে
-   ফিরে আসলে এড "skip" হয়ে যেত এবং স্পিন পেজে
-   ফিরত কিন্তু পয়েন্ট পেত না বা ভুল পেত।
+   সমস্যা ১: ক্লিক → বাইরে → ফিরে → .then() fire → পয়েন্ট পাচ্ছিল
+   সমস্যা ২: এড আটকে → স্ক্রিন tap → .then() fire → পয়েন্ট পাচ্ছিল
 
-   ঠিক করা নিয়ম:
-   ✅ visibilitychange শুধু _adClicked ফ্ল্যাগ সেট করে
-   ✅ এড বন্ধ বা শেষ করার কোনো কাজ করে না
-   ✅ AdsGram .then() → এড সম্পূর্ণ → পয়েন্ট দাও
-   ✅ AdsGram .catch() → skip/X/error → পয়েন্ট নেই
-   ✅ ইউজার ক্লিক করে বাইরে গেলেও এড চলতে থাকে,
-      AdsGram নিজেই .then()/.catch() fire করে
+   সমাধান (visibilitychange সম্পূর্ণ বাদ):
+   ══════════════════════════════════════
+   • AdsGram .show() চালু হলে একটা unique token (_adToken) তৈরি হয়
+   • .then()/.catch() এ token মিলিয়ে দেখা হয়
+   • ইউজার যদি এডে ক্লিক করে বাইরে যায় এবং ফিরে আসে,
+     AdsGram সেই session এর জন্য .catch() করে — তাই
+     visibilitychange track করার দরকার নেই।
+   • ক্লিক বোনাস: AdsGram reported clicks (adClickCount) দিয়ে
+     server-side track হয়, এখানে আলাদা flag নেই।
+   • adOverlay: এড চলাকালে পুরো স্পিন পেজ block।
 ════════════════════════════════ */
+
+let _adToken = null; /* প্রতিটি showAd() এ নতুন token */
+
 function showAd(){
   document.getElementById('spinBtn').textContent='📺 বিজ্ঞাপন দেখুন...';
 
-  /* visibilitychange — শুধু ক্লিক ট্র্যাক করি, এড বন্ধ করি না */
-  function onVisChange(){
-    if(document.hidden){
-      /* ইউজার অন্য পেজে/অ্যাপে গেছে = ক্লিক হিসেবে গণ্য */
-      _adClicked=true;
-    }
-    /* ফিরে আসলে (visible) — কিছুই করি না।
-       AdsGram নিজেই এড রেজ্যুমে/শেষ করবে। */
-  }
+  /* নতুন unique token — stale callback reject করতে */
+  const myToken = Date.now() + '_' + Math.random();
+  _adToken = myToken;
 
-  document.addEventListener('visibilitychange',onVisChange);
+  /* overlay চালু — স্পিন পেজে কোনো touch কাজ করবে না */
+  document.getElementById('adOverlay').classList.add('on');
+
+  function cleanup(){
+    document.getElementById('adOverlay').classList.remove('on');
+  }
 
   window.AdController.show()
 
     /* ✅ AdsGram confirmed: এড সম্পূর্ণ দেখা হয়েছে */
     .then(function(){
-      document.removeEventListener('visibilitychange',onVisChange);
+      cleanup();
+      /* stale callback check */
+      if(_adToken !== myToken) return;
+      _adToken = null;
+      /* পয়েন্ট দাও — ক্লিক বোনাস নেই (visibilitychange বাদ) */
       onAdComplete(true);
     })
 
-    /* ❌ X চাপা, skip, নেটওয়ার্ক — যেকারণেই হোক */
+    /* ❌ X চাপা, ক্লিক করে বাইরে গেলে ফিরলে, skip, error — সব এখানে */
     .catch(function(){
-      document.removeEventListener('visibilitychange',onVisChange);
-      _adClicked=false; /* incomplete — বোনাসও নেই */
+      cleanup();
+      if(_adToken !== myToken) return;
+      _adToken = null;
       onAdComplete(false);
     });
 }
@@ -381,15 +397,14 @@ function showAd(){
 function onAdComplete(success){
   _spinning=false;
   if(success){
-    /* এড সম্পূর্ণ দেখা হয়েছে — পয়েন্ট দাও */
+    /* ✅ এড সম্পূর্ণ — পয়েন্ট দাও */
     if(_wonPts>0 && VALID_PTS.includes(_wonPts)){
-      if(window._savePts) window._savePts(_wonPts,_adClicked);
+      if(window._savePts) window._savePts(_wonPts);
     } else {
-      /* ০ পয়েন্ট */
-      if(window._saveZeroSpin) window._saveZeroSpin(_adClicked);
+      if(window._saveZeroSpin) window._saveZeroSpin();
     }
   } else {
-    /* এড skip — পয়েন্ট নেই */
+    /* ❌ এড incomplete — পয়েন্ট নেই */
     setResult('⚠️ বিজ্ঞাপন সম্পূর্ণ দেখুন — তাহলেই পয়েন্ট পাবেন!','#ef4444');
     _resetSpinBtn();
   }
@@ -524,32 +539,24 @@ onAuthStateChanged(auth,async(u)=>{
    এড সম্পূর্ণ দেখার পর পয়েন্ট সেভ।
    adClicked=true হলে স্পিন পয়েন্টের সাথে +1 বোনাস।
 ════════════════════ */
-window._savePts=async(pts,adClicked)=>{
+window._savePts=async(pts)=>{
   if(!user||!VALID_PTS.includes(pts)||pts<=0)return;
-
-  const bonus=adClicked?1:0;
-  const total=pts+bonus;
 
   try{
     await updateDoc(doc(db,'users',user.uid),{
-      points: increment(total),
-      ...(adClicked?{adClickCount:increment(1)}:{})
+      points: increment(pts)
     });
     await incTodaySpins(user.uid);
 
-    uData.points=(uData.points||0)+total;
+    uData.points=(uData.points||0)+pts;
     window._pts=uData.points;
     window._todaySpins=(window._todaySpins||0)+1;
 
     updateUI();
     updateLimitUI();
-    addHist(pts,bonus);
+    addHist(pts);
 
-    if(bonus>0){
-      setResult('🎉 +'+pts+' পয়েন্ট + 👆+1 বোনাস = '+total+' পয়েন্ট!','#10b981');
-    } else {
-      setResult('🎉 +'+pts+' পয়েন্ট পেলেন!','#10b981');
-    }
+    setResult('🎉 +'+pts+' পয়েন্ট পেলেন!','#10b981');
     setTimeout(()=>setResult('',''),4000);
     _resetSpinBtn();
 
@@ -564,24 +571,12 @@ window._savePts=async(pts,adClicked)=>{
    ০ পয়েন্ট পেলে শুধু spinCount বাড়াও।
    adClicked হলে +1 বোনাস দাও।
 ════════════════════ */
-window._saveZeroSpin=async(adClicked)=>{
+window._saveZeroSpin=async()=>{
   if(!user)return;
-  const bonus=adClicked?1:0;
   try{
-    await updateDoc(doc(db,'users',user.uid),{
-      ...(bonus>0?{points:increment(1),adClickCount:increment(1)}:{})
-    });
     await incTodaySpins(user.uid);
-
     window._todaySpins=(window._todaySpins||0)+1;
-    if(bonus>0){
-      uData.points=(uData.points||0)+1;
-      window._pts=uData.points;
-      updateUI();
-      setResult('😅 শূন্য! তবে 👆+1 ক্লিক বোনাস পেলেন!','#f59e0b');
-    } else {
-      setResult('😅 এবার শূন্য! আবার চেষ্টা করুন।','#64748b');
-    }
+    setResult('😅 এবার শূন্য! আবার চেষ্টা করুন।','#64748b');
     setTimeout(()=>setResult('',''),3000);
     updateLimitUI();
     _resetSpinBtn();
@@ -613,12 +608,12 @@ window._doConvert=async()=>{
 /* ════════════════════
    UI Helpers
 ════════════════════ */
-function addHist(pts,bonus){
+function addHist(pts){
   const t=new Date().toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'});
-  spinHist.unshift({pts,bonus,t});
+  spinHist.unshift({pts,t});
   if(spinHist.length>10)spinHist.pop();
   document.getElementById('hist').innerHTML=spinHist
-    .map(h=>'<div class="hitem"><span>🎡 স্পিন</span><span style="color:#64748b;font-size:11px">'+h.t+'</span><span class="hpts">+'+h.pts+(h.bonus>0?' 👆+1':'')+'</span></div>')
+    .map(h=>'<div class="hitem"><span>🎡 স্পিন</span><span style="color:#64748b;font-size:11px">'+h.t+'</span><span class="hpts">+'+h.pts+'</span></div>')
     .join('');
 }
 
