@@ -240,24 +240,69 @@ function showAdOverlay(onSuccess,onCancel){
   _adWatched=false;_timerDone=false;_adActive=true;window._adActive=true;_timerSecs=15;_clickDone=false;
   document.getElementById('adHint').textContent='বিজ্ঞাপন দেখুন...';
   document.getElementById('timerNum').textContent=_timerSecs;
+  document.getElementById('btnAdClick').style.display='none';
   setRing(1);document.getElementById('adOverlay').classList.add('on');
   history.pushState(null,'',location.href);
-  function tryReward(){if(_adWatched&&_timerDone){endAdOverlay();onSuccess();}}
+
+  function tryReward(){
+    if(_timerDone){
+      endAdOverlay();
+      onSuccess();
+    }
+  }
+
+  function showClickBtn(){
+    document.getElementById('adHint').textContent='✅ এড দেখা শেষ! নিচে ক্লিক করুন — +2 পয়েন্ট পাবেন!';
+    document.getElementById('btnAdClick').style.display='block';
+  }
+
+  /* AdsGram */
   window.AdController.show()
     .then(function(){
       _adWatched=true;
-      document.getElementById('adHint').textContent='✅ এড দেখা শেষ! নিচে ক্লিক করুন — বেশি পয়েন্ট পাবেন!';
-      document.getElementById('btnAdClick').style.display='block';
-      tryReward();
+      showClickBtn();
     })
-    .catch(function(){clearInterval(_adTimerId);endAdOverlay();onCancel();});
+    .catch(function(){
+      /* এড বন্ধ বা skip — timer শেষ হলে proceed */
+      _adWatched=true;
+    });
+
+  /* Timer */
   clearInterval(_adTimerId);
   const total=_timerSecs;
   _adTimerId=setInterval(function(){
     if(!_adActive){clearInterval(_adTimerId);return;}
-    _timerSecs--;document.getElementById('timerNum').textContent=_timerSecs;setRing(_timerSecs/total);
-    if(_timerSecs<=0){clearInterval(_adTimerId);_timerDone=true;document.getElementById('timerNum').textContent='🎉';tryReward();}
+    _timerSecs--;
+    document.getElementById('timerNum').textContent=_timerSecs;
+    setRing(_timerSecs/total);
+    if(_timerSecs<=0){
+      clearInterval(_adTimerId);
+      _timerDone=true;
+      document.getElementById('timerNum').textContent='🎉';
+      /* timer শেষ — click btn দেখাও যদি আগে না দেখানো হয় */
+      showClickBtn();
+      /* ৫ সেকেন্ড পর অটো proceed */
+      setTimeout(function(){
+        if(_adActive){ endAdOverlay(); onSuccess(); }
+      }, 5000);
+    }
   },1000);
+
+  /* ── এড থেকে ফিরলে overlay বন্ধ করো ── */
+  function onVisible(){
+    if(document.visibilityState==='visible' && _adActive && _timerDone){
+      document.removeEventListener('visibilitychange', onVisible);
+      /* ছোট delay দিয়ে proceed */
+      setTimeout(function(){
+        if(_adActive){ endAdOverlay(); onSuccess(); }
+      }, 800);
+    }
+  }
+  document.addEventListener('visibilitychange', onVisible);
+
+  /* এই overlay এর onSuccess store করো */
+  window._currentAdSuccess = onSuccess;
+  window._currentAdCancel  = onCancel;
 }
 
 function endAdOverlay(){
@@ -272,8 +317,15 @@ window.onAdClick=function(){
   if(_clickDone)return;
   _clickDone=true;
   document.getElementById('btnAdClick').style.display='none';
-  document.getElementById('adHint').textContent='✅ ধন্যবাদ! +2 পয়েন্ট পাবেন!';
+  document.getElementById('adHint').textContent='✅ ধন্যবাদ! +2 বোনাস পয়েন্ট!';
   if(window._saveAdClick) window._saveAdClick();
+  /* ক্লিক করলে ১ সেকেন্ড পর proceed */
+  setTimeout(function(){
+    if(_adActive && window._currentAdSuccess){
+      endAdOverlay();
+      window._currentAdSuccess();
+    }
+  }, 1000);
 };
 
 function startWheelSpin(){
