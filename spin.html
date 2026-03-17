@@ -118,6 +118,11 @@ canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);
   <button class="btn-spin" id="spinBtn" onclick="doSpin()">🎯 স্পিন করুন</button>
   <div class="result" id="result"></div>
   <div class="note">⚠️ পয়েন্ট পেতে বিজ্ঞাপন সম্পূর্ণ দেখতে হবে</div>
+  <div id="spinLimitBar" style="margin:10px 16px 0;background:#16213e;border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-size:12px;color:#64748b;">🎡 আজকের স্পিন</span>
+    <span style="font-size:13px;font-weight:800;color:#f59e0b;"><span id="spinUsed">0</span> / 150</span>
+  </div>
+  <div id="spinResetTimer" style="display:none;text-align:center;margin:8px 16px 0;font-size:12px;color:#64748b;"></div>
 
   <div class="cards">
     <div class="card">
@@ -242,9 +247,11 @@ function showMain(){
 function doSpin(){
   if(_spinning){showToast('স্পিন চলছে...',true);return;}
   if(!window._fbReady){showToast('লোড হচ্ছে...',true);return;}
+  /* Daily limit চেক */
+  if(window._checkSpinLimit && !window._checkSpinLimit()){return;}
 
   _spinning=true;
-  window._clickBonusDone=false; // প্রতি স্পিনে reset
+  window._clickBonusDone=false;
   document.getElementById('spinBtn').disabled=true;
   document.getElementById('result').textContent='';
 
@@ -401,7 +408,87 @@ onAuthStateChanged(auth,async(u)=>{
   window._rate = cfg.pointsToTaka || 0.01;
   window._fbReady=true;
   updateUI();
+  updateSpinUI();
 });
+
+/* ── Daily Spin Limit ── */
+const DAILY_LIMIT = 150;
+
+function getTodayKey(){
+  const d = new Date();
+  return `spin_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}_${user?.uid?.slice(0,8)}`;
+}
+
+function getSpinData(){
+  try{
+    const key  = getTodayKey();
+    const data = JSON.parse(localStorage.getItem(key)||'{}');
+    return { count: data.count||0, resetAt: data.resetAt||0 };
+  }catch(e){ return {count:0, resetAt:0}; }
+}
+
+function saveSpinData(count){
+  const key    = getTodayKey();
+  const now    = Date.now();
+  const resetAt= now + 24*60*60*1000; // ২৪ ঘন্টা পর
+  localStorage.setItem(key, JSON.stringify({count, resetAt}));
+}
+
+function updateSpinUI(){
+  const data = getSpinData();
+  const used = Math.min(data.count, DAILY_LIMIT);
+  document.getElementById('spinUsed').textContent = used;
+
+  if(used >= DAILY_LIMIT){
+    /* লিমিট শেষ — বাটন বন্ধ + timer দেখাও */
+    document.getElementById('spinBtn').disabled = true;
+    document.getElementById('spinBtn').textContent = '🚫 আজকের স্পিন শেষ!';
+    showResetTimer();
+  } else {
+    document.getElementById('spinBtn').disabled = false;
+    document.getElementById('spinBtn').textContent = '🎯 স্পিন করুন';
+    document.getElementById('spinResetTimer').style.display = 'none';
+  }
+}
+
+function showResetTimer(){
+  const el = document.getElementById('spinResetTimer');
+  el.style.display = 'block';
+  function tick(){
+    const now   = Date.now();
+    const key   = getTodayKey();
+    /* পরের দিন midnight পর্যন্ত */
+    const tomorrow = new Date();
+    tomorrow.setHours(24,0,0,0);
+    const diff  = tomorrow - now;
+    if(diff <= 0){
+      updateSpinUI(); return;
+    }
+    const h = Math.floor(diff/3600000);
+    const m = Math.floor((diff%3600000)/60000);
+    const s = Math.floor((diff%60000)/1000);
+    el.textContent = `🔄 রিসেট হবে: ${h}ঘ ${m}মি ${s}সে পরে`;
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+window._checkSpinLimit = function(){
+  const data = getSpinData();
+  if(data.count >= DAILY_LIMIT){
+    showToast('🚫 আজকের ১৫০টি স্পিন শেষ! কাল আবার আসুন।', true);
+    updateSpinUI();
+    return false;
+  }
+  return true;
+};
+
+window._incrementSpinCount = function(){
+  const data  = getSpinData();
+  const newCount = data.count + 1;
+  saveSpinData(newCount);
+  updateSpinUI();
+};
 
 /* ── Ad Click বোনাস ── */
 window._clickBonusDone = false;
@@ -429,6 +516,7 @@ window._savePts=async(pts)=>{
       points:    increment(pts),
       spinCount: increment(1)
     });
+    window._incrementSpinCount(); // daily count বাড়াও
     uData.points=(uData.points||0)+pts;
     window._pts=uData.points;
     updateUI();
