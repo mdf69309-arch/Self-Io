@@ -468,28 +468,26 @@ function fetchTodaySpinsFromUserDoc(userData){
 
 /* ════════════════════
    Firebase এ আজকের স্পিন +1 করো
-   users/{uid} এ todaySpinDate ও todaySpinCount আপডেট করো
+   uData (already loaded) দিয়ে check — extra getDoc নেই
 ════════════════════ */
 async function incTodaySpins(uid){
   try{
     const today = getTodayKey();
-    const snap  = await getDoc(doc(db,'users',uid));
-    const data  = snap.exists() ? snap.data() : {};
-
-    if(data.todaySpinDate === today){
-      /* একই দিন — increment */
+    if(uData && uData.todaySpinDate === today){
       await updateDoc(doc(db,'users',uid),{
         todaySpinCount: increment(1),
-        todaySpinDate:  today
+        spinCount:      increment(1)
       });
+      uData.todaySpinCount = (uData.todaySpinCount||0)+1;
     } else {
-      /* নতুন দিন — reset করে 1 সেট করো */
       await updateDoc(doc(db,'users',uid),{
         todaySpinCount: 1,
-        todaySpinDate:  today
+        todaySpinDate:  today,
+        spinCount:      increment(1)
       });
+      if(uData){ uData.todaySpinDate=today; uData.todaySpinCount=1; }
     }
-  }catch(e){}
+  }catch(e){ console.error('incTodaySpins:',e); }
 }
 
 /* ════════════════════
@@ -534,8 +532,7 @@ window._savePts=async(pts,adClicked)=>{
 
   try{
     await updateDoc(doc(db,'users',user.uid),{
-      points:   increment(total),
-      spinCount:increment(1),
+      points: increment(total),
       ...(adClicked?{adClickCount:increment(1)}:{})
     });
     await incTodaySpins(user.uid);
@@ -572,7 +569,6 @@ window._saveZeroSpin=async(adClicked)=>{
   const bonus=adClicked?1:0;
   try{
     await updateDoc(doc(db,'users',user.uid),{
-      spinCount:increment(1),
       ...(bonus>0?{points:increment(1),adClickCount:increment(1)}:{})
     });
     await incTodaySpins(user.uid);
