@@ -8,21 +8,11 @@
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --primary:#e8380d;--primary2:#ff6b35;
-  --bg:#0f0f1a;--card:#16213e;
-  --text:#f1f5f9;--muted:#64748b;
-  --green:#10b981;--gold:#f59e0b;
-  --purple:#7c3aed;
-}
+:root{--primary:#e8380d;--primary2:#ff6b35;--bg:#0f0f1a;--card:#16213e;--text:#f1f5f9;--muted:#64748b;--green:#10b981;--gold:#f59e0b;--purple:#7c3aed;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Noto Sans Bengali',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px;}
 
-/* ── Loading ── */
-#loadScreen{
-  position:fixed;inset:0;background:var(--bg);z-index:999;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;
-}
+#loadScreen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;}
 .load-icon{font-size:64px;animation:bounce 1s ease-in-out infinite alternate;}
 @keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-14px);}}
 .load-title{font-size:24px;font-weight:800;color:var(--gold);}
@@ -30,33 +20,25 @@ body{font-family:'Noto Sans Bengali',sans-serif;background:var(--bg);color:var(-
 .load-bar-wrap{width:240px;height:6px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;}
 .load-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--primary));border-radius:10px;width:0%;transition:width .4s ease;}
 
-/* ── Main ── */
 #mainContent{display:none;}
 .header{background:var(--card);padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:50;}
 .back-btn{width:38px;height:38px;background:rgba(255,255,255,0.08);border-radius:10px;border:none;color:var(--text);font-size:18px;cursor:pointer;}
 .htitle{font-size:18px;font-weight:700;}
 .badge{margin-left:auto;background:linear-gradient(135deg,var(--gold),var(--primary2));color:#000;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:800;}
 
-/* ── Wheel ── */
 .wheel-wrap{text-align:center;padding:22px 16px 10px;}
 .wheel-outer{position:relative;display:inline-block;}
 .ptr{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:30px;z-index:10;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6));}
 canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);}
 
-/* ── Spin Button ── */
-.btn-spin{
-  display:block;width:calc(100% - 32px);margin:16px 16px 0;padding:15px;
-  background:linear-gradient(135deg,var(--purple),#9333ea);
-  border:none;border-radius:16px;color:#fff;font-size:17px;font-weight:700;
-  font-family:inherit;cursor:pointer;
-  box-shadow:0 4px 24px rgba(124,58,237,.45);transition:opacity .2s,transform .1s;
-}
+.btn-spin{display:block;width:calc(100% - 32px);margin:16px 16px 0;padding:15px;background:linear-gradient(135deg,var(--purple),#9333ea);border:none;border-radius:16px;color:#fff;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 4px 24px rgba(124,58,237,.45);transition:opacity .2s,transform .1s;}
 .btn-spin:active{transform:scale(0.98);}
 .btn-spin:disabled{opacity:.4;cursor:not-allowed;transform:none;}
-.result{text-align:center;margin-top:10px;font-size:16px;font-weight:800;color:var(--gold);min-height:24px;}
+.result{text-align:center;margin-top:10px;font-size:15px;font-weight:800;color:var(--gold);min-height:24px;padding:0 16px;}
 .note{text-align:center;margin-top:6px;font-size:12px;color:var(--muted);}
+.spin-limit{margin:8px 16px 0;background:var(--card);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+.spin-reset{text-align:center;margin:6px 16px 0;font-size:12px;color:var(--muted);display:none;}
 
-/* ── Cards ── */
 .cards{padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
 .card{background:var(--card);border-radius:16px;padding:16px;border:1px solid rgba(255,255,255,.04);}
 .pts-row{display:flex;align-items:center;gap:12px;}
@@ -74,7 +56,6 @@ canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);
 .hpts{font-weight:700;color:var(--gold);}
 .hempty{text-align:center;color:var(--muted);font-size:13px;padding:12px 0;}
 
-/* ── Convert Modal ── */
 .cmodal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:990;align-items:center;justify-content:center;}
 .cmodal.on{display:flex;}
 .cbox{background:#1e293b;border-radius:20px;padding:24px 20px;width:88%;max-width:340px;border:1px solid rgba(255,255,255,.06);}
@@ -85,14 +66,12 @@ canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);
 .btn-do{width:100%;padding:13px;background:linear-gradient(135deg,var(--green),#059669);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:16px;margin-bottom:8px;}
 .btn-no{width:100%;padding:11px;background:rgba(255,255,255,.06);border:none;border-radius:12px;color:var(--muted);font-size:14px;font-family:inherit;cursor:pointer;}
 
-/* ── Toast ── */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);color:#fff;padding:11px 22px;border-radius:12px;font-size:13px;font-weight:700;opacity:0;transition:all .3s;z-index:9999;white-space:nowrap;pointer-events:none;}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
 
-<!-- ══ Loading Screen ══ -->
 <div id="loadScreen">
   <div class="load-icon">🎡</div>
   <div class="load-title">Spin &amp; Win</div>
@@ -100,7 +79,6 @@ canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);
   <div class="load-bar-wrap"><div class="load-bar" id="loadBar"></div></div>
 </div>
 
-<!-- ══ Main Content ══ -->
 <div id="mainContent">
   <div class="header">
     <button class="back-btn" onclick="goBack()">←</button>
@@ -118,11 +96,11 @@ canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);
   <button class="btn-spin" id="spinBtn" onclick="doSpin()">🎯 স্পিন করুন</button>
   <div class="result" id="result"></div>
   <div class="note">⚠️ পয়েন্ট পেতে বিজ্ঞাপন সম্পূর্ণ দেখতে হবে</div>
-  <div id="spinLimitBar" style="margin:10px 16px 0;background:#16213e;border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
-    <span style="font-size:12px;color:#64748b;">🎡 আজকের স্পিন</span>
-    <span style="font-size:13px;font-weight:800;color:#f59e0b;"><span id="spinUsed">0</span> / 150</span>
+  <div class="spin-limit">
+    <span style="font-size:12px;color:var(--muted);">🎡 আজকের স্পিন</span>
+    <span style="font-size:13px;font-weight:800;color:var(--gold);"><span id="spinUsed">0</span> / 150</span>
   </div>
-  <div id="spinResetTimer" style="display:none;text-align:center;margin:8px 16px 0;font-size:12px;color:#64748b;"></div>
+  <div class="spin-reset" id="spinReset"></div>
 
   <div class="cards">
     <div class="card">
@@ -147,7 +125,6 @@ canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);
   </div>
 </div>
 
-<!-- Convert Modal -->
 <div class="cmodal" id="convModal">
   <div class="cbox">
     <h3>💰 পয়েন্ট কনভার্ট</h3>
@@ -165,15 +142,33 @@ canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);
 <script>
 'use strict';
 
-/* ── Wheel Setup ── */
-const SEGS=['1','5','1','0','8','2','1','3','6','0','9','1','4','10'];
-const COLS=['#e8380d','#7c3aed','#1e40af','#0891b2','#047857','#92400e','#831843','#1e3a5f','#064e3b','#7c2d12','#4338ca','#065f46','#be123c','#1d4ed8'];
-let _angle=0, _spinning=false;
-window._fbReady=false;
-window._pts=0; window._min=100; window._rate=0.01;
+const SEGS = ['1','5','1','0','8','2','1','3','6','0','9','1','4','10'];
+const COLS = ['#e8380d','#7c3aed','#1e40af','#0891b2','#047857','#92400e','#831843','#1e3a5f','#064e3b','#7c2d12','#4338ca','#065f46','#be123c','#1d4ed8'];
+const DAILY_LIMIT = 150;
+const VALID_PTS   = [0,1,2,3,4,5,6,8,9,10];
 
+let _angle = 0;
+
+/* ── State ── */
+window.AdController  = null;
+window._fbReady      = false;
+window._pts          = 0;
+window._min          = 100;
+window._rate         = 0.01;
+
+/* ── Spin state ── */
+let _spinning        = false;  // চাকা ঘুরছে
+let _adShowing       = false;  // এড দেখাচ্ছে
+let _wonPts          = 0;      // চাকায় যা পেয়েছে
+let _adClicked       = false;  // এড এ ক্লিক করেছে
+let _bonusGiven      = false;  // বোনাস দেওয়া হয়েছে
+
+/* ════════════════════════════════
+   Wheel Draw
+════════════════════════════════ */
 function drawWheel(a){
-  const cv=document.getElementById('cv');if(!cv)return;
+  const cv=document.getElementById('cv');
+  if(!cv)return;
   const ctx=cv.getContext('2d'),W=cv.width,cx=W/2,r=cx-12;
   ctx.clearRect(0,0,W,W);
   const arc=(2*Math.PI)/SEGS.length;
@@ -190,217 +185,255 @@ function drawWheel(a){
   ctx.fillStyle='#fff';ctx.font='bold 12px Arial';ctx.textAlign='center';ctx.fillText('GO',cx,cx+5);
 }
 
+/* ════════════════════════════════
+   Toast
+════════════════════════════════ */
 function showToast(msg,err){
   const el=document.getElementById('toast');
-  el.textContent=msg;el.style.background=err?'#ef4444':'#10b981';
-  el.classList.add('on');setTimeout(()=>el.classList.remove('on'),3000);
+  el.textContent=msg;
+  el.style.background=err?'#ef4444':'#10b981';
+  el.classList.add('on');
+  setTimeout(()=>el.classList.remove('on'),3000);
 }
 window.showToast=showToast;
 
+function setResult(msg, color){
+  const el = document.getElementById('result');
+  el.textContent = msg;
+  el.style.color  = color || '#f59e0b';
+}
+
 /* ════════════════════════════════
-   STEP 1: পেজ লোড → AdsGram লোড
-   লোড হলে → স্পিন দেখাও
+   Daily Spin Limit
 ════════════════════════════════ */
-window.AdController=null;
+function getDayKey(){
+  if(!window._uid) return 'spin_unknown';
+  const d=new Date();
+  return `spin_${window._uid.slice(0,8)}_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
+}
 
-function initAd(){
-  const bar=document.getElementById('loadBar');
-  let pct=0;
-  /* Progress bar animate */
-  const iv=setInterval(()=>{
-    pct+=5;bar.style.width=Math.min(pct,85)+'%';
-    if(pct>=85)clearInterval(iv);
-  },80);
+function getSpinCount(){
+  try{ return parseInt(localStorage.getItem(getDayKey())||'0'); }
+  catch(e){ return 0; }
+}
 
-  if(window.Adsgram){
-    try{
-      window.AdController=window.Adsgram.init({blockId:'25155'});
-      bar.style.width='100%';
-      document.getElementById('loadMsg').textContent='✅ প্রস্তুত! স্পিন করুন';
-      setTimeout(showMain, 600);
-    }catch(e){
-      /* AdsGram error — তবুও দেখাও */
-      bar.style.width='100%';
-      setTimeout(showMain, 600);
-    }
+function incSpinCount(){
+  try{ localStorage.setItem(getDayKey(), getSpinCount()+1); }
+  catch(e){}
+}
+
+function updateLimitUI(){
+  const used = getSpinCount();
+  document.getElementById('spinUsed').textContent = Math.min(used, DAILY_LIMIT);
+  const btn = document.getElementById('spinBtn');
+  const resetEl = document.getElementById('spinReset');
+
+  if(used >= DAILY_LIMIT){
+    btn.disabled = true;
+    btn.textContent = '🚫 আজকের স্পিন শেষ!';
+    resetEl.style.display = 'block';
+    startResetTimer(resetEl);
   } else {
-    /* AdsGram script লোড হয়নি — ৩ সেকেন্ড পর দেখাও */
-    setTimeout(()=>{
-      bar.style.width='100%';
-      document.getElementById('loadMsg').textContent='⚠️ বিজ্ঞাপন ছাড়া চলছে';
-      setTimeout(showMain, 800);
-    },3000);
+    if(!_spinning && !_adShowing){
+      btn.disabled = false;
+      btn.textContent = '🎯 স্পিন করুন';
+    }
+    resetEl.style.display = 'none';
   }
 }
 
-function showMain(){
-  document.getElementById('loadScreen').style.display='none';
-  document.getElementById('mainContent').style.display='block';
-  drawWheel(_angle);
+let _resetInterval = null;
+function startResetTimer(el){
+  if(_resetInterval) clearInterval(_resetInterval);
+  function tick(){
+    const now = Date.now();
+    const tomorrow = new Date(); tomorrow.setHours(24,0,0,0);
+    const diff = tomorrow - now;
+    if(diff<=0){ updateLimitUI(); clearInterval(_resetInterval); return; }
+    const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+    el.textContent=`🔄 রিসেট হবে ${h}ঘ ${m}মি ${s}সে পরে`;
+  }
+  tick();
+  _resetInterval = setInterval(tick, 1000);
 }
 
 /* ════════════════════════════════
-   STEP 2: স্পিন বাটন চাপলে
-   → চাকা ঘুরবে + এড দেখাবে
-   → এড সম্পূর্ণ হলে → পয়েন্ট
+   Loading & Ad Init
+════════════════════════════════ */
+function initAd(){
+  const bar = document.getElementById('loadBar');
+  let pct = 0;
+  const iv = setInterval(()=>{
+    pct += 5; bar.style.width = Math.min(pct,85)+'%';
+    if(pct>=85) clearInterval(iv);
+  }, 80);
+
+  setTimeout(()=>{
+    if(window.Adsgram){
+      try{
+        window.AdController = window.Adsgram.init({blockId:'25155'});
+      }catch(e){ window.AdController = null; }
+    }
+    bar.style.width = '100%';
+    document.getElementById('loadMsg').textContent = window.AdController
+      ? '✅ প্রস্তুত! স্পিন করুন'
+      : '⚠️ বিজ্ঞাপন লোড হয়নি';
+    setTimeout(()=>{
+      document.getElementById('loadScreen').style.display='none';
+      document.getElementById('mainContent').style.display='block';
+      drawWheel(_angle);
+      updateLimitUI();
+    }, 600);
+  }, 1500);
+}
+
+/* ════════════════════════════════
+   Spin Button Click
 ════════════════════════════════ */
 function doSpin(){
-  if(_spinning){showToast('স্পিন চলছে...',true);return;}
-  if(!window._fbReady){showToast('লোড হচ্ছে...',true);return;}
-  /* Daily limit চেক */
-  if(window._checkSpinLimit && !window._checkSpinLimit()){return;}
+  if(_spinning || _adShowing) return;
+  if(!window._fbReady){ showToast('লোড হচ্ছে...',true); return; }
+  if(!window.AdController){ showToast('⚠️ বিজ্ঞাপন লোড হয়নি! পেজ রিলোড করুন।',true); return; }
+  if(getSpinCount() >= DAILY_LIMIT){ showToast('🚫 আজকের স্পিন শেষ!',true); updateLimitUI(); return; }
 
-  _spinning=true;
-  window._clickBonusDone=false;
-  document.getElementById('spinBtn').disabled=true;
-  document.getElementById('result').textContent='';
+  /* State reset */
+  _spinning   = true;
+  _adClicked  = false;
+  _bonusGiven = false;
+  _wonPts     = 0;
 
-  /* ১. আগে চাকা ঘোরাও */
-  spinWheel(function(wonPts){
-    /* ২. চাকা থামলে এড দেখাও */
-    showAd(
-      function(){
-        /* ✅ এড সম্পূর্ণ → পয়েন্ট দাও */
-        if(wonPts>0){
-          window._savePts(wonPts);
-        } else {
-          showToast('😅 এবার শূন্য! আবার চেষ্টা করুন');
-          resetSpin();
-        }
-      },
-      function(){
-        /* ❌ এড skip/বন্ধ → পয়েন্ট নেই */
-        showToast('⚠️ বিজ্ঞাপন সম্পূর্ণ দেখুন — পয়েন্ট পাবেন!',true);
-        resetSpin();
-      }
-    );
+  document.getElementById('spinBtn').disabled = true;
+  setResult('');
+
+  /* চাকা ঘোরাও */
+  spinWheel(function(pts){
+    _wonPts = pts;
+    /* চাকা থামলে এড দেখাও */
+    showAd();
   });
 }
 
-/* ── Wheel Animation ── */
+/* ════════════════════════════════
+   Wheel Animation
+════════════════════════════════ */
 function spinWheel(onDone){
   const total=(6+Math.random()*6)*2*Math.PI;
-  const dur=3500,t0=performance.now(),a0=_angle;
+  const dur=3500, t0=performance.now(), a0=_angle;
   function frame(now){
-    const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,4);
-    _angle=a0+total*e;drawWheel(_angle);
-    if(p<1){requestAnimationFrame(frame);return;}
-    /* চাকা থামলে কোন segment এ পড়লো */
+    const p=Math.min((now-t0)/dur,1), e=1-Math.pow(1-p,4);
+    _angle=a0+total*e; drawWheel(_angle);
+    if(p<1){ requestAnimationFrame(frame); return; }
     const arc=(2*Math.PI)/SEGS.length;
     const norm=((_angle%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
     const rel=((3*Math.PI/2)-norm+2*Math.PI)%(2*Math.PI);
     const idx=Math.floor(rel/arc)%SEGS.length;
     const pts=parseInt(SEGS[idx])||0;
-    /* result দেখাও */
-    if(pts>0){
-      document.getElementById('result').textContent='🎉 +'+pts+' পয়েন্ট! এড দেখুন...';
-    } else {
-      document.getElementById('result').textContent='😅 শূন্য পয়েন্ট';
-    }
+    setResult(pts>0 ? `🎯 ${pts} পয়েন্ট পেয়েছেন! এড দেখুন...` : '😅 শূন্য! এড দেখুন...', '#f59e0b');
     onDone(pts);
   }
   requestAnimationFrame(frame);
 }
 
-/* ── AdsGram Ad Show ── */
-function showAd(onSuccess, onCancel){
-  if(!window.AdController){
-    window.showToast('⚠️ বিজ্ঞাপন লোড হয়নি! পেজ রিলোড করুন।', true);
-    onCancel();
-    return;
-  }
+/* ════════════════════════════════
+   Ad Show — সবচেয়ে গুরুত্বপূর্ণ অংশ
+   
+   নিয়ম:
+   ১. এড সম্পূর্ণ দেখলে → পয়েন্ট পাবে
+   ২. এড এ ক্লিক করলে → পয়েন্ট + বোনাস পাবে
+   ৩. শুধু X চাপলে → পয়েন্ট পাবে না
+   ৪. এড থেকে ফিরে screen touch করলে → পয়েন্ট পাবে না
+════════════════════════════════ */
+function showAd(){
+  _adShowing  = true;
+  _adClicked  = false;
 
-  let _adDone    = false;
-  let _wasHidden = false;
-  let _visTimer  = null;
-
-  function onVisChange(){
+  /* visibilitychange listener */
+  function onVis(){
     if(document.hidden){
-      /* ইউজার এড এ ক্লিক করে অন্য পেজে গেছে */
-      _wasHidden = true;
-    } else {
-      /* ফিরে এসেছে */
-      if(_wasHidden && !_adDone){
-        /* ক্লিক করে ফিরলে — এড সম্পূর্ণ গণ্য + বোনাস */
-        clearTimeout(_visTimer);
-        _visTimer = setTimeout(function(){
-          if(!_adDone){
-            _adDone = true;
-            document.removeEventListener('visibilitychange', onVisChange);
-            if(window._saveAdClick) window._saveAdClick();
-            onSuccess();
-          }
-        }, 500);
-      }
+      /* এড এ ক্লিক করে অন্য পেজে গেছে */
+      _adClicked = true;
     }
+    /* visible হলে কিছু করবো না — .then() বা .catch() handle করবে */
   }
-  document.addEventListener('visibilitychange', onVisChange);
+  document.addEventListener('visibilitychange', onVis);
 
   window.AdController.show()
     .then(function(){
-      /* এড নিজে থেকে সম্পূর্ণ হয়েছে */
-      if(_adDone) return;
-      _adDone = true;
-      clearTimeout(_visTimer);
-      document.removeEventListener('visibilitychange', onVisChange);
-      if(_wasHidden && window._saveAdClick) window._saveAdClick();
-      onSuccess();
+      /* ✅ এড সম্পূর্ণ দেখা হয়েছে */
+      document.removeEventListener('visibilitychange', onVis);
+      onAdComplete(true);
     })
     .catch(function(){
-      /* X বাটন চাপলে বা skip — কিন্তু ক্লিক করে ফিরলে নয় */
-      if(_adDone) return; // ইতিমধ্যে visibilitychange এ handle হয়েছে
-      _adDone = true;
-      clearTimeout(_visTimer);
-      document.removeEventListener('visibilitychange', onVisChange);
-      if(_wasHidden){
-        /* ক্লিক করে ফিরেছিল তারপর X চেপেছে — success */
-        if(window._saveAdClick) window._saveAdClick();
-        onSuccess();
+      /* X চাপলে বা এড শেষে close */
+      document.removeEventListener('visibilitychange', onVis);
+      if(_adClicked){
+        /* ক্লিক করে ফিরেছিল — পয়েন্ট দাও + বোনাস */
+        onAdComplete(true);
       } else {
-        /* শুধু X চেপে বন্ধ করেছে — পয়েন্ট নেই */
-        onCancel();
+        /* শুধু X চেপে বন্ধ — পয়েন্ট নেই */
+        onAdComplete(false);
       }
     });
 }
 
-function resetSpin(){
-  _spinning=false;
-  document.getElementById('spinBtn').disabled=false;
-}
-window.resetSpin=resetSpin;
+function onAdComplete(success){
+  _adShowing = false;
+  _spinning  = false;
 
-/* ── Convert Modal ── */
+  if(success){
+    /* স্পিনের পয়েন্ট দাও */
+    if(_wonPts > 0){
+      if(window._savePts) window._savePts(_wonPts);
+    } else {
+      /* ০ পয়েন্ট — শুধু spinCount বাড়াও */
+      if(window._saveZeroSpin) window._saveZeroSpin();
+      setResult('😅 এবার শূন্য! আবার চেষ্টা করুন', '#64748b');
+      incSpinCount();
+      updateLimitUI();
+      document.getElementById('spinBtn').disabled = false;
+    }
+    /* ক্লিক বোনাস */
+    if(_adClicked && !_bonusGiven){
+      _bonusGiven = true;
+      setTimeout(()=>{
+        if(window._saveClickBonus) window._saveClickBonus();
+      }, 500);
+    }
+  } else {
+    /* এড skip — পয়েন্ট নেই */
+    setResult('⚠️ বিজ্ঞাপন সম্পূর্ণ দেখুন — পয়েন্ট পাবেন!', '#ef4444');
+    document.getElementById('spinBtn').disabled = false;
+    document.getElementById('spinBtn').textContent = '🎯 স্পিন করুন';
+  }
+}
+
+/* ── Convert ── */
 function openConv(){
-  const pts=window._pts||0,min=window._min||100,rate=window._rate||0.01;
-  if(pts<min){showToast('কমপক্ষে '+min+' পয়েন্ট লাগবে!',true);return;}
-  document.getElementById('cPts').textContent=pts+' পয়েন্ট';
-  document.getElementById('cRate').textContent=min+' পয়েন্ট = ৳'+(min*rate).toFixed(2);
-  document.getElementById('cTaka').textContent='৳'+(pts*rate).toFixed(2);
+  const pts=window._pts||0, min=window._min||100, rate=window._rate||0.01;
+  if(pts<min){ showToast('কমপক্ষে '+min+' পয়েন্ট লাগবে!',true); return; }
+  document.getElementById('cPts').textContent  = pts+' পয়েন্ট';
+  document.getElementById('cRate').textContent = min+' পয়েন্ট = ৳'+(min*rate).toFixed(2);
+  document.getElementById('cTaka').textContent = '৳'+(pts*rate).toFixed(2);
   document.getElementById('convModal').classList.add('on');
 }
-function closeConv(){document.getElementById('convModal').classList.remove('on');}
-function doConvert(){closeConv();window._doConvert();}
-window.openConv=openConv;window.closeConv=closeConv;window.doConvert=doConvert;
+function closeConv(){ document.getElementById('convModal').classList.remove('on'); }
+function doConvert(){ closeConv(); if(window._doConvert) window._doConvert(); }
+window.openConv=openConv; window.closeConv=closeConv; window.doConvert=doConvert;
 
-/* ── Back ── */
 function goBack(){
-  if(_spinning){showToast('⚠️ স্পিন শেষ হতে দিন!',true);return;}
+  if(_spinning||_adShowing){ showToast('⚠️ স্পিন শেষ হতে দিন!',true); return; }
   location.href='home.html';
 }
 window.goBack=goBack;
 
 window.addEventListener('popstate',function(){
-  if(_spinning){history.pushState(null,'',location.href);return;}
+  if(_spinning||_adShowing){ history.pushState(null,'',location.href); return; }
   location.href='home.html';
 });
 
-/* ── AdsGram load হলে init ── */
-window.addEventListener('load',function(){
-  initAd();
-});
+window.addEventListener('load', initAd);
 </script>
 
-<!-- ══ Firebase Module ══ -->
 <script type="module">
 import { auth, db } from './firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -410,15 +443,16 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const tg=window.Telegram?.WebApp;
-if(tg){tg.expand();tg.BackButton.show();tg.BackButton.onClick(()=>window.goBack());}
+if(tg){ tg.expand(); tg.BackButton.show(); tg.BackButton.onClick(()=>window.goBack()); }
 
 let user=null, uData=null, spinHist=[];
-let cfg={pointsToTaka:0.01, minWithdraw:100};
+let cfg={ pointsToTaka:0.01, minWithdraw:100 };
 
-onAuthStateChanged(auth,async(u)=>{
-  if(!u){location.href='index.html';return;}
+onAuthStateChanged(auth, async(u)=>{
+  if(!u){ location.href='index.html'; return; }
   user=u;
-  const [uSnap,cSnap]=await Promise.all([
+  window._uid = u.uid;
+  const [uSnap,cSnap] = await Promise.all([
     getDoc(doc(db,'users',u.uid)),
     getDoc(doc(db,'settings','adConfig'))
   ]);
@@ -427,168 +461,90 @@ onAuthStateChanged(auth,async(u)=>{
   window._pts  = uData?.points    || 0;
   window._min  = cfg.minWithdraw  || 100;
   window._rate = cfg.pointsToTaka || 0.01;
-  window._fbReady=true;
+  window._fbReady = true;
   updateUI();
-  updateSpinUI();
 });
 
-/* ── Daily Spin Limit ── */
-const DAILY_LIMIT = 150;
-
-function getTodayKey(){
-  const d = new Date();
-  return `spin_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}_${user?.uid?.slice(0,8)}`;
-}
-
-function getSpinData(){
-  try{
-    const key  = getTodayKey();
-    const data = JSON.parse(localStorage.getItem(key)||'{}');
-    return { count: data.count||0, resetAt: data.resetAt||0 };
-  }catch(e){ return {count:0, resetAt:0}; }
-}
-
-function saveSpinData(count){
-  const key    = getTodayKey();
-  const now    = Date.now();
-  const resetAt= now + 24*60*60*1000; // ২৪ ঘন্টা পর
-  localStorage.setItem(key, JSON.stringify({count, resetAt}));
-}
-
-function updateSpinUI(){
-  const data = getSpinData();
-  const used = Math.min(data.count, DAILY_LIMIT);
-  document.getElementById('spinUsed').textContent = used;
-
-  if(used >= DAILY_LIMIT){
-    /* লিমিট শেষ — বাটন বন্ধ + timer দেখাও */
-    document.getElementById('spinBtn').disabled = true;
-    document.getElementById('spinBtn').textContent = '🚫 আজকের স্পিন শেষ!';
-    showResetTimer();
-  } else {
-    document.getElementById('spinBtn').disabled = false;
-    document.getElementById('spinBtn').textContent = '🎯 স্পিন করুন';
-    document.getElementById('spinResetTimer').style.display = 'none';
-  }
-}
-
-function showResetTimer(){
-  const el = document.getElementById('spinResetTimer');
-  el.style.display = 'block';
-  function tick(){
-    const now   = Date.now();
-    const key   = getTodayKey();
-    /* পরের দিন midnight পর্যন্ত */
-    const tomorrow = new Date();
-    tomorrow.setHours(24,0,0,0);
-    const diff  = tomorrow - now;
-    if(diff <= 0){
-      updateSpinUI(); return;
-    }
-    const h = Math.floor(diff/3600000);
-    const m = Math.floor((diff%3600000)/60000);
-    const s = Math.floor((diff%60000)/1000);
-    el.textContent = `🔄 রিসেট হবে: ${h}ঘ ${m}মি ${s}সে পরে`;
-  }
-  tick();
-  setInterval(tick, 1000);
-}
-
-window._checkSpinLimit = function(){
-  const data = getSpinData();
-  if(data.count >= DAILY_LIMIT){
-    showToast('🚫 আজকের ১৫০টি স্পিন শেষ! কাল আবার আসুন।', true);
-    updateSpinUI();
-    return false;
-  }
-  return true;
-};
-
-window._incrementSpinCount = function(){
-  const data  = getSpinData();
-  const newCount = data.count + 1;
-  saveSpinData(newCount);
-  updateSpinUI();
-};
-
-/* ── Ad Click বোনাস ── */
-window._clickBonusDone = false;
-window._saveAdClick=async()=>{
-  if(!user || window._clickBonusDone) return;
-  window._clickBonusDone = true;
-  try{
-    await updateDoc(doc(db,'users',user.uid),{
-      points:       increment(1),
-      adClickCount: increment(1)
-    });
-    uData.points=(uData.points||0)+1;
-    window._pts=uData.points;
-    updateUI();
-    /* result div এ দেখাও */
-    const res = document.getElementById('result');
-    if(res){
-      res.style.color='#10b981';
-      res.textContent='👆 +1 ক্লিক বোনাস পয়েন্ট পেয়েছেন!';
-      setTimeout(()=>{res.textContent='';res.style.color='#f59e0b';}, 3000);
-    }
-  }catch(e){ console.error(e); }
-};
-
-/* ── পয়েন্ট সেভ ── */
-window._savePts=async(pts)=>{
-  if(!user){window.showToast('লগইন প্রয়োজন!',true);window.resetSpin();return;}
-  if(![0,1,2,3,4,5,6,8,9,10].includes(pts)){window.showToast('অবৈধ পয়েন্ট!',true);window.resetSpin();return;}
+/* ── পয়েন্ট > 0 হলে save ── */
+window._savePts = async(pts)=>{
+  if(!user || !VALID_PTS.includes(pts) || pts===0) return;
   try{
     await updateDoc(doc(db,'users',user.uid),{
       points:    increment(pts),
       spinCount: increment(1)
     });
-    window._incrementSpinCount(); // daily count বাড়াও
-    uData.points=(uData.points||0)+pts;
-    window._pts=uData.points;
+    uData.points = (uData.points||0)+pts;
+    window._pts  = uData.points;
     updateUI();
-    addSpinHist(pts);
-    document.getElementById('result').textContent='🎉 +'+pts+' পয়েন্ট পেলেন!';
-    window.showToast('🎉 +'+pts+' পয়েন্ট!');
-  }catch(e){
-    window.showToast('সেভ ব্যর্থ!',true);
-  }
-  window.resetSpin();
+    addHist(pts);
+    incSpinCount();
+    updateLimitUI();
+    setResult('🎉 +'+pts+' পয়েন্ট পেলেন!', '#10b981');
+    setTimeout(()=>setResult('',''), 3000);
+    document.getElementById('spinBtn').disabled = false;
+    document.getElementById('spinBtn').textContent = '🎯 স্পিন করুন';
+  }catch(e){ window.showToast('সেভ ব্যর্থ!',true); }
+};
+
+/* ── ০ পয়েন্ট পেলে শুধু spinCount বাড়াও ── */
+window._saveZeroSpin = async()=>{
+  if(!user) return;
+  try{
+    await updateDoc(doc(db,'users',user.uid),{ spinCount: increment(1) });
+  }catch(e){}
+};
+
+/* ── ক্লিক বোনাস +1 ── */
+window._saveClickBonus = async()=>{
+  if(!user) return;
+  try{
+    await updateDoc(doc(db,'users',user.uid),{
+      points:       increment(1),
+      adClickCount: increment(1)
+    });
+    uData.points = (uData.points||0)+1;
+    window._pts  = uData.points;
+    updateUI();
+    setResult('👆 +1 ক্লিক বোনাস পয়েন্ট পেয়েছেন!', '#f59e0b');
+    setTimeout(()=>setResult('',''), 3000);
+  }catch(e){}
 };
 
 /* ── Convert ── */
-window._doConvert=async()=>{
+window._doConvert = async()=>{
   const pts=uData?.points||0, rate=cfg.pointsToTaka||0.01, min=cfg.minWithdraw||100;
-  if(pts<min){window.showToast('কমপক্ষে '+min+' পয়েন্ট লাগবে!',true);return;}
+  if(pts<min){ window.showToast('কমপক্ষে '+min+' পয়েন্ট লাগবে!',true); return; }
   const taka=parseFloat((pts*rate).toFixed(2));
   try{
-    await updateDoc(doc(db,'users',user.uid),{points:0, balance:increment(taka)});
+    await updateDoc(doc(db,'users',user.uid),{ points:0, balance:increment(taka) });
     await addDoc(collection(db,'withdrawRequests_point'),{
-      userId:   user.uid, userName:uData.name,
-      points:   pts, taka:taka.toFixed(2),
-      type:     'point_convert', status:'completed',
+      userId:user.uid, userName:uData.name,
+      points:pts, taka:taka.toFixed(2),
+      type:'point_convert', status:'completed',
       createdAt:serverTimestamp()
     });
     uData.points=0; uData.balance=(uData.balance||0)+taka;
     window._pts=0;
     updateUI();
     window.showToast('✅ ৳'+taka.toFixed(2)+' ব্যালেন্সে যোগ হয়েছে!');
-  }catch(e){window.showToast('ব্যর্থ হয়েছে!',true);}
+  }catch(e){ window.showToast('ব্যর্থ হয়েছে!',true); }
 };
 
-function addSpinHist(pts){
+const VALID_PTS = [0,1,2,3,4,5,6,8,9,10];
+
+function addHist(pts){
   spinHist.unshift({pts, t:new Date().toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'})});
-  if(spinHist.length>10)spinHist.pop();
-  document.getElementById('hist').innerHTML=spinHist
+  if(spinHist.length>10) spinHist.pop();
+  document.getElementById('hist').innerHTML = spinHist
     .map(h=>`<div class="hitem"><span>🎡 স্পিন</span><span style="color:#64748b;font-size:11px">${h.t}</span><span class="hpts">+${h.pts}</span></div>`)
     .join('');
 }
 
 function updateUI(){
   const pts=uData?.points||0, rate=cfg.pointsToTaka||0.01, min=cfg.minWithdraw||100;
-  document.getElementById('hpts').textContent=pts;
-  document.getElementById('ptsVal').textContent=pts+' পয়েন্ট';
-  document.getElementById('rateTag').textContent=min+' পয়েন্ট = ৳'+(min*rate).toFixed(2);
+  document.getElementById('hpts').textContent  = pts;
+  document.getElementById('ptsVal').textContent = pts+' পয়েন্ট';
+  document.getElementById('rateTag').textContent = min+' পয়েন্ট = ৳'+(min*rate).toFixed(2);
 }
 </script>
 </body>
