@@ -244,6 +244,7 @@ function doSpin(){
   if(!window._fbReady){showToast('লোড হচ্ছে...',true);return;}
 
   _spinning=true;
+  window._clickBonusDone=false; // প্রতি স্পিনে reset
   document.getElementById('spinBtn').disabled=true;
   document.getElementById('result').textContent='';
 
@@ -297,33 +298,38 @@ function spinWheel(onDone){
 /* ── AdsGram Ad Show ── */
 function showAd(onSuccess, onCancel){
   if(!window.AdController){
-    onSuccess();
+    /* এড লোড হয়নি — পয়েন্ট দেওয়া যাবে না */
+    window.showToast('⚠️ বিজ্ঞাপন লোড হয়নি! পেজ রিলোড করুন।', true);
+    onCancel();
     return;
   }
 
-  let _clicked = false;
+  let _adDone    = false; // এড .then() বা .catch() হয়েছে
+  let _wasHidden = false; // ক্লিক করে অন্য পেজে গিয়েছিল
 
-  /* ── ক্লিক detect: এড এ ক্লিক করলে page hidden হয় ── */
   function onVisChange(){
     if(document.hidden){
-      /* ইউজার এড এ ক্লিক করে অন্য পেজে গেছে */
-      _clicked = true;
-    } else if(_clicked){
-      /* ফিরে এসেছে — +2 বোনাস পয়েন্ট */
-      document.removeEventListener('visibilitychange', onVisChange);
-      if(window._saveAdClick) window._saveAdClick();
+      _wasHidden = true;
+    } else {
+      /* ফিরে এসেছে */
+      if(_wasHidden && !_adDone){
+        /* ক্লিক করে ফিরেছে কিন্তু এড শেষ হয়নি — বোনাস দাও */
+        if(window._saveAdClick) window._saveAdClick();
+      }
     }
   }
   document.addEventListener('visibilitychange', onVisChange);
 
   window.AdController.show()
     .then(function(){
-      /* ✅ এড সম্পূর্ণ */
+      _adDone = true;
       document.removeEventListener('visibilitychange', onVisChange);
+      /* এড সম্পূর্ণ দেখলেও ক্লিক করে থাকলে বোনাস দাও */
+      if(_wasHidden && window._saveAdClick) window._saveAdClick();
       onSuccess();
     })
     .catch(function(){
-      /* ❌ skip/বন্ধ */
+      _adDone = true;
       document.removeEventListener('visibilitychange', onVisChange);
       onCancel();
     });
@@ -398,8 +404,10 @@ onAuthStateChanged(auth,async(u)=>{
 });
 
 /* ── Ad Click বোনাস ── */
+window._clickBonusDone = false;
 window._saveAdClick=async()=>{
-  if(!user) return;
+  if(!user || window._clickBonusDone) return;
+  window._clickBonusDone = true; // একবারের বেশি দেওয়া যাবে না
   try{
     await updateDoc(doc(db,'users',user.uid),{
       points:       increment(2),
