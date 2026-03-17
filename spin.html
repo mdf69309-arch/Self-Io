@@ -337,56 +337,34 @@ function spinWheel(onDone){
 /* ════════════════════════════════
    Ad Show
    নিয়ম:
-   ১. এড সম্পূর্ণ দেখলে → পয়েন্ট পাবে
-   ২. এড এ ক্লিক করে ফিরলে → পয়েন্ট + বোনাস পাবে
-   ৩. শুধু X চাপলে → পয়েন্ট পাবে না
-   ৪. ক্লিক করে ফিরে আবার এড আটকালে touch → পয়েন্ট পাবে না
+   ১. এড সম্পূর্ণ দেখলে (.then) → পয়েন্ট পাবে
+   ২. .catch() যেকোনো কারণে → পয়েন্ট পাবে না
+   ৩. ক্লিক বোনাস শুধু .then() এর মধ্যে
 ════════════════════════════════ */
 function showAd(){
   _adShowing = true;
   _adClicked = false;
-  let _returnedFromClick = false; // একবার ফিরেছে কিনা
-  let _adResolved = false;        // .then/.catch হয়ে গেছে কিনা
 
+  /* visibilitychange — শুধু ক্লিক detect করতে */
   function onVis(){
     if(document.hidden){
-      /* এড এ ক্লিক করে অন্য পেজে গেছে */
       _adClicked = true;
-    } else {
-      /* ফিরে এসেছে */
-      if(_adClicked && !_returnedFromClick){
-        _returnedFromClick = true;
-        /* প্রথমবার ফিরলে — ঠিক আছে, .catch() এ handle হবে */
-      } else if(_adClicked && _returnedFromClick){
-        /* দ্বিতীয়বার ফিরলে — আটকে আছে, click flag বাতিল */
-        _adClicked = false;
-      }
     }
   }
   document.addEventListener('visibilitychange', onVis);
 
   window.AdController.show()
     .then(function(){
-      if(_adResolved) return;
-      _adResolved = true;
+      /* ✅ AdsGram confirmed — এড সম্পূর্ণ দেখা হয়েছে */
       document.removeEventListener('visibilitychange', onVis);
-      /* এড সম্পূর্ণ দেখা হয়েছে */
       onAdComplete(true);
     })
     .catch(function(){
-      if(_adResolved) return;
-      _adResolved = true;
+      /* ❌ যেকোনো কারণে বন্ধ হলে — পয়েন্ট নেই */
+      /* X চাপলে, আটকে touch করলে, যেভাবেই হোক */
       document.removeEventListener('visibilitychange', onVis);
-      if(_adClicked && _returnedFromClick){
-        /* ক্লিক করে একবার ফিরেছিল তারপর X চাপে → পয়েন্ট দাও */
-        onAdComplete(true);
-      } else if(_adClicked && !_returnedFromClick){
-        /* ক্লিক করে গেছে কিন্তু এখনো ফিরেনি — edge case → পয়েন্ট দাও */
-        onAdComplete(true);
-      } else {
-        /* শুধু X চেপে বন্ধ → পয়েন্ট নেই */
-        onAdComplete(false);
-      }
+      _adClicked = false; // বোনাসও নেই
+      onAdComplete(false);
     });
 }
 
