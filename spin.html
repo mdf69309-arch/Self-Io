@@ -72,11 +72,11 @@ canvas{display:block;border-radius:50%;box-shadow:0 0 50px rgba(245,158,11,.25);
 /* ── Ad Overlay: এড চলাকালীন পুরো স্ক্রিন block ── */
 #adOverlay{
   display:none;position:fixed;inset:0;z-index:8888;
-  background:rgba(0,0,0,0.01);  /* প্রায় transparent — AdsGram এড দেখা যাবে */
-  touch-action:none;             /* touch/tap block */
-  pointer-events:none;           /* AdsGram এর নিজের UI তে touch যাবে */
+  background:transparent;
+  touch-action:none;
+  pointer-events:none;  /* default: off */
 }
-#adOverlay.on{display:block;}
+#adOverlay.on{display:block;pointer-events:all;}  /* on হলে সব touch block */
 </style>
 </head>
 <body>
@@ -373,19 +373,32 @@ function showAd(){
     document.getElementById('adOverlay').classList.remove('on');
   }
 
+  /* প্রতিটি show() এর আগে AdController রি-ইনিট — stale instance এড়াতে */
+  if(window.Adsgram){
+    try{ window.AdController = window.Adsgram.init({blockId:'25155'}); }
+    catch(e){}
+  }
+
+  if(!window.AdController){
+    cleanup();
+    _adToken=null;
+    setResult('⚠️ বিজ্ঞাপন লোড হয়নি! পেজ রিলোড করুন।','#ef4444');
+    _spinning=false;
+    _resetSpinBtn();
+    return;
+  }
+
   window.AdController.show()
 
     /* ✅ AdsGram confirmed: এড সম্পূর্ণ দেখা হয়েছে */
     .then(function(){
       cleanup();
-      /* stale callback check */
       if(_adToken !== myToken) return;
       _adToken = null;
-      /* পয়েন্ট দাও — ক্লিক বোনাস নেই (visibilitychange বাদ) */
       onAdComplete(true);
     })
 
-    /* ❌ X চাপা, ক্লিক করে বাইরে গেলে ফিরলে, skip, error — সব এখানে */
+    /* ❌ X চাপা / ক্লিক করে বাইরে গেলে / skip / error */
     .catch(function(){
       cleanup();
       if(_adToken !== myToken) return;
@@ -535,9 +548,7 @@ onAuthStateChanged(auth,async(u)=>{
 });
 
 /* ════════════════════
-   _savePts
-   এড সম্পূর্ণ দেখার পর পয়েন্ট সেভ।
-   adClicked=true হলে স্পিন পয়েন্টের সাথে +1 বোনাস।
+   _savePts — এড সম্পূর্ণ দেখার পর পয়েন্ট সেভ
 ════════════════════ */
 window._savePts=async(pts)=>{
   if(!user||!VALID_PTS.includes(pts)||pts<=0)return;
@@ -567,9 +578,7 @@ window._savePts=async(pts)=>{
 };
 
 /* ════════════════════
-   _saveZeroSpin
-   ০ পয়েন্ট পেলে শুধু spinCount বাড়াও।
-   adClicked হলে +1 বোনাস দাও।
+   _saveZeroSpin — ০ পয়েন্ট পেলে শুধু spinCount বাড়াও
 ════════════════════ */
 window._saveZeroSpin=async()=>{
   if(!user)return;
