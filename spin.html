@@ -515,16 +515,22 @@ window._incrementSpinCount = function(){
 window._clickBonusDone = false;
 window._saveAdClick=async()=>{
   if(!user || window._clickBonusDone) return;
-  window._clickBonusDone = true; // একবারের বেশি দেওয়া যাবে না
+  window._clickBonusDone = true;
   try{
     await updateDoc(doc(db,'users',user.uid),{
       points:       increment(1),
       adClickCount: increment(1)
     });
-    uData.points=(uData.points||0)+2;
+    uData.points=(uData.points||0)+1;
     window._pts=uData.points;
     updateUI();
-    window.showToast('👆 +2 ক্লিক বোনাস পয়েন্ট!');
+    /* result div এ দেখাও */
+    const res = document.getElementById('result');
+    if(res){
+      res.style.color='#10b981';
+      res.textContent='👆 +1 ক্লিক বোনাস পয়েন্ট পেয়েছেন!';
+      setTimeout(()=>{res.textContent='';res.style.color='#f59e0b';}, 3000);
+    }
   }catch(e){ console.error(e); }
 };
 
