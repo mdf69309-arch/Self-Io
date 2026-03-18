@@ -357,22 +357,36 @@ function spinWheel(onDone){
    • adOverlay: এড চলাকালে পুরো স্পিন পেজ block।
 ════════════════════════════════ */
 
-let _adToken    = null;
+let _adToken     = null;
 let _adStartTime = 0;
-const AD_MIN_SEC = 15; /* এড কমপক্ষে এই সেকেন্ড না দেখলে পয়েন্ট নেই */
+let _adTimeoutId = null;
+const AD_MIN_SEC = 20;  /* এড কমপক্ষে এতক্ষণ না চললে পয়েন্ট নেই (এড ২৪ সেকেন্ডের) */
+const AD_MAX_SEC = 90;  /* এর বেশি আটকে থাকলে force-release */
 
 function showAd(){
   document.getElementById('spinBtn').textContent='📺 বিজ্ঞাপন দেখুন...';
 
-  const myToken = Date.now() + '_' + Math.random();
+  const myToken = Date.now()+'_'+Math.random();
   _adToken      = myToken;
-  _adStartTime  = Date.now(); /* এড শুরুর সময় রেকর্ড */
+  _adStartTime  = Date.now();
 
   document.getElementById('adOverlay').classList.add('on');
 
   function cleanup(){
     document.getElementById('adOverlay').classList.remove('on');
+    if(_adTimeoutId){ clearTimeout(_adTimeoutId); _adTimeoutId=null; }
   }
+
+  /* ── Maximum timeout: এড AD_MAX_SEC সেকেন্ডের বেশি আটকে থাকলে
+     force release করো — পয়েন্ট দেব না কিন্তু spin button ফিরিয়ে দেব ── */
+  _adTimeoutId = setTimeout(function(){
+    if(_adToken !== myToken) return;
+    _adToken = null;
+    cleanup();
+    _spinning = false;
+    setResult('⏱️ বিজ্ঞাপন সময় শেষ। আবার স্পিন করুন।','#64748b');
+    _resetSpinBtn();
+  }, AD_MAX_SEC * 1000);
 
   /* প্রতিটি show() এর আগে AdController রি-ইনিট */
   if(window.Adsgram){
@@ -393,10 +407,9 @@ function showAd(){
       if(_adToken !== myToken) return;
       _adToken = null;
 
-      /* ── মূল চেক: এড কতক্ষণ চলেছে? ──
-         ইউজার ক্লিক করে বাইরে গিয়ে সাথে সাথে ফিরলে
-         .then() খুব দ্রুত fire হয় (< AD_MIN_SEC সেকেন্ড)।
-         সেক্ষেত্রে পয়েন্ট দেব না। */
+      /* ── সময় চেক ──
+         AD_MIN_SEC এর কম সময়ে .then() = ক্লিক করে দ্রুত ফিরেছে
+         পয়েন্ট দেব না */
       const elapsed = (Date.now() - _adStartTime) / 1000;
       if(elapsed < AD_MIN_SEC){
         _spinning = false;
@@ -412,6 +425,7 @@ function showAd(){
       cleanup();
       if(_adToken !== myToken) return;
       _adToken = null;
+      /* X চাপা / skip / যেকারণেই হোক — পয়েন্ট নেই */
       onAdComplete(false);
     });
 }
