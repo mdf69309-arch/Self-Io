@@ -357,48 +357,57 @@ function spinWheel(onDone){
    • adOverlay: এড চলাকালে পুরো স্পিন পেজ block।
 ════════════════════════════════ */
 
-let _adToken = null; /* প্রতিটি showAd() এ নতুন token */
+let _adToken    = null;
+let _adStartTime = 0;
+const AD_MIN_SEC = 15; /* এড কমপক্ষে এই সেকেন্ড না দেখলে পয়েন্ট নেই */
 
 function showAd(){
   document.getElementById('spinBtn').textContent='📺 বিজ্ঞাপন দেখুন...';
 
-  /* নতুন unique token — stale callback reject করতে */
   const myToken = Date.now() + '_' + Math.random();
-  _adToken = myToken;
+  _adToken      = myToken;
+  _adStartTime  = Date.now(); /* এড শুরুর সময় রেকর্ড */
 
-  /* overlay চালু — স্পিন পেজে কোনো touch কাজ করবে না */
   document.getElementById('adOverlay').classList.add('on');
 
   function cleanup(){
     document.getElementById('adOverlay').classList.remove('on');
   }
 
-  /* প্রতিটি show() এর আগে AdController রি-ইনিট — stale instance এড়াতে */
+  /* প্রতিটি show() এর আগে AdController রি-ইনিট */
   if(window.Adsgram){
     try{ window.AdController = window.Adsgram.init({blockId:'25155'}); }
     catch(e){}
   }
 
   if(!window.AdController){
-    cleanup();
-    _adToken=null;
+    cleanup(); _adToken=null;
     setResult('⚠️ বিজ্ঞাপন লোড হয়নি! পেজ রিলোড করুন।','#ef4444');
-    _spinning=false;
-    _resetSpinBtn();
-    return;
+    _spinning=false; _resetSpinBtn(); return;
   }
 
   window.AdController.show()
 
-    /* ✅ AdsGram confirmed: এড সম্পূর্ণ দেখা হয়েছে */
     .then(function(){
       cleanup();
       if(_adToken !== myToken) return;
       _adToken = null;
+
+      /* ── মূল চেক: এড কতক্ষণ চলেছে? ──
+         ইউজার ক্লিক করে বাইরে গিয়ে সাথে সাথে ফিরলে
+         .then() খুব দ্রুত fire হয় (< AD_MIN_SEC সেকেন্ড)।
+         সেক্ষেত্রে পয়েন্ট দেব না। */
+      const elapsed = (Date.now() - _adStartTime) / 1000;
+      if(elapsed < AD_MIN_SEC){
+        _spinning = false;
+        setResult('⚠️ বিজ্ঞাপন সম্পূর্ণ দেখুন — পয়েন্ট পাবেন!','#ef4444');
+        _resetSpinBtn();
+        return;
+      }
+
       onAdComplete(true);
     })
 
-    /* ❌ X চাপা / ক্লিক করে বাইরে গেলে / skip / error */
     .catch(function(){
       cleanup();
       if(_adToken !== myToken) return;
